@@ -1,71 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { Flex, Layout } from "antd";
-
-import { getCustomers } from "./api";
-
-import Navbar from "./components/Navbar";
-import MainContent from "./components/MainContent";
-import FooterContainer from "./components/Footer";
-
-import "./App.css";
-const { Header, Footer, Content } = Layout;
+import { BrowserRouter as Router } from "react-router";
+import AppRoutes from "./Routes/AppRoutes";
 
 const App = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [customers, setCustomers] = useState([]);
-
-  const fetchCustomers = async () => {
-    setIsLoading(true);
-    try {
-      const response = await getCustomers();
-      setCustomers(response.data);
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Error fetching customers:", error);
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchCustomers();
-  }, []);
-
   return (
-    <Flex>
-      <Layout>
-        <Header style={headerStyle}>
-          <Navbar />
-        </Header>
-        <Content style={contentStyle}>
-          <MainContent
-            isLoading={isLoading}
-            customers={customers}
-            refreshCustomers={fetchCustomers}
-          />
-        </Content>
-        <Footer style={footerStyle}>
-          <FooterContainer />
-        </Footer>
-      </Layout>
-    </Flex>
+    <>
+      <Router>
+        <AppRoutes />
+      </Router>
+    </>
   );
 };
 export default App;
-
-const headerStyle = {
-  textAlign: "center",
-  color: "#fff",
-  height: 48,
-  lineHeight: "48px",
-  backgroundColor: "#4096ff",
-};
-
-const contentStyle = {
-  padding: "2rem",
-};
-const footerStyle = {
-  textAlign: "center",
-  color: "#fff",
-  padding: 0,
-  backgroundColor: "#4096ff",
-};
