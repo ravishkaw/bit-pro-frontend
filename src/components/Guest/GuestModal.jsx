@@ -1,6 +1,13 @@
 import { Modal, Form, Input, Radio, DatePicker } from "antd";
 
-const GuestModal = ({ isEditing, open, onCancel, form, handleSave }) => {
+const GuestModal = ({
+  isEditing,
+  open,
+  onCancel,
+  form,
+  handleSave,
+  confirmLoading,
+}) => {
   return (
     <>
       <Modal
@@ -9,6 +16,7 @@ const GuestModal = ({ isEditing, open, onCancel, form, handleSave }) => {
         onCancel={onCancel}
         okText={isEditing ? "Update" : "Add"}
         onOk={() => form.submit()}
+        confirmLoading={confirmLoading}
       >
         <Form
           labelCol={{ span: 8 }}
