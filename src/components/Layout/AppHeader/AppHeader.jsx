@@ -4,7 +4,7 @@ import { useGlobalContext } from "../../../contexts/context";
 
 const AppHeader = () => {
   const { collapsed, setCollapsed } = useGlobalContext();
-  
+
   return (
     <Layout.Header style={headerStyle}>
       <Button
@@ -15,7 +15,7 @@ const AppHeader = () => {
           fontSize: "16px",
           width: 64,
           height: 64,
-          color: "white",
+          // color: "black",
         }}
       />
       Navbar
@@ -28,7 +28,7 @@ const headerStyle = {
   position: "sticky",
   padding: 0,
   top: 0,
-  zIndex: 1,
+  zIndex: 100,
   width: "100%",
   display: "flex",
   overflow: "auto",

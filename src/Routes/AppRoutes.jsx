@@ -1,8 +1,8 @@
 import React from "react";
 import { Routes, Route } from "react-router";
 import AppLayout from "../components/Layout/AppLayout";
-import ManageGuest from "../pages/Admin/ManageGuest";
 import Home from "../Pages/Home";
+import ManageGuest from "../Pages/Admin/ManageGuest";
 
 const AppRoutes = () => {
   return (

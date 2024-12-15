@@ -25,4 +25,5 @@ const siderStyle = {
   top: 0,
   bottom: 0,
   scrollbarGutter: "stable",
+  color: "#fff",
 };
