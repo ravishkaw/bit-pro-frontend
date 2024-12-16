@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { Card, Col, Row, Table, Button, Space, Form } from "antd";
+import { Col, Row, Table, Button, Form } from "antd";
 
 import { useGlobalContext } from "../../contexts/context";
 import GuestModal from "../../components/Guest/GuestModal";
 import useGuests from "../../components/hooks/useGuest";
 import { guestColumns } from "../../constants/guestColumns";
 import dayjs from "dayjs";
+import GuestCard from "../../components/Guest/GuestCard";
+import LoadingCard from "../../components/Common/LoadingCard";
 
 const ManageGuest = () => {
   const [modalState, setModalState] = useState({
@@ -16,6 +18,7 @@ const ManageGuest = () => {
   });
 
   const { isMobile } = useGlobalContext();
+
   const {
     guests,
     loading,
@@ -78,6 +81,7 @@ const ManageGuest = () => {
               Add New Guest
             </Button>
           </Row>
+
           {!isMobile ? (
             <Table
               rowKey="guestId"
@@ -89,46 +93,19 @@ const ManageGuest = () => {
                 x: "max-content",
               }}
             />
+          ) : loading ? (
+            Array.from({ length: 3 }).map((_, index) => (
+              <LoadingCard key={index} />
+            ))
           ) : (
             guests.map((data, index) => (
-              <Card key={index} style={{ marginBottom: "16px" }}>
-                {columns.map((column) => {
-                  let value = data[column.dataIndex];
-                  if (column.dataIndex === "deleted") {
-                    value = value ? "Deleted" : "Active";
-                  } else if (column.key === "operation") {
-                    const formattedGuest = {
-                      ...data,
-                      dob: dayjs(data.dob, "YYYY-MM-DD"),
-                    };
-                    value = (
-                      <Space>
-                        <Button
-                          size="small"
-                          onClick={() => openModal(true, formattedGuest)}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          size="small"
-                          danger
-                          onClick={() =>
-                            deleteGuestRecord(formattedGuest.guestId)
-                          }
-                        >
-                          Delete
-                        </Button>
-                      </Space>
-                    );
-                  }
-
-                  return (
-                    <div key={column.key}>
-                      <strong>{column.title}:</strong> {value || "N/A"}
-                    </div>
-                  );
-                })}
-              </Card>
+              <GuestCard
+                key={index}
+                columns={columns}
+                data={data}
+                openModal={openModal}
+                deleteGuestRecord={deleteGuestRecord}
+              />
             ))
           )}
         </Col>
