@@ -58,6 +58,7 @@ export const guestColumns = (openModal, deleteGuestRecord) => [
     title: "Emergency Contact",
     dataIndex: "emergencyContact",
     key: "emergencyContact",
+    render: (emergencyContact) => (emergencyContact ? emergencyContact : "N/A"),
   },
   {
     title: "Status",
@@ -71,27 +72,43 @@ export const guestColumns = (openModal, deleteGuestRecord) => [
     fixed: "right",
     render: (_, record) => (
       <Space>
-        <Button
-          size="small"
-          disabled={record.deleted}
-          onClick={() => openModal(true, record)}
-        >
-          Edit
-        </Button>
+        {!record.deleted ? (
+          <>
+            <Button
+              size="small"
+              disabled={record.deleted}
+              onClick={() => openModal(true, record)}
+            >
+              Edit
+            </Button>
 
-        <Popconfirm
-          title="Delete the guest"
-          description="Are you sure to delete this guest?"
-          onConfirm={() => deleteGuestRecord(record.guestId)}
-          okText="Yes"
-          okButtonProps={{ danger: true }}
-          cancelText="No"
-          disabled={record.deleted}
-        >
-          <Button size="small" danger disabled={record.deleted}>
-            Delete
-          </Button>
-        </Popconfirm>
+            <Popconfirm
+              title="Delete the guest"
+              description="Are you sure to delete this guest?"
+              onConfirm={() => deleteGuestRecord(record.guestId)}
+              okText="Yes"
+              okButtonProps={{ danger: true }}
+              cancelText="No"
+              disabled={record.deleted}
+            >
+              <Button size="small" danger disabled={record.deleted}>
+                Delete
+              </Button>
+            </Popconfirm>
+          </>
+        ) : (
+          <Popconfirm
+            title="Restore the guest"
+            description="Not implemented"
+            // onConfirm={() => deleteGuestRecord(record.guestId)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button size="small" color="default" variant="dashed">
+              Restore
+            </Button>
+          </Popconfirm>
+        )}
       </Space>
     ),
   },
