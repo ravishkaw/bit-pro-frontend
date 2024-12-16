@@ -38,6 +38,7 @@ const ManageGuest = () => {
         dob: dayjs(guest.dob, "YYYY-MM-DD"),
       };
       form.setFieldsValue(formattedGuest);
+      setTimeout(() => form.validateFields(), 0);
     } else {
       form.resetFields();
     }
