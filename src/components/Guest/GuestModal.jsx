@@ -1,6 +1,21 @@
 import { Modal, Form, Input, Radio, DatePicker } from "antd";
 import dayjs from "dayjs";
 
+import { formValidations } from "../../utils/validations";
+
+const {
+  firstNameValidation,
+  lastNameValidation,
+  nicValidation,
+  genderValidation,
+  nationalityValidation,
+  dobValidation,
+  phoneValidation,
+  emailValidation,
+  addressValidation,
+  emergencyContactValidation,
+} = formValidations;
+
 const GuestModal = ({
   isEditing,
   open,
@@ -13,7 +28,6 @@ const GuestModal = ({
     <>
       <Modal
         title={isEditing ? "Edit The Guest" : "Add New Guest"}
-        style={{ textAlign: "center" }}
         open={open}
         onCancel={onCancel}
         okText={isEditing ? "Update" : "Add"}
@@ -30,13 +44,7 @@ const GuestModal = ({
           <Form.Item
             label="First Name"
             name="firstName"
-            rules={[
-              { required: true, message: "First name is required" },
-              {
-                min: 2,
-                message: "At least two characters",
-              },
-            ]}
+            rules={firstNameValidation}
             hasFeedback
           >
             <Input />
@@ -44,29 +52,18 @@ const GuestModal = ({
           <Form.Item
             label="Last Name"
             name="lastName"
-            rules={[
-              { required: true, message: "Last name is required" },
-              {
-                min: 2,
-                message: "At least two characters",
-              },
-            ]}
+            rules={lastNameValidation}
             hasFeedback
           >
             <Input />
           </Form.Item>
-          <Form.Item
-            label="NIC"
-            name="nic"
-            rules={[{ required: true, message: "NIC is required" }]}
-            hasFeedback
-          >
+          <Form.Item label="NIC" name="nic" rules={nicValidation} hasFeedback>
             <Input />
           </Form.Item>
           <Form.Item
             label="Gender"
             name="gender"
-            rules={[{ required: true, message: "Gender is required" }]}
+            rules={genderValidation}
             hasFeedback
           >
             <Radio.Group>
@@ -77,7 +74,7 @@ const GuestModal = ({
           <Form.Item
             label="Nationality"
             name="nationality"
-            rules={[{ required: true, message: "Nationality is required" }]}
+            rules={nationalityValidation}
             hasFeedback
           >
             <Input />
@@ -85,7 +82,7 @@ const GuestModal = ({
           <Form.Item
             label="Date of Birth"
             name="dob"
-            rules={[{ required: true, message: "Date of Birth is required" }]}
+            rules={dobValidation}
             hasFeedback
           >
             <DatePicker
@@ -97,7 +94,7 @@ const GuestModal = ({
           <Form.Item
             label="Phone No"
             name="phone"
-            rules={[{ required: true, message: "Phone number is required" }]}
+            rules={phoneValidation}
             hasFeedback
           >
             <Input />
@@ -105,10 +102,7 @@ const GuestModal = ({
           <Form.Item
             label="Email"
             name="email"
-            rules={[
-              { required: true, message: "Email is required" },
-              { type: "email" },
-            ]}
+            rules={emailValidation}
             hasFeedback
           >
             <Input />
@@ -116,7 +110,7 @@ const GuestModal = ({
           <Form.Item
             label="Address"
             name="address"
-            rules={[{ required: true, message: "Address is required" }]}
+            rules={addressValidation}
             hasFeedback
           >
             <Input />
@@ -125,6 +119,7 @@ const GuestModal = ({
             label="Emergency Contact"
             name="emergencyContact"
             labelWrap
+            rules={emergencyContactValidation}
             hasFeedback
           >
             <Input />
