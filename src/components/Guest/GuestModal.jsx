@@ -1,4 +1,5 @@
 import { Modal, Form, Input, Radio, DatePicker } from "antd";
+import dayjs from "dayjs";
 
 const GuestModal = ({
   isEditing,
@@ -12,6 +13,7 @@ const GuestModal = ({
     <>
       <Modal
         title={isEditing ? "Edit The Guest" : "Add New Guest"}
+        style={{ textAlign: "center" }}
         open={open}
         onCancel={onCancel}
         okText={isEditing ? "Update" : "Add"}
@@ -23,6 +25,7 @@ const GuestModal = ({
           wrapperCol={{ span: 16 }}
           form={form}
           onFinish={handleSave}
+          labelAlign="left"
         >
           <Form.Item
             label="First Name"
@@ -68,7 +71,7 @@ const GuestModal = ({
           >
             <Radio.Group>
               <Radio value={"Male"}>Male</Radio>
-              <Radio value={"Female"}>Eemale</Radio>
+              <Radio value={"Female"}>Female</Radio>
             </Radio.Group>
           </Form.Item>
           <Form.Item
@@ -85,7 +88,11 @@ const GuestModal = ({
             rules={[{ required: true, message: "Date of Birth is required" }]}
             hasFeedback
           >
-            <DatePicker format="YYYY-MM-DD" />
+            <DatePicker
+              format="YYYY-MM-DD"
+              maxDate={dayjs(new Date().toISOString(), "YYYY-MM-DD")}
+              style={{ width: "100%" }}
+            />
           </Form.Item>
           <Form.Item
             label="Phone No"
@@ -117,6 +124,7 @@ const GuestModal = ({
           <Form.Item
             label="Emergency Contact"
             name="emergencyContact"
+            labelWrap
             hasFeedback
           >
             <Input />
