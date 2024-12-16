@@ -85,7 +85,7 @@ const GuestModal = ({
             rules={[{ required: true, message: "Date of Birth is required" }]}
             hasFeedback
           >
-            <DatePicker format={"YYYY-MM-DD"} />
+            <DatePicker format="YYYY-MM-DD" />
           </Form.Item>
           <Form.Item
             label="Phone No"

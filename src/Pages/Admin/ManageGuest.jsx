@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Card, Col, Row, Table, Button, Space, Form } from "antd";
-import moment from "moment";
 
 import { useGlobalContext } from "../../contexts/context";
 import GuestModal from "../../components/Guest/GuestModal";
 import useGuests from "../../components/hooks/useGuest";
 import { guestColumns } from "../../constants/guestColumns";
+import dayjs from "dayjs";
 
 const ManageGuest = () => {
   const [modalState, setModalState] = useState({
@@ -30,10 +30,11 @@ const ManageGuest = () => {
   const openModal = (isEditing, guest = null) => {
     setModalState({ open: true, isEditing, selectedGuest: guest });
     if (guest) {
-      form.setFieldsValue({
+      const formattedGuest = {
         ...guest,
-        dob: guest.dob ? moment(guest.dob, "YYYY-MM-DD") : null,
-      });
+        dob: dayjs(guest.dob, "YYYY-MM-DD"),
+      };
+      form.setFieldsValue(formattedGuest);
     } else {
       form.resetFields();
     }
@@ -96,15 +97,25 @@ const ManageGuest = () => {
                   if (column.dataIndex === "deleted") {
                     value = value ? "Deleted" : "Active";
                   } else if (column.key === "operation") {
+                    const formattedGuest = {
+                      ...data,
+                      dob: dayjs(data.dob, "YYYY-MM-DD"),
+                    };
                     value = (
                       <Space>
                         <Button
                           size="small"
-                          onClick={() => openModal(true, data)}
+                          onClick={() => openModal(true, formattedGuest)}
                         >
                           Edit
                         </Button>
-                        <Button size="small" danger>
+                        <Button
+                          size="small"
+                          danger
+                          onClick={() =>
+                            deleteGuestRecord(formattedGuest.guestId)
+                          }
+                        >
                           Delete
                         </Button>
                       </Space>
