@@ -78,9 +78,11 @@ const ManageGuest = () => {
             Manage Guests
           </h1>
           <Row justify="end" style={{ marginBottom: "20px" }}>
-            <Button type="primary" onClick={() => openModal(false)}>
-              Add New Guest
-            </Button>
+            <Col>
+              <Button type="primary" onClick={() => openModal(false)}>
+                Add New Guest
+              </Button>
+            </Col>
           </Row>
 
           {!isMobile ? (
