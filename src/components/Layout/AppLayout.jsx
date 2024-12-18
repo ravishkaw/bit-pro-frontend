@@ -11,41 +11,41 @@ const AppLayout = () => {
       <ConfigProvider
         theme={{
           token: {
-            colorPrimary: "#8C7A6B",
-            colorBgLayout: "#FDFBF7",
-            colorText: "#4A4A4A",
-            colorBorder: "#D9D0C7",
-            fontFamily: "Roboto, sans-serif",
+            colorPrimary: "#A67B5B", 
+            colorBgLayout: "#FDF8F4",
+            colorText: "#5C3D2E", 
+            colorBorder: "#E6D2C3", 
+            fontFamily: "Merriweather, serif",
           },
           components: {
             Layout: {
-              headerBg: "#E8E0D6",
-              siderBg: "#8C7A6B",
-              bodyBg: "#FDFBF7",
+              headerBg: "#e3cdbd",
+              siderBg: "#A67B5B",
+              bodyBg: "#FDF8F4",
             },
             Button: {
-              colorPrimary: "#8C7A6B",
-              colorPrimaryHover: "#6F5D4C",
-              algorithm: true,
+              colorPrimary: "#A67B5B",
+              colorPrimaryHover: "#8D6344",
             },
             Table: {
-              headerBg: "#F3F1ED",
+              headerBg: "#F2E8E1",
               rowBg: "#FFFFFF",
-              rowBgHover: "#F8F5F0",
-              borderColor: "#D9D0C7",
+              rowBgHover: "#F8ECE3",
+              borderColor: "#E6D2C3",
             },
             Card: {
               colorBg: "#FFFFFF",
-              colorBorder: "#E0E0E0",
-              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-            },
-            Modal: {
-              colorBg: "#FFFFFF",
+              colorBorder: "#E6D2C3",
             },
           },
         }}
       >
-        <Layout>
+        <Layout
+          hasSider
+          style={{
+            minHeight: "100vh",
+          }}
+        >
           <AppSider />
           <Layout>
             <AppHeader />
