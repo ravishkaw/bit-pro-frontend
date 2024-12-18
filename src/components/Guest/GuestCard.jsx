@@ -3,7 +3,7 @@ import { Card, Button, Space, Col, Row, Popconfirm } from "antd";
 
 const GuestCard = ({ columns, data, openModal, deleteGuestRecord }) => {
   return (
-    <Card style={{ marginBottom: "16px" }}>
+    <Card style={{ marginBottom: "16px", overflow: "auto" }}>
       {columns.map((column) => {
         let value = data[column.dataIndex];
         if (column.dataIndex === "deleted") {
