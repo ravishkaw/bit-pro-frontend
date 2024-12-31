@@ -1,21 +1,14 @@
 import { useState } from "react";
-import { Button, DatePicker, Flex, Form, Input, Radio, Space } from "antd";
+import { DatePicker, Flex, Form, Input, Radio } from "antd";
 import dayjs from "dayjs";
 
 import { formValidations } from "./validations";
 import { dobGenderCal } from "../../utils/dobGenderCal";
 
-const PersonalInfo = ({
-  personalInfo,
-  setPersonalInfo,
-  next,
-  handleCancel,
-}) => {
+const PersonalInfo = ({ form }) => {
   const [nationality, setNationality] = useState("");
   const [otherNationality, setOtherNationality] = useState("");
   const [nic, setNic] = useState("");
-
-  const [form] = Form.useForm();
 
   const {
     firstNameValidation,
@@ -57,135 +50,107 @@ const PersonalInfo = ({
     }
   };
 
-  const handleSubmit = (e) => {
-    const formData = {
-      ...e,
-      nationality: nationality === "other" ? otherNationality : nationality,
-    };
-    console.log(formData);
-    setPersonalInfo(formData);
-    next();
-  };
-
   return (
     <>
-      <Form
-        form={form}
-        labelCol={{ span: 6 }}
-        wrapperCol={{ span: 18 }}
-        labelAlign="left"
-        initialValues={personalInfo}
-        onFinish={handleSubmit}
+      <Form.Item
+        name="firstName"
+        label="First Name"
+        rules={firstNameValidation}
+        hasFeedback
       >
-        <Form.Item
-          name="firstName"
-          label="First Name"
-          rules={firstNameValidation}
-          hasFeedback
-        >
-          <Input placeholder="Eg:- John" />
-        </Form.Item>
+        <Input placeholder="Eg:- John" />
+      </Form.Item>
 
-        <Form.Item
-          name="lastName"
-          label="Last Name"
-          rules={lastNameValidation}
-          hasFeedback
-        >
-          <Input placeholder="Eg:- Doe" />
-        </Form.Item>
+      <Form.Item
+        name="lastName"
+        label="Last Name"
+        rules={lastNameValidation}
+        hasFeedback
+      >
+        <Input placeholder="Eg:- Doe" />
+      </Form.Item>
 
-        <Form.Item
-          name="nationality"
-          label="Nationality"
-          rules={[
-            ...nationalityValidation,
-            {
-              validator: (_, value) => {
-                if (value === "other" && !otherNationality.trim()) {
-                  return Promise.reject(
-                    new Error("Please specify your nationality.")
-                  );
-                }
-                return Promise.resolve();
-              },
+      <Form.Item
+        name="nationality"
+        label="Nationality"
+        rules={[
+          ...nationalityValidation,
+          {
+            validator: (_, value) => {
+              if (value === "other" && !otherNationality.trim()) {
+                return Promise.reject(
+                  new Error("Please specify your nationality.")
+                );
+              }
+              return Promise.resolve();
             },
-          ]}
-          hasFeedback
-        >
-          <Flex>
-            <Radio.Group onChange={nationalityChange} value={nationality}>
-              <Radio value="srilankan">Sri Lankan</Radio>
-              <Radio value="other">Other</Radio>
-            </Radio.Group>
-            {nationality !== "srilankan" && (
-              <Input
-                placeholder="Ex: American"
-                value={otherNationality}
-                onChange={handleOtherNationalityChange}
-              />
-            )}
-          </Flex>
-        </Form.Item>
-
-        <Form.Item
-          label="NIC"
-          name="nic"
-          rules={
-            nationality == "srilankan"
-              ? nicValidation
-              : [
-                  {
-                    required: true,
-                  },
-                ]
-          }
-          hasFeedback
-        >
-          <Input
-            placeholder={
-              nationality == "srilankan"
-                ? "95xxxxxxxxxV or 2000123456789"
-                : "Enter NIC Number"
-            }
-            value={nic}
-            onChange={handleNICChange}
-          />
-        </Form.Item>
-
-        <Form.Item
-          label="Date of Birth"
-          name="dob"
-          rules={dobValidation}
-          hasFeedback
-        >
-          <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
-        </Form.Item>
-
-        <Form.Item
-          label="Gender"
-          name="gender"
-          rules={genderValidation}
-          hasFeedback
-        >
-          <Radio.Group
-            options={[
-              { label: "Male", value: "male" },
-              { label: "Female", value: "female" },
-            ]}
-            disabled={nationality === "srilankan"}
-          />
-        </Form.Item>
-
-        <Flex justify="end">
-          <Space>
-            <Button onClick={handleCancel}>Cancel</Button>
-            <Button htmlType="submit" type="primary">
-              Next
-            </Button>
-          </Space>
+          },
+        ]}
+        hasFeedback
+      >
+        <Flex>
+          <Radio.Group onChange={nationalityChange} value={nationality}>
+            <Radio value="srilankan">Sri Lankan</Radio>
+            <Radio value="other">Other</Radio>
+          </Radio.Group>
+          {nationality !== "srilankan" && (
+            <Input
+              placeholder="Ex: American"
+              value={otherNationality}
+              onChange={handleOtherNationalityChange}
+            />
+          )}
         </Flex>
-      </Form>
+      </Form.Item>
+
+      <Form.Item
+        label="NIC"
+        name="nic"
+        rules={
+          nationality == "srilankan"
+            ? nicValidation
+            : [
+                {
+                  required: true,
+                },
+              ]
+        }
+        hasFeedback
+      >
+        <Input
+          placeholder={
+            nationality == "srilankan"
+              ? "95xxxxxxxxxV or 2000123456789"
+              : "Enter NIC Number"
+          }
+          value={nic}
+          onChange={handleNICChange}
+        />
+      </Form.Item>
+
+      <Form.Item
+        label="Date of Birth"
+        name="dob"
+        rules={dobValidation}
+        hasFeedback
+      >
+        <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+      </Form.Item>
+
+      <Form.Item
+        label="Gender"
+        name="gender"
+        rules={genderValidation}
+        hasFeedback
+      >
+        <Radio.Group
+          options={[
+            { label: "Male", value: "male" },
+            { label: "Female", value: "female" },
+          ]}
+          disabled={nationality === "srilankan"}
+        />
+      </Form.Item>
     </>
   );
 };

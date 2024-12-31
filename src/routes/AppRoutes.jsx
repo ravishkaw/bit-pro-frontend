@@ -33,7 +33,7 @@ const AppRoutes = () => {
           </PrivateRoute>
         }
       />
-
+      
       {/* Manager */}
       <Route
         path="/manager/*"

@@ -1,4 +1,4 @@
-import { Button, Modal, Steps } from "antd";
+import { Button, Flex, Form, Modal, Space, Steps } from "antd";
 import PersonalInfo from "../Forms/PersonalInfo";
 import { useState } from "react";
 import ContactInformation from "../Forms/ContactInformation";
@@ -7,36 +7,46 @@ import {
   IdcardOutlined,
   UserOutlined,
 } from "@ant-design/icons";
+import EmploymentInformation from "../Forms/EmploymentInformation";
 
 const AddNewModal = ({ isModalOpen, setIsModalOpen, personType }) => {
   const [current, setCurrent] = useState(0);
-
-  const [personalInfo, setPersonalInfo] = useState(null);
+  const [formData, setFormData] = useState({});
+  const [form] = Form.useForm();
 
   /* These are to handle the button operations */
   const handleCancel = () => {
+    form.resetFields();
+    setFormData({});
     setIsModalOpen(false);
   };
 
-  const next = () => {
-    setCurrent(current + 1);
+  const next = async () => {
+    try {
+      const values = await form.validateFields();
+      const newData = { ...formData, ...values };
+      setFormData(newData);
+      form.setFieldsValue(newData);
+      setCurrent(current + 1);
+    } catch (error) {
+      console.log("Validation Failed:", error);
+    }
   };
 
   const prev = () => {
     setCurrent(current - 1);
   };
 
+  const onFinish = (values) => {
+    const updatedData = { ...formData, ...values };
+    setFormData(updatedData);
+    console.log(updatedData);
+  };
+
   const steps = [
     {
       title: "Personal Information",
-      content: (
-        <PersonalInfo
-          initialValues={personalInfo}
-          setPersonalInfo={setPersonalInfo}
-          next={next}
-          handleCancel={handleCancel}
-        />
-      ),
+      content: <PersonalInfo form={form} />,
       icon: <UserOutlined />,
     },
     {
@@ -46,7 +56,7 @@ const AddNewModal = ({ isModalOpen, setIsModalOpen, personType }) => {
     },
     {
       title: "Employeement Information",
-      content: <ContactInformation />,
+      content: <EmploymentInformation />,
       icon: <IdcardOutlined />,
     },
   ];
@@ -69,8 +79,39 @@ const AddNewModal = ({ isModalOpen, setIsModalOpen, personType }) => {
       width={600}
       footer={null}
     >
-      <Steps current={current} size="small" items={items} />
-      <div style={{ marginTop: 16 }}>{steps[current].content}</div>
+      <Form
+        form={form}
+        initialValues={formData}
+        labelCol={{ span: 6 }}
+        wrapperCol={{ span: 18 }}
+        labelAlign="left"
+        labelWrap
+        onFinish={onFinish}
+      >
+        {/* Steps */}
+        <Steps current={current} size="small" items={items} />
+        <div style={{ marginTop: 16 }}>{steps[current].content}</div>
+
+        {/* Buttons */}
+        <Flex justify="end">
+          <Space>
+            {current === 0 && (
+              <Button onClick={() => handleCancel()}>Cancel</Button>
+            )}
+            {current > 0 && <Button onClick={() => prev()}>Previous</Button>}
+            {current < items.length - 1 && (
+              <Button type="primary" onClick={() => next()}>
+                Next
+              </Button>
+            )}
+            {current === items.length - 1 && (
+              <Button type="primary" htmlType="submit">
+                Submit
+              </Button>
+            )}
+          </Space>
+        </Flex>
+      </Form>
     </Modal>
   );
 };
