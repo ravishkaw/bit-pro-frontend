@@ -12,7 +12,7 @@ import RoleBasedRoutes from "./RoleBasedRoutes";
 
 // Users Routes
 import AdminRoutes from "../pages/Admin/Routes";
-import ManagerRoutes from "../pages/Manager/routes";
+import ManagerRoutes from "../pages/Manager/Routes";
 
 const AppRoutes = () => {
   return (
@@ -33,7 +33,7 @@ const AppRoutes = () => {
           </PrivateRoute>
         }
       />
-      
+
       {/* Manager */}
       <Route
         path="/manager/*"
