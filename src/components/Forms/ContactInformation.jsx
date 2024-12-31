@@ -17,7 +17,7 @@ const ContactInformation = () => {
         rules={addressValidation}
         hasFeedback
       >
-        <Input.TextArea placeholder="45, xxx,xxx" />
+        <Input.TextArea placeholder="E.g., 123 Main Street, Colombo" />
       </Form.Item>
       <Form.Item
         name="contactNumber"
@@ -25,11 +25,11 @@ const ContactInformation = () => {
         rules={phoneValidation}
         hasFeedback
       >
-        <Input placeholder="In international format" />
+        <Input placeholder="E.g., +94 712345678" />
       </Form.Item>
 
       <Form.Item name="email" label="Email" rules={emailValidation} hasFeedback>
-        <Input placeholder="Ex - johndoe@gmail.com" type="email" />
+        <Input placeholder="E.g., john.doe@example.com" type="email" />
       </Form.Item>
 
       <Form.Item
@@ -38,7 +38,7 @@ const ContactInformation = () => {
         rules={emergencyContactValidation}
         hasFeedback
       >
-        <Input placeholder="In international format" />
+        <Input placeholder="E.g., +94 712345678 (Optional)" />
       </Form.Item>
     </>
   );

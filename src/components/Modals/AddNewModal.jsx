@@ -35,6 +35,9 @@ const AddNewModal = ({ isModalOpen, setIsModalOpen, personType }) => {
 
   const prev = () => {
     setCurrent(current - 1);
+    setTimeout(() => {
+      form.validateFields();
+    }, 0);
   };
 
   const onFinish = (values) => {
@@ -46,7 +49,7 @@ const AddNewModal = ({ isModalOpen, setIsModalOpen, personType }) => {
   const steps = [
     {
       title: "Personal Information",
-      content: <PersonalInfo form={form} />,
+      content: <PersonalInfo form={form} formData={formData} />,
       icon: <UserOutlined />,
     },
     {
@@ -98,9 +101,9 @@ const AddNewModal = ({ isModalOpen, setIsModalOpen, personType }) => {
             {current === 0 && (
               <Button onClick={() => handleCancel()}>Cancel</Button>
             )}
-            {current > 0 && <Button onClick={() => prev()}>Previous</Button>}
+            {current > 0 && <Button onClick={prev}>Previous</Button>}
             {current < items.length - 1 && (
-              <Button type="primary" onClick={() => next()}>
+              <Button type="primary" onClick={next}>
                 Next
               </Button>
             )}

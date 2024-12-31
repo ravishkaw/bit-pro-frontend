@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DatePicker, Flex, Form, Input, Radio } from "antd";
 import dayjs from "dayjs";
 
 import { formValidations } from "./validations";
 import { dobGenderCal } from "../../utils/dobGenderCal";
 
-const PersonalInfo = ({ form }) => {
+const PersonalInfo = ({ form, formData }) => {
   const [nationality, setNationality] = useState("");
   const [otherNationality, setOtherNationality] = useState("");
   const [nic, setNic] = useState("");
@@ -31,6 +31,16 @@ const PersonalInfo = ({ form }) => {
     setNationality("other");
     setOtherNationality(e.target.value);
   };
+
+  // If user clicks previous from next steps, this implementation helps to populate the nationality based on previous value
+  useEffect(() => {
+    const { nationality } = formData || {};
+    if (nationality) {
+      const isOther = nationality !== "srilankan";
+      setOtherNationality(isOther ? nationality : "");
+      setNationality(isOther ? "other" : "srilankan");
+    }
+  }, [formData]);
 
   // NIC Change Handler
   const handleNICChange = (e) => {
@@ -58,7 +68,7 @@ const PersonalInfo = ({ form }) => {
         rules={firstNameValidation}
         hasFeedback
       >
-        <Input placeholder="Eg:- John" />
+        <Input placeholder="E.g., John" />
       </Form.Item>
 
       <Form.Item
@@ -67,7 +77,7 @@ const PersonalInfo = ({ form }) => {
         rules={lastNameValidation}
         hasFeedback
       >
-        <Input placeholder="Eg:- Doe" />
+        <Input placeholder="E.g., Doe" />
       </Form.Item>
 
       <Form.Item
@@ -120,8 +130,8 @@ const PersonalInfo = ({ form }) => {
         <Input
           placeholder={
             nationality == "srilankan"
-              ? "95xxxxxxxxxV or 2000123456789"
-              : "Enter NIC Number"
+              ? "E.g., 95XXXXXXXXXV or 2000123456789"
+              : "NIC Number"
           }
           value={nic}
           onChange={handleNICChange}
@@ -134,7 +144,11 @@ const PersonalInfo = ({ form }) => {
         rules={dobValidation}
         hasFeedback
       >
-        <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+        <DatePicker
+          format="YYYY-MM-DD"
+          style={{ width: "100%" }}
+          placeholder="Choose your birthdate"
+        />
       </Form.Item>
 
       <Form.Item

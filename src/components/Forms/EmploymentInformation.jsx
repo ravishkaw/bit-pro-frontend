@@ -6,6 +6,7 @@ const EmploymentInformation = () => {
       {/* This will be populate dynamically  */}
       <Form.Item name="jobRole" label="Job Role" hasFeedback>
         <Select
+          placeholder="Choose from available roles"
           options={[
             {
               value: "manager",
@@ -24,6 +25,7 @@ const EmploymentInformation = () => {
       </Form.Item>
       <Form.Item name="department" label="Department" hasFeedback>
         <Select
+          placeholder="Choose from available departments"
           options={[
             {
               value: "cleaning",
@@ -33,7 +35,7 @@ const EmploymentInformation = () => {
         />
       </Form.Item>
       <Form.Item name="salary" label="Salary" hasFeedback>
-        <Input />
+        <Input placeholder="E.g., 50,000" />
       </Form.Item>
     </>
   );
