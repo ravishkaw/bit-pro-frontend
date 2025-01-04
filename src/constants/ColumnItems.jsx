@@ -1,10 +1,14 @@
 import { Button, Space, Popconfirm } from "antd";
-import { EditOutlined, DeleteOutlined, EyeOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EyeOutlined, UndoOutlined } from "@ant-design/icons";
 
-export const employeeColumnItems = (handleView) => [
+export const employeeColumnItems = (
+  handleView,
+  deleteAnEmployee,
+  restoreAnEmployee
+) => [
   {
     title: "Employee ID",
-    dataIndex: "employeeID",
+    dataIndex: "employeeId",
     fixed: "left",
   },
   {
@@ -14,7 +18,7 @@ export const employeeColumnItems = (handleView) => [
   },
   {
     title: "NIC Number",
-    dataIndex: "nicNumber",
+    dataIndex: "nic",
   },
   {
     title: "Phone",
@@ -23,6 +27,10 @@ export const employeeColumnItems = (handleView) => [
   {
     title: "Email",
     dataIndex: "email",
+  },
+  {
+    title: "Job Role",
+    dataIndex: "jobRole",
   },
   {
     title: "Status",
@@ -38,14 +46,37 @@ export const employeeColumnItems = (handleView) => [
           size="small"
           variant="outlined"
           onClick={() => {
-            handleView();
+            handleView(record.employeeId);
           }}
         >
           <EyeOutlined />
         </Button>
-        <Button size="small" variant="outlined" danger>
-          <DeleteOutlined />
-        </Button>
+        {record.status !== "deleted" ? (
+          <Popconfirm
+            title="Delete the Employee"
+            description="Are you sure to delete this Employee?"
+            onConfirm={() => deleteAnEmployee(record.employeeId)}
+            okText="Delete"
+            cancelText="No"
+            okButtonProps={{ danger: true }}
+          >
+            <Button size="small" variant="outlined" danger>
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
+        ) : (
+          <Popconfirm
+            title="Restore the Employee"
+            description="Are you sure to restore?"
+            onConfirm={() => restoreAnEmployee(record.employeeId)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button size="small" variant="outlined">
+              <UndoOutlined />
+            </Button>
+          </Popconfirm>
+        )}
       </Space>
     ),
   },

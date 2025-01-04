@@ -1,18 +1,27 @@
 import { Button, Flex, Form, Modal, Space, Steps } from "antd";
 import PersonalInfo from "../Forms/PersonalInfo";
 import { useState } from "react";
-import ContactInformation from "../Forms/ContactInformation";
+import { useAuth } from "../../contexts/AuthContext";
 import {
   ContactsOutlined,
   IdcardOutlined,
   UserOutlined,
 } from "@ant-design/icons";
+
+import ContactInformation from "../Forms/ContactInformation";
 import EmploymentInformation from "../Forms/EmploymentInformation";
 
-const AddNewModal = ({ isModalOpen, setIsModalOpen, personType }) => {
+const AddNewModal = ({
+  isModalOpen,
+  setIsModalOpen,
+  personType,
+  addAnEmployee,
+}) => {
   const [current, setCurrent] = useState(0);
   const [formData, setFormData] = useState({});
   const [form] = Form.useForm();
+
+  const { user } = useAuth();
 
   /* These are to handle the button operations */
   const handleCancel = () => {
@@ -40,10 +49,22 @@ const AddNewModal = ({ isModalOpen, setIsModalOpen, personType }) => {
     }, 0);
   };
 
-  const onFinish = (values) => {
-    const updatedData = { ...formData, ...values };
+  const onFinish = async (values) => {
+    const data = { ...formData, ...values };
+
+    const addedDate = new Date().toISOString();
+    const addedBy = user.name;
+
+    const updatedData = {
+      ...data,
+      status: "Deactive",
+      addedBy: addedBy,
+      addedDate: addedDate,
+    };
+
     setFormData(updatedData);
-    console.log(updatedData);
+    await addAnEmployee(updatedData);
+    setIsModalOpen(false);
   };
 
   const steps = [

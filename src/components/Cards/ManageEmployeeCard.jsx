@@ -1,7 +1,13 @@
-import { Card, Col, Row } from "antd";
-import { EditOutlined, DeleteOutlined, EyeOutlined } from "@ant-design/icons";
+import { Card, Col, Row, Popconfirm } from "antd";
+import { DeleteOutlined, EyeOutlined } from "@ant-design/icons";
 
-const ManageEmployeeCard = ({ loading, columns, employee, handleView }) => {
+const ManageEmployeeCard = ({
+  loading,
+  columns,
+  employee,
+  handleView,
+  deleteAnEmployee,
+}) => {
   const newColumns = columns.filter((column) => column.title !== "Actions");
 
   return (
@@ -10,10 +16,19 @@ const ManageEmployeeCard = ({ loading, columns, employee, handleView }) => {
       actions={[
         <EyeOutlined
           onClick={() => {
-            handleView();
+            handleView(employee.employeeId);
           }}
         />,
-        <DeleteOutlined style={{ color: "red" }} />,
+        <Popconfirm
+          title="Delete the Employee"
+          description="Are you sure to delete this Employee?"
+          onConfirm={() => deleteAnEmployee(employee.employeeId)}
+          okText="Delete"
+          cancelText="No"
+          okButtonProps={{ danger: true }}
+        >
+          <DeleteOutlined style={{ color: "red" }} />,
+        </Popconfirm>,
       ]}
       style={{ marginBottom: 10 }}
     >

@@ -20,7 +20,7 @@ const ContactInformation = () => {
         <Input.TextArea placeholder="E.g., 123 Main Street, Colombo" />
       </Form.Item>
       <Form.Item
-        name="contactNumber"
+        name="phone"
         label="Contact Number"
         rules={phoneValidation}
         hasFeedback

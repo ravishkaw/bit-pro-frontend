@@ -13,11 +13,23 @@ import AddNewModal from "../../components/Modals/AddNewModal";
 const ManageEmployee = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
   const { isMobile } = useMobileContext();
 
-  const { employees, loading, error, contextHolder } = useEmployees();
+  const {
+    employees,
+    loadOneEmployee,
+    addAnEmployee,
+    updateAnEmployee,
+    deleteAnEmployee,
+    restoreAnEmployee,
+    loading,
+    contextHolder,
+  } = useEmployees();
 
-  const handleView = () => {
+  const handleView = async (employeeid) => {
+    const employee = await loadOneEmployee(employeeid);
+    setSelectedEmployee(employee);
     setIsDrawerOpen(true);
   };
 
@@ -25,11 +37,15 @@ const ManageEmployee = () => {
     setIsModalOpen(true);
   };
 
-  const columns = employeeColumnItems(handleView);
+  const columns = employeeColumnItems(
+    handleView,
+    deleteAnEmployee,
+    restoreAnEmployee
+  );
 
   const dataSource = employees.map((employee) => ({
     ...employee,
-    key: employee.employeeID,
+    key: employee.employeeId,
     name: `${employee.firstName} ${employee.lastName}`,
   }));
 
@@ -67,14 +83,16 @@ const ManageEmployee = () => {
           )}
 
           {isMobile &&
-            dataSource.map((employee, index) => {
+            dataSource.map((employee) => {
               return (
                 <ManageEmployeeCard
-                  key={index}
+                  key={employee.employeeId}
                   loading={loading}
                   columns={columns}
                   employee={employee}
                   handleView={handleView}
+                  deleteAnEmployee={deleteAnEmployee}
+                  restoreAnEmployee={restoreAnEmployee}
                 />
               );
             })}
@@ -83,12 +101,17 @@ const ManageEmployee = () => {
             isModalOpen={isModalOpen}
             setIsModalOpen={setIsModalOpen}
             personType="Employee"
+            addAnEmployee={addAnEmployee}
           />
 
-          <EditDrawer
-            isDrawerOpen={isDrawerOpen}
-            setIsDrawerOpen={setIsDrawerOpen}
-          />
+          {isDrawerOpen && selectedEmployee && (
+            <EditDrawer
+              isDrawerOpen={isDrawerOpen}
+              setIsDrawerOpen={setIsDrawerOpen}
+              personType="Employee"
+              employee={selectedEmployee}
+            />
+          )}
         </Col>
       </Row>
     </>
