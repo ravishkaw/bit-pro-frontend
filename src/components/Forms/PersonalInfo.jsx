@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
-import { DatePicker, Flex, Form, Input, Radio } from "antd";
+import { DatePicker, Flex, Form, Input, Radio, Row, Select } from "antd";
 import dayjs from "dayjs";
+
+import nationalities from "i18n-nationality";
+import en from "i18n-nationality/langs/en.json";
 
 import { formValidations } from "./validations";
 import { dobGenderCal } from "../../utils/dobGenderCal";
 
 const PersonalInfo = ({ form, formData }) => {
   const [nationality, setNationality] = useState("");
-  const [otherNationality, setOtherNationality] = useState("");
+  const [idType, setIdType] = useState("");
   const [nic, setNic] = useState("");
 
   const {
@@ -19,28 +22,13 @@ const PersonalInfo = ({ form, formData }) => {
     genderValidation,
   } = formValidations;
 
-  // Nationality change handlers
-  const nationalityChange = (e) => {
-    setNationality(e.target.value);
-    if (e.target.value !== "other") {
-      setOtherNationality("");
-    }
-  };
-
-  const handleOtherNationalityChange = (e) => {
-    setNationality("other");
-    setOtherNationality(e.target.value);
-  };
-
-  // If user clicks previous from next steps, this implementation helps to populate the nationality based on previous value
-  useEffect(() => {
-    const { nationality } = formData || {};
-    if (nationality) {
-      const isOther = nationality !== "srilankan";
-      setOtherNationality(isOther ? nationality : "");
-      setNationality(isOther ? "other" : "srilankan");
-    }
-  }, [formData]);
+  // Nationality dropdown select format
+  nationalities.registerLocale(en);
+  const nationalitiesList = Object.values(nationalities.getNames("en"));
+  const selectOptionItems = nationalitiesList.map((nationality) => ({
+    value: nationality,
+    label: nationality,
+  }));
 
   // NIC Change Handler
   const handleNICChange = (e) => {
@@ -83,58 +71,47 @@ const PersonalInfo = ({ form, formData }) => {
       <Form.Item
         name="nationality"
         label="Nationality"
-        rules={[
-          ...nationalityValidation,
-          {
-            validator: (_, value) => {
-              if (value === "other" && !otherNationality.trim()) {
-                return Promise.reject(
-                  new Error("Please specify your nationality.")
-                );
-              }
-              return Promise.resolve();
-            },
-          },
-        ]}
+        rules={nationalityValidation}
         hasFeedback
       >
-        <Flex>
-          <Radio.Group onChange={nationalityChange} value={nationality}>
-            <Radio value="srilankan">Sri Lankan</Radio>
-            <Radio value="other">Other</Radio>
-          </Radio.Group>
-          {nationality !== "srilankan" && (
-            <Input
-              placeholder="Ex: American"
-              value={otherNationality}
-              onChange={handleOtherNationalityChange}
-            />
-          )}
-        </Flex>
+        <Select
+          showSearch
+          placeholder="Eg., Sri Lankan"
+          defaultValue="Sri Lankan"
+          optionFilterProp="label"
+          options={selectOptionItems}
+        />
       </Form.Item>
 
       <Form.Item
-        label="NIC"
-        name="nic"
-        rules={
-          nationality == "srilankan"
-            ? nicValidation
-            : [
-                {
-                  required: true,
-                },
-              ]
-        }
+        label="Identification Type"
+        name="idType"
+        rules={[{ required: true, message: "Please select an ID type" }]}
+      >
+        <Select
+          options={[
+            { value: "nic", label: "NIC" },
+            { value: "passport", label: "Passport" },
+          ]}
+          placeholder="select"
+          onChange={(value) => setIdType(value)}
+        />
+      </Form.Item>
+
+      <Form.Item
+        label={idType === "passport" ? "Passport Number" : "NIC"}
+        name="idNumber"
+        rules={[{ required: true, message: "Number required" }]}
         hasFeedback
       >
         <Input
           placeholder={
-            nationality == "srilankan"
+            idType === "passport"
+              ? "Enter Passport Number"
+              : nationality === "Sri Lankan"
               ? "E.g., 95XXXXXXXXXV or 2000123456789"
-              : "NIC Number"
+              : "Enter NIC"
           }
-          value={nic}
-          onChange={handleNICChange}
         />
       </Form.Item>
 
@@ -161,8 +138,8 @@ const PersonalInfo = ({ form, formData }) => {
           options={[
             { label: "Male", value: "male" },
             { label: "Female", value: "female" },
+            { label: "Other", value: "other" },
           ]}
-          disabled={nationality === "srilankan"}
         />
       </Form.Item>
     </>

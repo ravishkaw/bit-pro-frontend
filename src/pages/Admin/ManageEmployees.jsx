@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Button, Col, Row, Table } from "antd";
+import { Button, Col, Row, Table, Typography } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 
 import { useMobileContext } from "../../contexts/MobileContext";
 
@@ -7,13 +8,13 @@ import { employeeColumnItems } from "../../constants/ColumnItems";
 import useEmployees from "../../hooks/useEmployees";
 
 import ManageEmployeeCard from "../../components/Cards/ManageEmployeeCard";
-import EditDrawer from "../../components/Drawers/EditDrawer";
-import AddNewModal from "../../components/Modals/AddNewModal";
+import FormModal from "../../components/Modals/FormModal";
 
 const ManageEmployee = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
+
   const { isMobile } = useMobileContext();
 
   const {
@@ -54,15 +55,13 @@ const ManageEmployee = () => {
       {contextHolder}
       <Row>
         <Col span={24}>
-          <h1 style={{ textAlign: "center", marginBottom: "1.25rem" }}>
-            Manage Employees
-          </h1>
           <Row>
-            <Col
-              span={24}
-              style={{ textAlign: "end", marginBottom: "1.25rem" }}
-            >
+            <Col span={16}>
+              <Typography.Title level={2}>Manage Employees</Typography.Title>
+            </Col>
+            <Col span={8} style={{ textAlign: "end" }}>
               <Button type="primary" onClick={handleAdd}>
+                <PlusOutlined />
                 Add New Employee
               </Button>
             </Col>
@@ -73,7 +72,7 @@ const ManageEmployee = () => {
           {!isMobile && (
             <Table
               columns={columns}
-              bordered
+              // bordered
               dataSource={dataSource}
               loading={loading}
               scroll={{
@@ -97,21 +96,12 @@ const ManageEmployee = () => {
               );
             })}
 
-          <AddNewModal
+          <FormModal
             isModalOpen={isModalOpen}
             setIsModalOpen={setIsModalOpen}
             personType="Employee"
             addAnEmployee={addAnEmployee}
           />
-
-          {isDrawerOpen && selectedEmployee && (
-            <EditDrawer
-              isDrawerOpen={isDrawerOpen}
-              setIsDrawerOpen={setIsDrawerOpen}
-              personType="Employee"
-              employee={selectedEmployee}
-            />
-          )}
         </Col>
       </Row>
     </>

@@ -12,6 +12,7 @@ const AppSider = () => {
       collapsible
       collapsed={collapsed}
       collapsedWidth="0"
+      width={250}
     >
       <SiderContent />
     </Layout.Sider>
@@ -28,5 +29,4 @@ const siderStyle = {
   bottom: 0,
   paddingTop: "2rem",
   // scrollbarGutter: "stable",
-  color: "#fff",
 };

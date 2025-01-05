@@ -41,4 +41,5 @@ const headerStyle = {
   padding: "0 20px 0 0",
   top: 0,
   zIndex: 100,
+  borderBottom: "2px solid #d4e3eb",
 };
