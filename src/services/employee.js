@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://bit-backend.jumpingcrab.com/api/employee";
+const API_URL = "http://localhost:8080/api/employee";
 
 // Fetch All employee Details From The DB
 export const fetchEmployees = async () => {

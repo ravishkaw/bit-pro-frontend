@@ -16,11 +16,11 @@ const FormModal = ({
   setIsModalOpen,
   personType,
   addAnEmployee,
+  loading,
 }) => {
   const [current, setCurrent] = useState(0);
   const [formData, setFormData] = useState({});
   const [form] = Form.useForm();
-
   const { user } = useAuth();
 
   /* These are to handle the button operations */
@@ -69,17 +69,17 @@ const FormModal = ({
 
   const steps = [
     {
-      title: "Personal Info",
+      title: "Personal Information",
       content: <PersonalInfo form={form} formData={formData} />,
       icon: <UserOutlined />,
     },
     {
-      title: "Contact Info",
+      title: "Contact Information",
       content: <ContactInformation />,
       icon: <ContactsOutlined />,
     },
     {
-      title: "Employeement Info",
+      title: "Employeement Information",
       content: <EmploymentInformation />,
       icon: <IdcardOutlined />,
     },
@@ -100,15 +100,13 @@ const FormModal = ({
       title={`Add New ${personType}`}
       open={isModalOpen}
       onCancel={handleCancel}
-      width={650}
+      width={720}
       footer={null}
     >
       <Form
         form={form}
         initialValues={formData}
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
-        labelAlign="left"
+        layout="vertical"
         labelWrap
         onFinish={onFinish}
       >
@@ -135,7 +133,7 @@ const FormModal = ({
               </Button>
             )}
             {current === items.length - 1 && (
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" htmlType="submit" loading={loading}>
                 Submit
               </Button>
             )}

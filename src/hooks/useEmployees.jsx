@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { message } from "antd";
 
+import { toast } from "react-toastify";
+
 import {
   fetchEmployees,
   fetchOneEmployee,
@@ -15,44 +17,14 @@ const useEmployees = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Messages
-  const [messageApi, contextHolder] = message.useMessage();
-
-  const msgSuccess = (message) =>
-    messageApi.open({
-      type: "success",
-      content: `Employee ${message} successfully`,
-      style: {
-        fontSize: "1rem",
-      },
-    });
-
-  const msgWarn = (message) =>
-    messageApi.open({
-      type: "warn",
-      content: `Employee ${message} Failed`,
-      style: {
-        fontSize: "1rem",
-      },
-    });
-
-  const msgError = (message) =>
-    messageApi.open({
-      type: "error",
-      content: `Employee ${message} Failed`,
-      style: {
-        fontSize: "1rem",
-      },
-    });
-
   // Crud Operation Api
   const loadEmployees = async () => {
     try {
       const resp = await fetchEmployees();
       setEmployees(resp);
-      // msgSuccess("loaded");
+      toast.success("loaded successfully");
     } catch (err) {
-      msgError("loading");
+      toast.error("loaded error");
       setError(err.message);
     } finally {
       setLoading(false);
@@ -64,54 +36,63 @@ const useEmployees = () => {
   }, []);
 
   const loadOneEmployee = async (employeeId) => {
+    setLoading(true);
     try {
       const resp = await fetchOneEmployee(employeeId);
       return resp;
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const addAnEmployee = async (values) => {
+    setLoading(true);
     try {
       await addEmployee(values);
       msgSuccess("added");
       loadEmployees();
     } catch (err) {
-      msgError("adding");
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const updateAnEmployee = async (employeeId, values) => {
+    setLoading(true);
     try {
       await updateEmployee(employeeId, values);
-      msgSuccess("updated");
       loadEmployees();
     } catch (err) {
-      msgError("updating");
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const deleteAnEmployee = async (employeeId) => {
+    setLoading(true);
     try {
       await deleteEmployee(employeeId);
       msgSuccess("deleted");
-      loadEmployees();
     } catch (err) {
-      msgError("deleting");
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
+
   const restoreAnEmployee = async (employeeId) => {
+    setLoading(true);
     try {
       await restoreEmployee(employeeId);
-      msgSuccess("restored");
       loadEmployees();
     } catch (err) {
-      msgError("restoring");
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -124,7 +105,6 @@ const useEmployees = () => {
     restoreAnEmployee,
     loading,
     error,
-    contextHolder,
   };
 };
 

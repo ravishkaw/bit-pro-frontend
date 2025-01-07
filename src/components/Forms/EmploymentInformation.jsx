@@ -1,12 +1,18 @@
-import { Form, Input, Select } from "antd";
+import { Form, Input, Radio, Select } from "antd";
 
 const EmploymentInformation = () => {
   return (
     <>
       {/* This will be populate dynamically  */}
-      <Form.Item name="jobRole" label="Job Role" hasFeedback>
+      <Form.Item
+        name="designation"
+        label="Designation"
+        rules={[{ required: true, message: "Designation is required" }]}
+        hasFeedback
+      >
         <Select
-          placeholder="Choose from available roles"
+          placeholder="Choose from available designations"
+          showSearch
           options={[
             {
               value: "manager",
@@ -23,19 +29,34 @@ const EmploymentInformation = () => {
           ]}
         />
       </Form.Item>
-      <Form.Item name="department" label="Department" hasFeedback>
-        <Select
-          placeholder="Choose from available departments"
+      <Form.Item
+        name="status"
+        label="Employee Status"
+        rules={[{ required: true, message: "Employee Status is required" }]}
+        hasFeedback
+      >
+        <Radio.Group
+          optionType="button"
+          buttonStyle="solid"
           options={[
             {
-              value: "cleaning",
-              label: "Cleaning",
+              value: "Active",
+              label: "Active",
+            },
+            {
+              value: "Resigned",
+              label: "Resigned",
+            },
+            {
+              value: "On Leave",
+              label: "On Leave",
+            },
+            {
+              value: "Deleted",
+              label: "Deleted",
             },
           ]}
         />
-      </Form.Item>
-      <Form.Item name="salary" label="Salary" hasFeedback>
-        <Input placeholder="E.g., 50,000" />
       </Form.Item>
     </>
   );

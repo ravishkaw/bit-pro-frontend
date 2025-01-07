@@ -1,10 +1,13 @@
-import { BrowserRouter as Router, Routes } from "react-router";
+import { BrowserRouter as Router } from "react-router";
+import { ToastContainer } from "react-toastify";
+
 import AppRoutes from "./routes/AppRoutes";
 
 const App = () => {
   return (
     <Router>
       <AppRoutes />
+      <ToastContainer />
     </Router>
   );
 };

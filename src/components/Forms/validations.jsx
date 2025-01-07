@@ -15,7 +15,22 @@ export const formValidations = {
       message: "First letter should be capitalized and no trailing spaces",
     },
   ],
-  nicValidation: [
+  fullNameValidation: [
+    {
+      required: true,
+      message: "Full Name is required",
+    },
+    {
+      pattern: /^[A-Z][a-zA-Z]*(?: [A-Z][a-zA-Z]*){0,}$/,
+      message:
+        "First letter should be capitalized of every name and no trailing spaces",
+    },
+  ],
+  callingNameValidation: [
+    { required: true, message: "Calling Name is required" },
+  ],
+  idTypeValidation: [{ required: true, message: "Please select an ID type" }],
+  slNicValidation: [
     { required: true, message: "NIC is required" },
     {
       pattern: /^[0-9]{12}$|^[0-9]{9}[vxVX]$/,
@@ -24,6 +39,9 @@ export const formValidations = {
     },
   ],
   genderValidation: [{ required: true, message: "Gender is required" }],
+  civilStatusValidation: [
+    { required: true, message: "Civil Status is required" },
+  ],
   nationalityValidation: [
     { required: true, message: "Nationality is required" },
   ],

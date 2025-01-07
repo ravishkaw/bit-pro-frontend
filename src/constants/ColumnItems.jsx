@@ -7,34 +7,34 @@ export const employeeColumnItems = (
   restoreAnEmployee
 ) => [
   {
-    title: "Employee ID",
-    dataIndex: "employeeId",
+    title: "Employee NO",
+    dataIndex: "empNo",
     fixed: "left",
   },
   {
-    title: "Name",
-    dataIndex: "name",
+    title: "Full Name",
+    dataIndex: "fullName",
     fixed: "left",
   },
   {
-    title: "NIC Number",
-    dataIndex: "nic",
+    title: "Calling Name",
+    dataIndex: "callingName",
   },
   {
     title: "Phone",
-    dataIndex: "phone",
+    dataIndex: "mobileNo",
   },
   {
     title: "Email",
     dataIndex: "email",
   },
   {
-    title: "Job Role",
-    dataIndex: "jobRole",
+    title: "Designation",
+    // dataIndex: "designation",
   },
   {
     title: "Status",
-    dataIndex: "status",
+    // dataIndex: "status",
   },
   {
     title: "Actions",

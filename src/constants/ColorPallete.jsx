@@ -13,7 +13,7 @@ export const colorPallete = {
       bodyBg: "#f5f5f7",
     },
     Button: {
-      colorPrimary: "#0078D4",
+      colorPrimary: "#2330AA",
       // colorPrimaryHover: "#005A9E",
       algorithm: true,
     },

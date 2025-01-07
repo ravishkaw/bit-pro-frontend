@@ -11,7 +11,6 @@ import ManageEmployeeCard from "../../components/Cards/ManageEmployeeCard";
 import FormModal from "../../components/Modals/FormModal";
 
 const ManageEmployee = () => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
 
@@ -25,13 +24,11 @@ const ManageEmployee = () => {
     deleteAnEmployee,
     restoreAnEmployee,
     loading,
-    contextHolder,
   } = useEmployees();
 
   const handleView = async (employeeid) => {
     const employee = await loadOneEmployee(employeeid);
     setSelectedEmployee(employee);
-    setIsDrawerOpen(true);
   };
 
   const handleAdd = () => {
@@ -52,14 +49,13 @@ const ManageEmployee = () => {
 
   return (
     <>
-      {contextHolder}
       <Row>
         <Col span={24}>
-          <Row>
-            <Col span={16}>
+          <Row justify="space-between">
+            <Col>
               <Typography.Title level={2}>Manage Employees</Typography.Title>
             </Col>
-            <Col span={8} style={{ textAlign: "end" }}>
+            <Col>
               <Button type="primary" onClick={handleAdd}>
                 <PlusOutlined />
                 Add New Employee
@@ -101,6 +97,7 @@ const ManageEmployee = () => {
             setIsModalOpen={setIsModalOpen}
             personType="Employee"
             addAnEmployee={addAnEmployee}
+            loading={loading}
           />
         </Col>
       </Row>
