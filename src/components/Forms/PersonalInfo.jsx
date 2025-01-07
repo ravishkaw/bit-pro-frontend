@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { DatePicker, Flex, Form, Input, Radio, Row, Col, Select } from "antd";
+import { useEffect, useMemo, useState } from "react";
+import { DatePicker, Form, Input, Radio, Row, Col, Select } from "antd";
 import dayjs from "dayjs";
 
 import nationalities from "i18n-nationality";
@@ -9,9 +9,8 @@ import { formValidations } from "./validations";
 import { dobGenderCal } from "../../utils/dobGenderCal";
 
 const PersonalInfo = ({ form, formData }) => {
-  const [fullName, setFullName] = useState("");
+  const [fullName, setFullName] = useState(formData?.fullName || "");
   const [callingNameOptions, setCallingNameOptions] = useState([]);
-
   const [nationality, setNationality] = useState("");
   const [idType, setIdType] = useState("");
   const [nic, setNic] = useState("");
@@ -22,54 +21,87 @@ const PersonalInfo = ({ form, formData }) => {
     nationalityValidation,
     idTypeValidation,
     slNicValidation,
+    passportValidation,
+    otherNicValidation,
     dobValidation,
     genderValidation,
     civilStatusValidation,
+    noteValidation,
   } = formValidations;
 
-  // Calling name generator
+  // Updates the calling name options based on full name input
   useEffect(() => {
-    if (fullName) {
-      const nameParts = fullName.split(" ").filter(Boolean);
-      setCallingNameOptions(
-        nameParts.map((name) => ({ value: name, label: name }))
-      );
-    } else {
-      setCallingNameOptions([]);
-      form.setFieldsValue({ callingName: undefined });
+    const nameParts = fullName.split(" ").filter(Boolean); //splits the full name into non-empty parts
+    setCallingNameOptions(
+      nameParts.map((name) => ({ value: name, label: name }))
+    );
+
+    if (!nameParts.length) {
       form.resetFields(["callingName"]);
     }
   }, [fullName]);
 
-  // Nationality dropdown select format
+  // Nationality dropdown options
+  // Register English locale for browser support
   nationalities.registerLocale(en);
   const nationalitiesList = Object.values(nationalities.getNames("en"));
-  const selectNationaltiesItems = nationalitiesList.map((nationality) => ({
-    value: nationality,
-    label: nationality,
-  }));
 
-  // Employee age allow only 18+
+  //Memoize nationaltieslist dropdown options to avoid unnecessary re-renders
+  const selectNationaltiesItems = useMemo(() => {
+    return nationalitiesList.map((nationality) => ({
+      value: nationality,
+      label: nationality,
+    }));
+  }, [nationalitiesList]);
+
+  // Restrict employee age to 18 or higher
   const today = new Date();
   const maxEighteenYears = today.setFullYear(today.getFullYear() - 18);
 
-  // NIC Change Handler
-  const handleNICChange = (e) => {
-    if (idType === "nic") {
-      const nicValue = e.target.value;
-      setNic(nicValue);
-      // Calculate DOB and Gender if NIC is valid and nationality is Sri Lankan
-      // Note : There are some batch of Ids that not giving the correct dob. So don't disable dob field.
-      if (nationality === "Sri Lankan" && nicValue) {
+  // update Nationality and update id type based on nationality
+  const handleNationality = (value) => {
+    setNationality(value);
+    const newIdType = value !== "Sri Lankan" ? "passport" : "nic"; //Use passport as default for non Sri Lankans
+    setIdType(newIdType);
+    form.setFieldsValue({ idType: newIdType });
+    form.resetFields(["idNumber"]); // clear ID number when nationality changes
+  };
+
+  // Update ID type
+  const handleIdTypes = (e) => {
+    setIdType(e.target.value);
+    form.resetFields(["idNumber"]); //Clear ID number if id type changes
+  };
+
+  // Handle NIC change and update DOB and Gender based on the NIC for Sri Lankan nationality
+  const handleIdNumberChange = (e) => {
+    if (idType !== "nic") return;
+
+    const nicValue = e.target.value.trim();
+    setNic(nicValue);
+
+    // For Sri Lankan nationality, calculate and set DOB and Gender if NIC is valid
+    if (nationality === "Sri Lankan") {
+      if (nicValue) {
         const { dob, gender } = dobGenderCal(nicValue);
+
         if (dob) {
           form.setFieldsValue({
-            dob: dayjs(dob),
-            gender: gender,
+            dob: dayjs(dob), // Convert DOB to a dayjs object
+            gender,
           });
         }
+      } else {
+        // Reset DOB and Gender fields if NIC is empty
+        form.resetFields(["dob", "gender"]);
       }
     }
+  };
+
+  // Get Id number validation based on Id type
+  const getIdNumberValidation = () => {
+    if (idType === "passport") return passportValidation;
+    return nationality === "Sri Lankan" ? slNicValidation : otherNicValidation;
   };
 
   return (
@@ -120,10 +152,11 @@ const PersonalInfo = ({ form, formData }) => {
               showSearch
               placeholder="Eg., Sri Lankan"
               options={selectNationaltiesItems}
-              onChange={(value) => setNationality(value)}
+              onChange={handleNationality}
             />
           </Form.Item>
         </Col>
+
         <Col xs={24} sm={8}>
           <Form.Item
             label="Identification Type"
@@ -132,14 +165,14 @@ const PersonalInfo = ({ form, formData }) => {
           >
             <Radio.Group
               optionType="button"
+              buttonStyle="solid"
               block
+              value={idType}
+              onChange={handleIdTypes}
               options={[
                 { value: "nic", label: "NIC" },
                 { value: "passport", label: "Passport" },
               ]}
-              onChange={(e) => {
-                setIdType(e.target.value), form.resetFields(["idNumber"]);
-              }}
             />
           </Form.Item>
         </Col>
@@ -148,11 +181,7 @@ const PersonalInfo = ({ form, formData }) => {
           <Form.Item
             label={idType === "passport" ? "Passport Number" : "NIC"}
             name="idNumber"
-            rules={
-              idType === "nic"
-                ? slNicValidation
-                : [{ required: true, message: "Passport number is required" }]
-            }
+            rules={getIdNumberValidation()}
             hasFeedback
           >
             <Input
@@ -160,10 +189,10 @@ const PersonalInfo = ({ form, formData }) => {
                 idType === "passport"
                   ? "Enter Passport Number"
                   : nationality === "Sri Lankan"
-                  ? "E.g., 95XXXXXXXXXV or 2000123456789"
+                  ? "E.g., 95xxxxxxxV or 2000123456789"
                   : "Enter NIC"
               }
-              onChange={handleNICChange}
+              onChange={handleIdNumberChange}
             />
           </Form.Item>
         </Col>
@@ -175,6 +204,7 @@ const PersonalInfo = ({ form, formData }) => {
             label="Date of Birth"
             name="dob"
             rules={dobValidation}
+            required
             hasFeedback
           >
             <DatePicker
@@ -182,9 +212,11 @@ const PersonalInfo = ({ form, formData }) => {
               style={{ width: "100%" }}
               placeholder="Choose your birthdate"
               maxDate={dayjs(maxEighteenYears)}
+              showNow={false}
             />
           </Form.Item>
         </Col>
+
         <Col xs={24} sm={8}>
           <Form.Item
             label="Gender"
@@ -199,6 +231,7 @@ const PersonalInfo = ({ form, formData }) => {
                 { label: "Female", value: "female" },
                 { label: "Other", value: "other" },
               ]}
+              disabled={nic && nationality === "Sri Lankan"}
             />
           </Form.Item>
         </Col>
@@ -223,8 +256,8 @@ const PersonalInfo = ({ form, formData }) => {
         </Col>
       </Row>
 
-      <Form.Item label="Note" name="note" hasFeedback>
-        <Input.TextArea placeholder="Addtional Notes (Optional)"/>
+      <Form.Item label="Note" name="note" rules={noteValidation} hasFeedback>
+        <Input.TextArea placeholder="Addtional Notes (Optional)" />
       </Form.Item>
     </>
   );

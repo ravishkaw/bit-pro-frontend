@@ -7,7 +7,10 @@ const App = () => {
   return (
     <Router>
       <AppRoutes />
-      <ToastContainer />
+      <ToastContainer
+        autoClose={1500}
+        newestOnTop
+      />
     </Router>
   );
 };

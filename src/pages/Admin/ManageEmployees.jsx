@@ -24,6 +24,7 @@ const ManageEmployee = () => {
     deleteAnEmployee,
     restoreAnEmployee,
     loading,
+    getEmployeeDesignation,
   } = useEmployees();
 
   const handleView = async (employeeid) => {
@@ -97,6 +98,7 @@ const ManageEmployee = () => {
             setIsModalOpen={setIsModalOpen}
             personType="Employee"
             addAnEmployee={addAnEmployee}
+            getEmployeeDesignation={getEmployeeDesignation}
             loading={loading}
           />
         </Col>

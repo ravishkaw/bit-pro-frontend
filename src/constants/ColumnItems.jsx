@@ -30,11 +30,13 @@ export const employeeColumnItems = (
   },
   {
     title: "Designation",
-    // dataIndex: "designation",
+    dataIndex: "designation",
+    render: (_, record) => record.designation?.name || "N/A",
   },
   {
     title: "Status",
-    // dataIndex: "status",
+    dataIndex: "employeeStatus",
+    render: (_, record) => record.employeeStatus?.name || "N/A",
   },
   {
     title: "Actions",
@@ -51,7 +53,7 @@ export const employeeColumnItems = (
         >
           <EyeOutlined />
         </Button>
-        {record.status !== "deleted" ? (
+        {record.employeeStatus.name !== "Deleted" ? (
           <Popconfirm
             title="Delete the Employee"
             description="Are you sure to delete this Employee?"

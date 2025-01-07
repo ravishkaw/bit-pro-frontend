@@ -17,11 +17,11 @@ const FormModal = ({
   personType,
   addAnEmployee,
   loading,
+  getEmployeeDesignation,
 }) => {
   const [current, setCurrent] = useState(0);
   const [formData, setFormData] = useState({});
   const [form] = Form.useForm();
-  const { user } = useAuth();
 
   /* These are to handle the button operations */
   const handleCancel = () => {
@@ -52,18 +52,18 @@ const FormModal = ({
   const onFinish = async (values) => {
     const data = { ...formData, ...values };
 
-    const addedDate = new Date().toISOString();
-    const addedBy = user.name;
-
     const updatedData = {
       ...data,
-      status: "Deactive",
-      addedBy: addedBy,
-      addedDate: addedDate,
+      designation: {
+        id: data.designation,
+      },
+      employeeStatus: {
+        name: data.employeeStatus,
+      },
     };
-
-    setFormData(updatedData);
     await addAnEmployee(updatedData);
+    form.resetFields();
+    setFormData({});
     setIsModalOpen(false);
   };
 
@@ -79,8 +79,12 @@ const FormModal = ({
       icon: <ContactsOutlined />,
     },
     {
-      title: "Employeement Information",
-      content: <EmploymentInformation />,
+      title: "Job Information",
+      content: (
+        <EmploymentInformation
+          getEmployeeDesignation={getEmployeeDesignation}
+        />
+      ),
       icon: <IdcardOutlined />,
     },
   ];
@@ -100,7 +104,7 @@ const FormModal = ({
       title={`Add New ${personType}`}
       open={isModalOpen}
       onCancel={handleCancel}
-      width={720}
+      width={850}
       footer={null}
     >
       <Form

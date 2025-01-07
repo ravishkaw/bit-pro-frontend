@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { message } from "antd";
-
 import { toast } from "react-toastify";
 
 import {
@@ -12,6 +10,8 @@ import {
   restoreEmployee,
 } from "../services/employee";
 
+import { fetchAllDesignations } from "../services/designation";
+
 const useEmployees = () => {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,10 +22,9 @@ const useEmployees = () => {
     try {
       const resp = await fetchEmployees();
       setEmployees(resp);
-      toast.success("loaded successfully");
     } catch (err) {
-      toast.error("loaded error");
       setError(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -42,6 +41,7 @@ const useEmployees = () => {
       return resp;
     } catch (err) {
       setError(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -51,10 +51,11 @@ const useEmployees = () => {
     setLoading(true);
     try {
       await addEmployee(values);
-      msgSuccess("added");
+      toast.success("Employee added successfully");
       loadEmployees();
     } catch (err) {
       setError(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -64,9 +65,11 @@ const useEmployees = () => {
     setLoading(true);
     try {
       await updateEmployee(employeeId, values);
+      toast.success("Employee updated successfully");
       loadEmployees();
     } catch (err) {
       setError(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -76,9 +79,11 @@ const useEmployees = () => {
     setLoading(true);
     try {
       await deleteEmployee(employeeId);
-      msgSuccess("deleted");
+      toast.success("Employee deleted successfully");
+      loadEmployees();
     } catch (err) {
       setError(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -91,8 +96,19 @@ const useEmployees = () => {
       loadEmployees();
     } catch (err) {
       setError(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getEmployeeDesignation = async () => {
+    try {
+      const resp = await fetchAllDesignations();
+      return resp;
+    } catch (err) {
+      setError(err.message);
+      return [];
     }
   };
 
@@ -105,6 +121,7 @@ const useEmployees = () => {
     restoreAnEmployee,
     loading,
     error,
+    getEmployeeDesignation,
   };
 };
 

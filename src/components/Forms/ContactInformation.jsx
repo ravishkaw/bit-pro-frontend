@@ -27,7 +27,7 @@ const ContactInformation = () => {
       <Row gutter={16}>
         <Col xs={24} sm={12}>
           <Form.Item
-            name="phone"
+            name="mobileNo"
             label="Contact Number"
             rules={phoneValidation}
             hasFeedback
