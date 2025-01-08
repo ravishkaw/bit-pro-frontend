@@ -1,8 +1,7 @@
 import { Card, Col, Row, Popconfirm } from "antd";
-import { DeleteOutlined, EyeOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
 
 const ManageEmployeeCard = ({
-  loading,
   columns,
   employee,
   handleView,
@@ -12,9 +11,8 @@ const ManageEmployeeCard = ({
 
   return (
     <Card
-      loading={loading}
       actions={[
-        <EyeOutlined
+        <EditOutlined
           onClick={() => {
             handleView(employee.employeeId);
           }}
@@ -27,13 +25,20 @@ const ManageEmployeeCard = ({
           cancelText="No"
           okButtonProps={{ danger: true }}
         >
-          <DeleteOutlined style={{ color: "red" }} />,
+          <DeleteOutlined style={{ color: "red" }} />
         </Popconfirm>,
       ]}
       style={{ marginBottom: 10 }}
     >
       {newColumns.map((column, index) => {
         let value = employee[column.dataIndex];
+        if (
+          column.dataIndex == "designation" ||
+          column.dataIndex == "employeeStatus"
+        ) {
+          value = employee[column.dataIndex].name;
+        }
+
         return (
           <div key={index}>
             <Row>

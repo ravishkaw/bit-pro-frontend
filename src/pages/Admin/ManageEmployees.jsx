@@ -9,6 +9,7 @@ import useEmployees from "../../hooks/useEmployees";
 
 import ManageEmployeeCard from "../../components/Cards/ManageEmployeeCard";
 import FormModal from "../../components/Modals/FormModal";
+import SkeletonCards from "../../components/Cards/SkeletonCards";
 
 const ManageEmployee = () => {
   const [modalState, setModalState] = useState({
@@ -90,19 +91,23 @@ const ManageEmployee = () => {
           )}
 
           {isMobile &&
-            dataSource.map((employee) => {
-              return (
-                <ManageEmployeeCard
-                  key={employee.employeeId}
-                  loading={loading}
-                  columns={columns}
-                  employee={employee}
-                  handleView={handleView}
-                  deleteAnEmployee={deleteAnEmployee}
-                  restoreAnEmployee={restoreAnEmployee}
-                />
-              );
-            })}
+            (loading ? (
+              <SkeletonCards />
+            ) : (
+              dataSource.map((employee) => {
+                return (
+                  <ManageEmployeeCard
+                    key={employee.employeeId}
+                    loading={loading}
+                    columns={columns}
+                    employee={employee}
+                    handleView={handleView}
+                    deleteAnEmployee={deleteAnEmployee}
+                    restoreAnEmployee={restoreAnEmployee}
+                  />
+                );
+              })
+            ))}
 
           <FormModal
             personType="Employee"

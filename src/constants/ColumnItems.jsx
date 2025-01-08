@@ -12,7 +12,7 @@ export const employeeColumnItems = (
   restoreAnEmployee
 ) => [
   {
-    title: "Employee NO",
+    title: "Employee No",
     dataIndex: "empNo",
     fixed: "left",
   },
