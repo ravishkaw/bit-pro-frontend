@@ -1,34 +1,66 @@
+import { useEffect, useState } from "react";
 import { Button, Flex, Form, Modal, Space, Steps } from "antd";
-import PersonalInfo from "../Forms/PersonalInfo";
-import { useState } from "react";
-import { useAuth } from "../../contexts/AuthContext";
 import {
   ContactsOutlined,
   IdcardOutlined,
   UserOutlined,
 } from "@ant-design/icons";
+import dayjs from "dayjs";
 
+import PersonalInfo from "../Forms/PersonalInfo";
 import ContactInformation from "../Forms/ContactInformation";
 import EmploymentInformation from "../Forms/EmploymentInformation";
 
 const FormModal = ({
-  isModalOpen,
-  setIsModalOpen,
   personType,
   addAnEmployee,
-  loading,
+  updateAnEmployee,
   getEmployeeDesignation,
+  modalState,
+  closeModal,
 }) => {
   const [current, setCurrent] = useState(0);
   const [formData, setFormData] = useState({});
   const [form] = Form.useForm();
 
-  /* These are to handle the button operations */
-  const handleCancel = () => {
-    form.resetFields();
-    setFormData({});
-    setIsModalOpen(false);
-  };
+  const [designations, setDesignations] = useState([
+    { value: 1, label: "Staff" },
+  ]);
+
+  const { open, isEditing, confirmLoading, selectedEmployee } = modalState;
+
+  useEffect(() => {
+    const fetchDesignations = async () => {
+      try {
+        const response = await getEmployeeDesignation();
+        const mappedDesignations = response.map((designation) => ({
+          value: designation.id,
+          label: designation.name,
+        }));
+        setDesignations(mappedDesignations);
+
+        if (isEditing && selectedEmployee) {
+          form.setFieldsValue({
+            ...selectedEmployee,
+            dob: dayjs(selectedEmployee.dob),
+            designation: selectedEmployee.designation.id,
+            employeeStatus: selectedEmployee.employeeStatus.name,
+          });
+          setFormData(selectedEmployee);
+          console.log(selectedEmployee);
+        } else {
+          form.resetFields();
+          setFormData({});
+        }
+      } catch (error) {
+        console.error("Failed to fetch designations:", error);
+      }
+    };
+
+    if (open) {
+      fetchDesignations();
+    }
+  }, [open, isEditing, selectedEmployee, form, getEmployeeDesignation]);
 
   const next = async () => {
     try {
@@ -61,10 +93,19 @@ const FormModal = ({
         name: data.employeeStatus,
       },
     };
-    await addAnEmployee(updatedData);
-    form.resetFields();
-    setFormData({});
-    setIsModalOpen(false);
+
+    if (isEditing) {
+      await updateAnEmployee(selectedEmployee.employeeId, updatedData);
+    } else {
+      await addAnEmployee(updatedData);
+    }
+
+    setTimeout(() => {
+      form.resetFields();
+      form.setFieldsValue({});
+      setFormData({});
+    }, 0);
+    closeModal();
   };
 
   const steps = [
@@ -80,11 +121,7 @@ const FormModal = ({
     },
     {
       title: "Job Information",
-      content: (
-        <EmploymentInformation
-          getEmployeeDesignation={getEmployeeDesignation}
-        />
-      ),
+      content: <EmploymentInformation designations={designations} />,
       icon: <IdcardOutlined />,
     },
   ];
@@ -102,8 +139,8 @@ const FormModal = ({
   return (
     <Modal
       title={`Add New ${personType}`}
-      open={isModalOpen}
-      onCancel={handleCancel}
+      open={open}
+      onCancel={closeModal}
       width={850}
       footer={null}
     >
@@ -128,7 +165,7 @@ const FormModal = ({
         <Flex justify="end">
           <Space>
             {current === 0 && (
-              <Button onClick={() => handleCancel()}>Cancel</Button>
+              <Button onClick={() => closeModal()}>Cancel</Button>
             )}
             {current > 0 && <Button onClick={prev}>Previous</Button>}
             {current < items.length - 1 && (
@@ -137,8 +174,8 @@ const FormModal = ({
               </Button>
             )}
             {current === items.length - 1 && (
-              <Button type="primary" htmlType="submit" loading={loading}>
-                Submit
+              <Button type="primary" htmlType="submit" loading={confirmLoading}>
+                {isEditing ? "Update" : "Submit"}
               </Button>
             )}
           </Space>

@@ -1,5 +1,10 @@
 import { Button, Space, Popconfirm } from "antd";
-import { DeleteOutlined, EyeOutlined, UndoOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  EyeOutlined,
+  UndoOutlined,
+} from "@ant-design/icons";
 
 export const employeeColumnItems = (
   handleView,
@@ -51,7 +56,7 @@ export const employeeColumnItems = (
             handleView(record.employeeId);
           }}
         >
-          <EyeOutlined />
+          <EditOutlined />
         </Button>
         {record.employeeStatus.name !== "Deleted" ? (
           <Popconfirm

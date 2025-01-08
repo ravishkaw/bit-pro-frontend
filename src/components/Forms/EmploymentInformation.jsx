@@ -1,28 +1,6 @@
 import { Form, Input, Radio, Select } from "antd";
-import { useEffect, useState } from "react";
 
-const EmploymentInformation = ({ getEmployeeDesignation }) => {
-  const [designations, setDesignations] = useState([
-    { value: 1, label: "Staff" },
-  ]);
-
-  useEffect(() => {
-    const fetchDesignations = async () => {
-      try {
-        const response = await getEmployeeDesignation();
-        setDesignations(
-          response.map((designation) => ({
-            value: designation.id,
-            label: designation.name,
-          }))
-        );
-      } catch (error) {
-        console.error("Error fetching designations:", error);
-      }
-    };
-    fetchDesignations();
-  }, [getEmployeeDesignation]);
-
+const EmploymentInformation = ({ designations }) => {
   return (
     <>
       <Form.Item

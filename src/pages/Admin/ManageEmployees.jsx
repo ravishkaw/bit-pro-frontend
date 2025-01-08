@@ -11,8 +11,12 @@ import ManageEmployeeCard from "../../components/Cards/ManageEmployeeCard";
 import FormModal from "../../components/Modals/FormModal";
 
 const ManageEmployee = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [modalState, setModalState] = useState({
+    open: false,
+    isEditing: false,
+    confirmLoading: false,
+    selectedEmployee: null,
+  });
 
   const { isMobile } = useMobileContext();
 
@@ -27,13 +31,21 @@ const ManageEmployee = () => {
     getEmployeeDesignation,
   } = useEmployees();
 
-  const handleView = async (employeeid) => {
-    const employee = await loadOneEmployee(employeeid);
-    setSelectedEmployee(employee);
+  const openModal = (isEditing, selectedEmployee = null) => {
+    setModalState({
+      open: true,
+      isEditing,
+      selectedEmployee: selectedEmployee,
+    });
   };
 
-  const handleAdd = () => {
-    setIsModalOpen(true);
+  const closeModal = () => {
+    setModalState({ open: false, isEditing: false, selectedEmployee: null });
+  };
+
+  const handleView = async (employeeid) => {
+    const employee = await loadOneEmployee(employeeid);
+    openModal(true, employee);
   };
 
   const columns = employeeColumnItems(
@@ -41,7 +53,6 @@ const ManageEmployee = () => {
     deleteAnEmployee,
     restoreAnEmployee
   );
-
   const dataSource = employees.map((employee) => ({
     ...employee,
     key: employee.employeeId,
@@ -57,7 +68,7 @@ const ManageEmployee = () => {
               <Typography.Title level={2}>Manage Employees</Typography.Title>
             </Col>
             <Col>
-              <Button type="primary" onClick={handleAdd}>
+              <Button type="primary" onClick={() => openModal(false)}>
                 <PlusOutlined />
                 Add New Employee
               </Button>
@@ -94,12 +105,12 @@ const ManageEmployee = () => {
             })}
 
           <FormModal
-            isModalOpen={isModalOpen}
-            setIsModalOpen={setIsModalOpen}
             personType="Employee"
             addAnEmployee={addAnEmployee}
+            updateAnEmployee={updateAnEmployee}
             getEmployeeDesignation={getEmployeeDesignation}
-            loading={loading}
+            modalState={modalState}
+            closeModal={closeModal}
           />
         </Col>
       </Row>
