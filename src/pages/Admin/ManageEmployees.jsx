@@ -11,6 +11,8 @@ import useEmployees from "../../hooks/useEmployees";
 import ManageEmployeeCard from "../../components/Cards/ManageEmployeeCard";
 import FormModal from "../../components/Modals/FormModal";
 import SkeletonCards from "../../components/Cards/SkeletonCards";
+import DeleteConfirmModal from "../../components/Modals/DeleteConfirmModal";
+import UpdateConfirmModal from "../../components/Modals/UpdateConfirmModal";
 
 const ManageEmployee = () => {
   const [modalState, setModalState] = useState({
@@ -18,6 +20,15 @@ const ManageEmployee = () => {
     isEditing: false,
     confirmLoading: false,
     selectedPerson: null,
+  });
+
+  const [deleteModal, setDeleteModal] = useState({
+    open: false,
+    selectedPerson: null,
+  });
+
+  const [updateConfirmModal, setUpdateConfirmModal] = useState({
+    open: false,
   });
 
   const [designations, setDesignations] = useState([
@@ -56,7 +67,7 @@ const ManageEmployee = () => {
     fetchDesignations();
   }, []);
 
-  const openModal = (isEditing, selectedEmployee = null) => {
+  const openFormModal = (isEditing, selectedEmployee = null) => {
     setModalState({
       open: true,
       isEditing,
@@ -65,7 +76,7 @@ const ManageEmployee = () => {
     });
   };
 
-  const closeModal = () => {
+  const closeFormModal = () => {
     setModalState({
       open: false,
       isEditing: false,
@@ -82,12 +93,16 @@ const ManageEmployee = () => {
       designation: employee.designation.id,
       employeeStatus: employee.employeeStatus.name,
     };
-    openModal(true, updatedEmployee);
+    openFormModal(true, updatedEmployee);
+  };
+
+  const openDeleteModal = (record) => {
+    setDeleteModal({ open: true, selectedPerson: record });
   };
 
   const columns = employeeColumnItems(
     handleView,
-    deleteAnEmployee,
+    openDeleteModal,
     restoreAnEmployee
   );
 
@@ -110,7 +125,7 @@ const ManageEmployee = () => {
               <Typography.Title level={2}>Manage Employees</Typography.Title>
             </Col>
             <Col>
-              <Button type="primary" onClick={() => openModal(false)}>
+              <Button type="primary" onClick={() => openFormModal(false)}>
                 <PlusOutlined />
                 Add New Employee
               </Button>
@@ -163,8 +178,26 @@ const ManageEmployee = () => {
             updatePerson={updateAnEmployee}
             designations={designations}
             modalState={modalState}
-            closeModal={closeModal}
+            closeModal={closeFormModal}
           />
+
+          {employees.length > 0 && (
+            <DeleteConfirmModal
+              personType="Employee"
+              deleteModal={deleteModal}
+              setDeleteModal={setDeleteModal}
+              deletePerson={deleteAnEmployee}
+            />
+          )}
+
+          {/* {employees.length > 0 && (
+            <UpdateConfirmModal
+              personType="Employee"
+              deleteModal={deleteModal}
+              setDeleteModal={setDeleteModal}
+              deletePerson={deleteAnEmployee}
+            />
+          )} */}
         </Col>
       </Row>
     </>

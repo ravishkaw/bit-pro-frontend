@@ -8,7 +8,7 @@ import {
 
 export const employeeColumnItems = (
   handleView,
-  deleteAnEmployee,
+  openDeleteModal,
   restoreAnEmployee
 ) => [
   {
@@ -59,18 +59,14 @@ export const employeeColumnItems = (
           <EditOutlined />
         </Button>
         {record.employeeStatus.name !== "Deleted" ? (
-          <Popconfirm
-            title="Delete the Employee"
-            description="Are you sure to delete this Employee?"
-            onConfirm={() => deleteAnEmployee(record.employeeId)}
-            okText="Delete"
-            cancelText="No"
-            okButtonProps={{ danger: true }}
+          <Button
+            size="small"
+            variant="outlined"
+            danger
+            onClick={() => openDeleteModal(record)}
           >
-            <Button size="small" variant="outlined" danger>
-              <DeleteOutlined />
-            </Button>
-          </Popconfirm>
+            <DeleteOutlined />
+          </Button>
         ) : (
           <Popconfirm
             title="Restore the Employee"
