@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button, Col, Row, Table, Typography } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
+import dayjs from "dayjs";
 
 import { useMobileContext } from "../../contexts/MobileContext";
 
@@ -16,8 +17,12 @@ const ManageEmployee = () => {
     open: false,
     isEditing: false,
     confirmLoading: false,
-    selectedEmployee: null,
+    selectedPerson: null,
   });
+
+  const [designations, setDesignations] = useState([
+    { value: 1, label: "Staff" },
+  ]);
 
   const { isMobile } = useMobileContext();
 
@@ -32,21 +37,50 @@ const ManageEmployee = () => {
     getEmployeeDesignation,
   } = useEmployees();
 
+  useEffect(() => {
+    const fetchDesignations = async () => {
+      try {
+        const response = await getEmployeeDesignation();
+        const mappedDesignations = response.map((designation) => ({
+          value: designation.id,
+          label: designation.name,
+        }));
+        setDesignations(mappedDesignations);
+      } catch (error) {
+        console.error("Failed to fetch designations:", error);
+      }
+    };
+
+    fetchDesignations();
+  }, []);
+
   const openModal = (isEditing, selectedEmployee = null) => {
     setModalState({
       open: true,
       isEditing,
-      selectedEmployee: selectedEmployee,
+      confirmLoading: loading,
+      selectedPerson: selectedEmployee,
     });
   };
 
   const closeModal = () => {
-    setModalState({ open: false, isEditing: false, selectedEmployee: null });
+    setModalState({
+      open: false,
+      isEditing: false,
+      confirmLoading: false,
+      selectedPerson: null,
+    });
   };
 
   const handleView = async (employeeid) => {
     const employee = await loadOneEmployee(employeeid);
-    openModal(true, employee);
+    const updatedEmployee = {
+      ...employee,
+      dob: dayjs(employee.dob),
+      designation: employee.designation.id,
+      employeeStatus: employee.employeeStatus.name,
+    };
+    openModal(true, updatedEmployee);
   };
 
   const columns = employeeColumnItems(
@@ -111,9 +145,9 @@ const ManageEmployee = () => {
 
           <FormModal
             personType="Employee"
-            addAnEmployee={addAnEmployee}
-            updateAnEmployee={updateAnEmployee}
-            getEmployeeDesignation={getEmployeeDesignation}
+            addPerson={addAnEmployee}
+            updatePerson={updateAnEmployee}
+            designations={designations}
             modalState={modalState}
             closeModal={closeModal}
           />

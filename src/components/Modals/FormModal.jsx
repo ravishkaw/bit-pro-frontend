@@ -5,7 +5,6 @@ import {
   IdcardOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import dayjs from "dayjs";
 
 import PersonalInfo from "../Forms/PersonalInfo";
 import ContactInformation from "../Forms/ContactInformation";
@@ -13,9 +12,9 @@ import EmploymentInformation from "../Forms/EmploymentInformation";
 
 const FormModal = ({
   personType,
-  addAnEmployee,
-  updateAnEmployee,
-  getEmployeeDesignation,
+  addPerson,
+  updatePerson,
+  designations,
   modalState,
   closeModal,
 }) => {
@@ -23,44 +22,22 @@ const FormModal = ({
   const [formData, setFormData] = useState({});
   const [form] = Form.useForm();
 
-  const [designations, setDesignations] = useState([
-    { value: 1, label: "Staff" },
-  ]);
-
-  const { open, isEditing, confirmLoading, selectedEmployee } = modalState;
+  const { open, isEditing, confirmLoading, selectedPerson } = modalState;
 
   useEffect(() => {
-    const fetchDesignations = async () => {
-      try {
-        const response = await getEmployeeDesignation();
-        const mappedDesignations = response.map((designation) => ({
-          value: designation.id,
-          label: designation.name,
-        }));
-        setDesignations(mappedDesignations);
-
-        if (isEditing && selectedEmployee) {
-          form.setFieldsValue({
-            ...selectedEmployee,
-            dob: dayjs(selectedEmployee.dob),
-            designation: selectedEmployee.designation.id,
-            employeeStatus: selectedEmployee.employeeStatus.name,
-          });
-          setFormData(selectedEmployee);
-          console.log(selectedEmployee);
-        } else {
-          form.resetFields();
-          setFormData({});
-        }
-      } catch (error) {
-        console.error("Failed to fetch designations:", error);
-      }
-    };
-
     if (open) {
-      fetchDesignations();
+      if (isEditing && selectedPerson) {
+        setFormData(selectedPerson);
+        form.setFieldsValue(selectedPerson);
+      } else {
+        form.resetFields();
+        setFormData({});
+      }
+    } else {
+      setCurrent(0);
+      setFormData({});
     }
-  }, [open, isEditing, selectedEmployee, form, getEmployeeDesignation]);
+  }, [open, isEditing, selectedPerson, form]);
 
   const next = async () => {
     try {
@@ -69,6 +46,11 @@ const FormModal = ({
       setFormData(newData);
       form.setFieldsValue(newData);
       setCurrent(current + 1);
+      if (isEditing) {
+        setTimeout(() => {
+          form.validateFields();
+        }, 0);
+      }
     } catch (error) {
       console.log("Validation Failed:", error);
     }
@@ -95,9 +77,10 @@ const FormModal = ({
     };
 
     if (isEditing) {
-      await updateAnEmployee(selectedEmployee.employeeId, updatedData);
+      //todo Change the employeeid into id to use in guest future
+      await updatePerson(selectedPerson.employeeId, updatedData);
     } else {
-      await addAnEmployee(updatedData);
+      await addPerson(updatedData);
     }
 
     setTimeout(() => {
@@ -132,25 +115,19 @@ const FormModal = ({
     icon: item.icon,
   }));
 
-  if (personType != "Employee") {
-    items = items.filter((item) => item.title != "Employeement Info");
+  if (personType !== "Employee") {
+    items = items.filter((item) => item.title != "Job Information");
   }
 
   return (
     <Modal
-      title={`Add New ${personType}`}
+      title={isEditing ? `Edit ${personType}` : `Add New ${personType}`}
       open={open}
       onCancel={closeModal}
       width={850}
       footer={null}
     >
-      <Form
-        form={form}
-        initialValues={formData}
-        layout="vertical"
-        labelWrap
-        onFinish={onFinish}
-      >
+      <Form form={form} layout="vertical" labelWrap onFinish={onFinish}>
         {/* Steps */}
         <Steps
           type="navigation"

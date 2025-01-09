@@ -9,7 +9,7 @@ import { formValidations } from "./validations";
 import { dobGenderCal } from "../../utils/dobGenderCal";
 
 const PersonalInfo = ({ form, formData }) => {
-  const [fullName, setFullName] = useState(formData?.fullName || "");
+  const [fullName, setFullName] = useState("");
   const [callingNameOptions, setCallingNameOptions] = useState([]);
   const [nationality, setNationality] = useState("");
   const [idType, setIdType] = useState("");
@@ -28,6 +28,20 @@ const PersonalInfo = ({ form, formData }) => {
     civilStatusValidation,
     noteValidation,
   } = formValidations;
+
+  // Populate form data to fields
+  useEffect(() => {
+    // Fill the fullname to ensure to get calling name options
+    if (formData?.fullName) {
+      setFullName(formData.fullName);
+      form.setFieldsValue({ fullName: formData.fullName });
+    }
+    // To ensure to view correct idType when editing
+    if (formData?.idType) {
+      setIdType(formData.idType);
+      form.setFieldsValue({ idType: formData.idType });
+    }
+  }, [formData, form]);
 
   // Updates the calling name options based on full name input
   useEffect(() => {
