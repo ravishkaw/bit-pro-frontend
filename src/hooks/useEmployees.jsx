@@ -16,12 +16,27 @@ const useEmployees = () => {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [paginationDetails, setPaginationDetails] = useState({
+    current: 1,
+    pageSize: 10,
+  });
 
   // Crud Operation Api
   const loadEmployees = async () => {
     try {
-      const resp = await fetchEmployees();
-      setEmployees(resp);
+      // Fetch employees page starts with 0 but in antd starts with 1
+      const resp = await fetchEmployees(
+        paginationDetails.current - 1,
+        paginationDetails.pageSize
+        // !Add these with table sorter
+        // sortBy,
+        // sortOrder
+      );
+      setPaginationDetails((prev) => ({
+        ...prev,
+        total: resp.totalElements,
+      }));
+      setEmployees(resp.data);
     } catch (err) {
       setError(err.message);
       toast.error(err.message);
@@ -32,7 +47,7 @@ const useEmployees = () => {
 
   useEffect(() => {
     loadEmployees();
-  }, []);
+  }, [paginationDetails.current, paginationDetails.pageSize]);
 
   const loadOneEmployee = async (employeeId) => {
     setLoading(true);
@@ -122,6 +137,8 @@ const useEmployees = () => {
     loading,
     error,
     getEmployeeDesignation,
+    paginationDetails,
+    setPaginationDetails,
   };
 };
 

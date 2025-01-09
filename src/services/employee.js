@@ -4,10 +4,17 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 const EMPLOYEE_BASE_URL = `${BASE_URL}/employee`;
 
 // Fetch All employee Details From The DB
-export const fetchEmployees = async () => {
+export const fetchEmployees = async (
+  pageNumber,
+  pageSize,
+  sortBy = "empNo",
+  sortOrder = "desc"
+) => {
   try {
-    const response = await axios.get(`${EMPLOYEE_BASE_URL}/employees`);
-    return response.data.data;
+    const response = await axios.get(
+      `${EMPLOYEE_BASE_URL}/employees?pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=${sortBy}&sortOrder=${sortOrder}`
+    );
+    return response.data;
   } catch (error) {
     console.error("Error fetching employees:", error);
     throw error;
@@ -17,7 +24,9 @@ export const fetchEmployees = async () => {
 // Fetch All employee Details From The DB
 export const fetchOneEmployee = async (employeeId) => {
   try {
-    const response = await axios.get(`${EMPLOYEE_BASE_URL}/employee/${employeeId}`);
+    const response = await axios.get(
+      `${EMPLOYEE_BASE_URL}/employee/${employeeId}`
+    );
     return response.data;
   } catch (error) {
     console.error("Error fetching employees:", error);
@@ -48,7 +57,9 @@ export const updateEmployee = async (employeeId, values) => {
 // Delete employee Details
 export const deleteEmployee = async (employeeId) => {
   try {
-    const response = await axios.delete(`${EMPLOYEE_BASE_URL}/employee/${employeeId}`);
+    const response = await axios.delete(
+      `${EMPLOYEE_BASE_URL}/employee/${employeeId}`
+    );
     return response.data;
   } catch (error) {
     console.error("Error deleting employee:", error);

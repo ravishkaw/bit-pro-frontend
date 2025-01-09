@@ -34,6 +34,8 @@ const ManageEmployee = () => {
     deleteAnEmployee,
     restoreAnEmployee,
     loading,
+    paginationDetails,
+    setPaginationDetails,
     getEmployeeDesignation,
   } = useEmployees();
 
@@ -88,11 +90,16 @@ const ManageEmployee = () => {
     deleteAnEmployee,
     restoreAnEmployee
   );
-  const dataSource = employees.map((employee) => ({
-    ...employee,
-    key: employee.employeeId,
-    name: `${employee.firstName} ${employee.lastName}`,
-  }));
+
+  const handlePageChange = (pagination) => {
+    const isPageSizeChanged =
+      pagination.pageSize !== paginationDetails.pageSize;
+
+    setPaginationDetails({
+      current: isPageSizeChanged ? 1 : pagination.current,
+      pageSize: pagination.pageSize,
+    });
+  };
 
   return (
     <>
@@ -116,11 +123,18 @@ const ManageEmployee = () => {
             <Table
               columns={columns}
               // bordered
-              dataSource={dataSource}
+              rowKey="empNo"
+              dataSource={employees}
               loading={loading}
+              pagination={{
+                ...paginationDetails,
+                showSizeChanger: true,
+                pageSizeOptions: ["10", "20"],
+              }}
               scroll={{
                 x: "max-content",
               }}
+              onChange={handlePageChange}
             />
           )}
 
