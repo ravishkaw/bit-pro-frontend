@@ -8,8 +8,8 @@ import en from "i18n-nationality/langs/en.json";
 import { formValidations } from "./validations";
 import { dobGenderCal } from "../../utils/dobGenderCal";
 
-const PersonalInfo = ({ form, formData }) => {
-  const [fullName, setFullName] = useState("");
+const PersonalInfo = ({ form, formData, modelOpen }) => {
+  const [fullName, setFullName] = useState(formData?.fullName || "");
   const [callingNameOptions, setCallingNameOptions] = useState([]);
   const [nationality, setNationality] = useState("");
   const [idType, setIdType] = useState("");
@@ -29,19 +29,31 @@ const PersonalInfo = ({ form, formData }) => {
     noteValidation,
   } = formValidations;
 
-  // Populate form data to fields
+  // Reset state when the modal is closed
   useEffect(() => {
-    // Fill the fullname to ensure to get calling name options
-    if (formData?.fullName) {
-      setFullName(formData.fullName);
-      form.setFieldsValue({ fullName: formData.fullName });
+    if (!modelOpen) {
+      setFullName(formData?.fullName || "");
+      setCallingNameOptions([]);
+      setNationality("");
+      setIdType("");
+      setNic("");
     }
-    // To ensure to view correct idType when editing
-    if (formData?.idType) {
-      setIdType(formData.idType);
-      form.setFieldsValue({ idType: formData.idType });
+  }, [modelOpen, formData]);
+
+  // Update relevant fields when formData changes
+  useEffect(() => {
+    const { fullName, idType } = formData || {};
+
+    setFullName(fullName || "");
+    setIdType(idType || "");
+    form.setFieldsValue({ idType });
+
+    // Reset callingName field if fullName is empty
+    if (!fullName) {
+      form.resetFields(["callingName"]);
     }
-  }, [formData, form]);
+  }, [formData?.fullName, formData?.idType, form]);
+
 
   // Updates the calling name options based on full name input
   useEffect(() => {

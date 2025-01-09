@@ -94,7 +94,9 @@ const FormModal = ({
   const steps = [
     {
       title: "Personal Information",
-      content: <PersonalInfo form={form} formData={formData} />,
+      content: (
+        <PersonalInfo form={form} formData={formData} modalOpen={open} />
+      ),
       icon: <UserOutlined />,
     },
     {
