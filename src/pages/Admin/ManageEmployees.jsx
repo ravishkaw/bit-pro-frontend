@@ -160,7 +160,7 @@ const ManageEmployee = () => {
                     columns={columns}
                     employee={employee}
                     handleView={handleView}
-                    deleteAnEmployee={deleteAnEmployee}
+                    openDeleteModal={openDeleteModal}
                     restoreAnEmployee={restoreAnEmployee}
                   />
                 );

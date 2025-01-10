@@ -5,7 +5,7 @@ const ManageEmployeeCard = ({
   columns,
   employee,
   handleView,
-  deleteAnEmployee,
+  openDeleteModal,
 }) => {
   const newColumns = columns.filter((column) => column.title !== "Actions");
 
@@ -17,16 +17,10 @@ const ManageEmployeeCard = ({
             handleView(employee.employeeId);
           }}
         />,
-        <Popconfirm
-          title="Delete the Employee"
-          description="Are you sure to delete this Employee?"
-          onConfirm={() => deleteAnEmployee(employee.employeeId)}
-          okText="Delete"
-          cancelText="No"
-          okButtonProps={{ danger: true }}
-        >
-          <DeleteOutlined style={{ color: "red" }} />
-        </Popconfirm>,
+        <DeleteOutlined
+          style={{ color: "red" }}
+          onClick={() => openDeleteModal(employee)}
+        />,
       ]}
       style={{ marginBottom: 10 }}
     >
