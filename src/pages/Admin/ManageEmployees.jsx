@@ -152,7 +152,7 @@ const ManageEmployee = () => {
             (loading ? (
               <SkeletonCards />
             ) : (
-              dataSource.map((employee) => {
+              employees.map((employee) => {
                 return (
                   <ManageEmployeeCard
                     key={employee.employeeId}
