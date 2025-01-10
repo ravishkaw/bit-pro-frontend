@@ -12,7 +12,6 @@ import ManageEmployeeCard from "../../components/Cards/ManageEmployeeCard";
 import FormModal from "../../components/Modals/FormModal";
 import SkeletonCards from "../../components/Cards/SkeletonCards";
 import DeleteConfirmModal from "../../components/Modals/DeleteConfirmModal";
-import UpdateConfirmModal from "../../components/Modals/UpdateConfirmModal";
 
 const ManageEmployee = () => {
   const [modalState, setModalState] = useState({
@@ -25,10 +24,6 @@ const ManageEmployee = () => {
   const [deleteModal, setDeleteModal] = useState({
     open: false,
     selectedPerson: null,
-  });
-
-  const [updateConfirmModal, setUpdateConfirmModal] = useState({
-    open: false,
   });
 
   const [designations, setDesignations] = useState([
@@ -189,15 +184,6 @@ const ManageEmployee = () => {
               deletePerson={deleteAnEmployee}
             />
           )}
-
-          {/* {employees.length > 0 && (
-            <UpdateConfirmModal
-              personType="Employee"
-              deleteModal={deleteModal}
-              setDeleteModal={setDeleteModal}
-              deletePerson={deleteAnEmployee}
-            />
-          )} */}
         </Col>
       </Row>
     </>

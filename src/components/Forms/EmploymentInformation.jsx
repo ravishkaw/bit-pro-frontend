@@ -28,7 +28,7 @@ const EmploymentInformation = ({ designations }) => {
             { value: "Active", label: "Active" },
             { value: "Resigned", label: "Resigned" },
             { value: "On Leave", label: "On Leave" },
-            { value: "Deleted", label: "Deleted" },
+            // { value: "Deleted", label: "Deleted" },
           ]}
         />
       </Form.Item>

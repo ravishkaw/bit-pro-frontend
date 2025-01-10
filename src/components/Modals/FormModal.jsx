@@ -9,6 +9,7 @@ import {
 import PersonalInfo from "../Forms/PersonalInfo";
 import ContactInformation from "../Forms/ContactInformation";
 import EmploymentInformation from "../Forms/EmploymentInformation";
+import UpdateConfirmModal from "./UpdateConfirmModal";
 
 const FormModal = ({
   personType,
@@ -20,6 +21,15 @@ const FormModal = ({
 }) => {
   const [current, setCurrent] = useState(0);
   const [formData, setFormData] = useState({});
+  const [initialFormData, setInitialFormData] = useState({});
+
+  const [updateConfirmModal, setUpdateConfirmModal] = useState({
+    open: false,
+    updatedValues: null,
+    selectedPersonId: null,
+    updatedData: null,
+  });
+
   const [form] = Form.useForm();
 
   const { open, isEditing, confirmLoading, selectedPerson } = modalState;
@@ -28,14 +38,18 @@ const FormModal = ({
     if (open) {
       if (isEditing && selectedPerson) {
         setFormData(selectedPerson);
+        setInitialFormData(selectedPerson);
         form.setFieldsValue(selectedPerson);
       } else {
         form.resetFields();
         setFormData({});
+        setInitialFormData({});
       }
     } else {
+      form.resetFields();
       setCurrent(0);
       setFormData({});
+      setInitialFormData({});
     }
   }, [open, isEditing, selectedPerson, form]);
 
@@ -63,6 +77,26 @@ const FormModal = ({
     }, 0);
   };
 
+  const getChangedFieldValues = (initialData, updatedData) => {
+    const changes = {};
+
+    Object.keys(updatedData).forEach((key) => {
+      if (initialData[key] !== updatedData[key]) {
+        changes[key] = updatedData[key];
+      }
+    });
+    return changes;
+  };
+
+  const showUpdateModal = (updatedValues, selectedPersonId, updatedData) => {
+    setUpdateConfirmModal({
+      open: true,
+      updatedValues,
+      selectedPersonId,
+      updatedData,
+    });
+  };
+
   const onFinish = async (values) => {
     const data = { ...formData, ...values };
 
@@ -77,18 +111,16 @@ const FormModal = ({
     };
 
     if (isEditing) {
+      const updatedValues = getChangedFieldValues(initialFormData, data);
+
       //todo Change the employeeid into id to use in guest future
-      await updatePerson(selectedPerson.employeeId, updatedData);
+      showUpdateModal(updatedValues, selectedPerson.employeeId, updatedData);
     } else {
       await addPerson(updatedData);
-    }
-
-    setTimeout(() => {
       form.resetFields();
-      form.setFieldsValue({});
       setFormData({});
-    }, 0);
-    closeModal();
+      closeModal();
+    }
   };
 
   const steps = [
@@ -122,45 +154,63 @@ const FormModal = ({
   }
 
   return (
-    <Modal
-      title={isEditing ? `Edit ${personType}` : `Add New ${personType}`}
-      open={open}
-      onCancel={closeModal}
-      width={850}
-      footer={null}
-    >
-      <Form form={form} layout="vertical" labelWrap onFinish={onFinish}>
-        {/* Steps */}
-        <Steps
-          type="navigation"
-          size="small"
-          current={current}
-          items={items}
-          className="site-navigation-steps"
-        />
-        <div style={{ marginTop: 16 }}>{steps[current].content}</div>
+    <>
+      <Modal
+        title={isEditing ? `Edit ${personType}` : `Add New ${personType}`}
+        open={open}
+        onCancel={closeModal}
+        width={850}
+        footer={null}
+      >
+        <Form form={form} layout="vertical" labelWrap onFinish={onFinish}>
+          {/* Steps */}
+          <Steps
+            type="navigation"
+            size="small"
+            current={current}
+            items={items}
+            className="site-navigation-steps"
+          />
+          <div style={{ marginTop: 16 }}>{steps[current].content}</div>
 
-        {/* Buttons */}
-        <Flex justify="end">
-          <Space>
-            {current === 0 && (
-              <Button onClick={() => closeModal()}>Cancel</Button>
-            )}
-            {current > 0 && <Button onClick={prev}>Previous</Button>}
-            {current < items.length - 1 && (
-              <Button type="primary" onClick={next}>
-                Next
-              </Button>
-            )}
-            {current === items.length - 1 && (
-              <Button type="primary" htmlType="submit" loading={confirmLoading}>
-                {isEditing ? "Update" : "Submit"}
-              </Button>
-            )}
-          </Space>
-        </Flex>
-      </Form>
-    </Modal>
+          {/* Buttons */}
+          <Flex justify="end">
+            <Space>
+              {current === 0 && (
+                <Button onClick={() => closeModal()}>Cancel</Button>
+              )}
+              {current > 0 && <Button onClick={prev}>Previous</Button>}
+              {current < items.length - 1 && (
+                <Button type="primary" onClick={next}>
+                  Next
+                </Button>
+              )}
+              {current === items.length - 1 && (
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={confirmLoading}
+                >
+                  {isEditing ? "Update" : "Submit"}
+                </Button>
+              )}
+            </Space>
+          </Flex>
+        </Form>
+      </Modal>
+
+      {selectedPerson && (
+        <UpdateConfirmModal
+          personType="Employee"
+          updatePerson={updatePerson}
+          updateConfirmModal={updateConfirmModal}
+          setUpdateConfirmModal={setUpdateConfirmModal}
+          closeModal={closeModal}
+          form={form}
+          setFormData={setFormData}
+        />
+      )}
+    </>
   );
 };
 export default FormModal;

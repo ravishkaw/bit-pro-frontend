@@ -1,42 +1,87 @@
 import { useState } from "react";
-import { Modal, Space, Typography } from "antd";
-import { InfoCircleOutlined, WarningFilled } from "@ant-design/icons";
+import { Button, Flex, Modal, Space, Typography } from "antd";
+import { InfoCircleOutlined } from "@ant-design/icons";
 
-const UpdateConfirmModal = ({ deleteModal, setDeleteModal, deletePerson }) => {
+const { Title, Text } = Typography;
+
+const UpdateConfirmModal = ({
+  updatePerson,
+  updateConfirmModal,
+  setUpdateConfirmModal,
+  closeModal,
+  form,
+  setFormData,
+}) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
 
-  const { open, selectedPerson } = deleteModal;
+  const { open, updatedValues, selectedPersonId, updatedData } =
+    updateConfirmModal;
 
-  const handleOk = () => {
+  const handleOk = async () => {
     setConfirmLoading(true);
-    deletePerson(selectedPerson.employeeId); //!change employee id to id
+    await updatePerson(selectedPersonId, updatedData);
     setConfirmLoading(false);
-    setDeleteModal({ open: false, selectedPerson: null });
+    setUpdateConfirmModal({
+      open: false,
+      updatedValues: null,
+      selectedPersonId: null,
+      updatedData: null,
+    });
+    form.resetFields();
+    setFormData({});
+    closeModal();
   };
 
   const handleCancel = () => {
-    setDeleteModal({ open: false, selectedPerson: null });
+    setUpdateConfirmModal({
+      open: false,
+      updatedValues: null,
+      selectedPersonId: null,
+      updatedData: null,
+    });
   };
 
   return (
-    <Modal
-      centered
-      open={open}
-      onOk={handleOk}
-      confirmLoading={confirmLoading}
-      onCancel={handleCancel}
-      okText="Yes"
-      cancelText="No"
-      closable={false}
-      maskClosable={false}
-      okButtonProps={{ danger: true }}
-    >
-      <Typography.Title level={4} style={{ textAlign: "center" }}>
-        <WarningFilled style={{ color: "red", fontSize: "3rem" }} />
-        <br />
-        <br />
-        {`Are you sure to Delete ${selectedPerson?.fullName}`}
-      </Typography.Title>
+    <Modal centered open={open} closable={false} footer={null}>
+      {updatedValues && Object.keys(updatedValues).length > 0 ? (
+        <>
+          <Title level={4} style={{ textAlign: "center" }}>
+            <Space>
+              <InfoCircleOutlined
+                style={{ color: "yellow", fontSize: "2rem" }}
+              />
+              Following data got updated!
+            </Space>
+          </Title>
+          {/* make this good */}
+          <Text>{JSON.stringify(updatedValues)}</Text>
+          <Title level={5}>Are you sure to update?</Title>
+          <Flex justify="end">
+            <Space>
+              <Button onClick={handleCancel}>No</Button>
+              <Button
+                onClick={handleOk}
+                type="primary"
+                loading={confirmLoading}
+              >
+                Yes
+              </Button>
+            </Space>
+          </Flex>
+        </>
+      ) : (
+        <Title level={4} style={{ textAlign: "center" }}>
+          <Space>
+            <InfoCircleOutlined style={{ color: "green", fontSize: "2rem" }} />
+            No changes detected!
+          </Space>
+          <Flex justify="end">
+            <Space>
+              <Button onClick={handleCancel}>Close</Button>
+            </Space>
+          </Flex>
+        </Title>
+      )}
     </Modal>
   );
 };
