@@ -10,6 +10,7 @@ import PersonalInfo from "../Forms/PersonalInfo";
 import ContactInformation from "../Forms/ContactInformation";
 import EmploymentInformation from "../Forms/EmploymentInformation";
 import UpdateConfirmModal from "./UpdateConfirmModal";
+import dayjs from "dayjs";
 
 const FormModal = ({
   personType,
@@ -33,7 +34,10 @@ const FormModal = ({
   const [form] = Form.useForm();
 
   const { open, isEditing, confirmLoading, selectedPerson } = modalState;
-
+  /*  
+    modal open and close form will be reset
+    form will be populated depend on isEditing
+   */
   useEffect(() => {
     if (open) {
       if (isEditing && selectedPerson) {
@@ -53,6 +57,7 @@ const FormModal = ({
     }
   }, [open, isEditing, selectedPerson, form]);
 
+  // Handle next button and also validate fields
   const next = async () => {
     try {
       const values = await form.validateFields();
@@ -70,6 +75,7 @@ const FormModal = ({
     }
   };
 
+  // handle previous button also validate previous page to show feedback
   const prev = () => {
     setCurrent(current - 1);
     setTimeout(() => {
@@ -77,17 +83,52 @@ const FormModal = ({
     }, 0);
   };
 
+  // in edit mode, get the changed values of the form and return it to confirmation modal
   const getChangedFieldValues = (initialData, updatedData) => {
-    const changes = {};
+    const changes = [];
 
     Object.keys(updatedData).forEach((key) => {
-      if (initialData[key] !== updatedData[key]) {
-        changes[key] = updatedData[key];
+      const initialValue = initialData[key];
+      const updatedValue = updatedData[key];
+
+      if (initialValue !== updatedValue) {
+        let formattedKey = key
+          .replace(/([a-z])([A-Z])/g, "$1 $2")
+          .replace(/_/g, " ")
+          .toLowerCase();
+
+        let initialDisplayValue = initialValue;
+        let updatedDisplayValue = updatedValue;
+
+        if (formattedKey === "dob") {
+          formattedKey = "Date of Birth";
+          initialDisplayValue = dayjs(initialValue).format("YYYY-MM-DD");
+          updatedDisplayValue = dayjs(updatedValue).format("YYYY-MM-DD");
+        }
+
+        if (key === "designation") {
+          designations.forEach((designation) => {
+            if (updatedValue === designation.value) {
+              updatedDisplayValue = designation.label;
+            }
+            if (initialValue === designation.value) {
+              initialDisplayValue = designation.label;
+            }
+          });
+        }
+
+        const changeMessage = `${
+          formattedKey.charAt(0).toUpperCase() + formattedKey.slice(1)
+        } changed from "${initialDisplayValue}" to "${updatedDisplayValue}"`;
+
+        changes.push(changeMessage);
       }
     });
+
     return changes;
   };
 
+  // Show the update confirmation modal with updated data
   const showUpdateModal = (updatedValues, selectedPersonId, updatedData) => {
     setUpdateConfirmModal({
       open: true,
@@ -97,9 +138,11 @@ const FormModal = ({
     });
   };
 
+  // Onfinish function to submit data to the database
   const onFinish = async (values) => {
     const data = { ...formData, ...values };
 
+    // change the data structure to match with the backend
     const updatedData = {
       ...data,
       designation: {
@@ -123,6 +166,10 @@ const FormModal = ({
     }
   };
 
+  /*
+    Form steps
+    Job information only shows when personType is employee
+   */
   const steps = [
     {
       title: "Personal Information",
@@ -143,6 +190,7 @@ const FormModal = ({
     },
   ];
 
+  // Set the steps items
   let items = steps.map((item) => ({
     key: item.title,
     title: item.title,
@@ -187,7 +235,8 @@ const FormModal = ({
               )}
               {current === items.length - 1 && (
                 <Button
-                  type="primary"
+                  color={isEditing ? "yellow" : "green"}
+                  variant="solid"
                   htmlType="submit"
                   loading={confirmLoading}
                 >

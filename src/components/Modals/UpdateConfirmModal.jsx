@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Flex, Modal, Space, Typography } from "antd";
+import { Button, Divider, Flex, Modal, Space, Typography } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
@@ -17,6 +17,7 @@ const UpdateConfirmModal = ({
   const { open, updatedValues, selectedPersonId, updatedData } =
     updateConfirmModal;
 
+  //Submit data into db
   const handleOk = async () => {
     setConfirmLoading(true);
     await updatePerson(selectedPersonId, updatedData);
@@ -32,6 +33,7 @@ const UpdateConfirmModal = ({
     closeModal();
   };
 
+  // Cancel the confirmation
   const handleCancel = () => {
     setUpdateConfirmModal({
       open: false,
@@ -43,25 +45,31 @@ const UpdateConfirmModal = ({
 
   return (
     <Modal centered open={open} closable={false} footer={null}>
-      {updatedValues && Object.keys(updatedValues).length > 0 ? (
+      {updatedValues != null && updatedValues.length > 0 ? (
         <>
           <Title level={4} style={{ textAlign: "center" }}>
             <Space>
               <InfoCircleOutlined
                 style={{ color: "yellow", fontSize: "2rem" }}
               />
-              Following data got updated!
+              Following data got changed!
             </Space>
           </Title>
-          {/* make this good */}
-          <Text>{JSON.stringify(updatedValues)}</Text>
+          <Divider />
+          {updatedValues.map((values) => (
+            <>
+              <Text>{values}</Text> <br />
+            </>
+          ))}
+          <Divider />
           <Title level={5}>Are you sure to update?</Title>
           <Flex justify="end">
             <Space>
               <Button onClick={handleCancel}>No</Button>
               <Button
                 onClick={handleOk}
-                type="primary"
+                color="yellow"
+                variant="solid"
                 loading={confirmLoading}
               >
                 Yes
@@ -73,7 +81,7 @@ const UpdateConfirmModal = ({
         <Title level={4} style={{ textAlign: "center" }}>
           <Space>
             <InfoCircleOutlined style={{ color: "green", fontSize: "2rem" }} />
-            No changes detected!
+            No changes were made!
           </Space>
           <Flex justify="end">
             <Space>
