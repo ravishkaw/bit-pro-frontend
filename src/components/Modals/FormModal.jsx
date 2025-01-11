@@ -21,6 +21,7 @@ const FormModal = ({
   closeModal,
 }) => {
   const [current, setCurrent] = useState(0);
+  const [confirmLoading, setConfirmLoading] = useState(false);
   const [formData, setFormData] = useState({});
   const [initialFormData, setInitialFormData] = useState({});
 
@@ -33,7 +34,8 @@ const FormModal = ({
 
   const [form] = Form.useForm();
 
-  const { open, isEditing, confirmLoading, selectedPerson } = modalState;
+  const { open, isEditing, selectedPerson } = modalState;
+
   /*  
     modal open and close form will be reset
     form will be populated depend on isEditing
@@ -159,9 +161,11 @@ const FormModal = ({
       //todo Change the employeeid into id to use in guest future
       showUpdateModal(updatedValues, selectedPerson.employeeId, updatedData);
     } else {
+      setConfirmLoading(true);
       await addPerson(updatedData);
       form.resetFields();
       setFormData({});
+      setConfirmLoading(false);
       closeModal();
     }
   };
@@ -235,7 +239,7 @@ const FormModal = ({
               )}
               {current === items.length - 1 && (
                 <Button
-                  color={isEditing ? "yellow" : "green"}
+                  color={isEditing ? "primary" : "green"}
                   variant="solid"
                   htmlType="submit"
                   loading={confirmLoading}

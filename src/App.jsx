@@ -8,7 +8,9 @@ const App = () => {
     <Router>
       <AppRoutes />
       <ToastContainer
-        autoClose={1500}
+        autoClose={2000}
+        hideProgressBar
+        theme="colored"
         newestOnTop
       />
     </Router>

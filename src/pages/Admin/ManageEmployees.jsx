@@ -17,7 +17,6 @@ const ManageEmployee = () => {
   const [modalState, setModalState] = useState({
     open: false,
     isEditing: false,
-    confirmLoading: false,
     selectedPerson: null,
   });
 
@@ -66,7 +65,6 @@ const ManageEmployee = () => {
     setModalState({
       open: true,
       isEditing,
-      confirmLoading: loading,
       selectedPerson: selectedEmployee,
     });
   };
@@ -75,7 +73,6 @@ const ManageEmployee = () => {
     setModalState({
       open: false,
       isEditing: false,
-      confirmLoading: false,
       selectedPerson: null,
     });
   };
@@ -111,6 +108,8 @@ const ManageEmployee = () => {
     });
   };
 
+  const dataSource = employees ? employees : [];
+
   return (
     <>
       <Row>
@@ -134,12 +133,12 @@ const ManageEmployee = () => {
               columns={columns}
               // bordered
               rowKey="empNo"
-              dataSource={employees}
+              dataSource={dataSource}
               loading={loading}
               pagination={{
                 ...paginationDetails,
                 showSizeChanger: true,
-                pageSizeOptions: ["10", "20"],
+                pageSizeOptions: ["5", "10", "20"],
               }}
               scroll={{
                 x: "max-content",
@@ -152,7 +151,7 @@ const ManageEmployee = () => {
             (loading ? (
               <SkeletonCards />
             ) : (
-              employees.map((employee) => {
+              dataSource.map((employee) => {
                 return (
                   <ManageEmployeeCard
                     key={employee.employeeId}
@@ -176,7 +175,7 @@ const ManageEmployee = () => {
             closeModal={closeFormModal}
           />
 
-          {employees.length > 0 && (
+          {dataSource.length > 0 && (
             <DeleteConfirmModal
               personType="Employee"
               deleteModal={deleteModal}
