@@ -209,6 +209,7 @@ const FormModal = ({
         title={isEditing ? `Edit ${personType}` : `Add New ${personType}`}
         open={open}
         onCancel={closeModal}
+        maskClosable={false}
         width={850}
         footer={null}
       >
@@ -224,7 +225,17 @@ const FormModal = ({
           <div style={{ marginTop: 16 }}>{steps[current].content}</div>
 
           {/* Buttons */}
-          <Flex justify="end">
+          <Flex justify="space-between">
+            <Button
+              color="default"
+              variant="dashed"
+              onClick={() => {
+                form.resetFields();
+                setCurrent(0);
+              }}
+            >
+              Reset
+            </Button>
             <Space>
               {current === 0 && (
                 <Button onClick={() => closeModal()}>Cancel</Button>
