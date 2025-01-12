@@ -157,9 +157,7 @@ const FormModal = ({
 
     if (isEditing) {
       const updatedValues = getChangedFieldValues(initialFormData, data);
-
-      //todo Change the employeeid into id to use in guest future
-      showUpdateModal(updatedValues, selectedPerson.employeeId, updatedData);
+      showUpdateModal(updatedValues, selectedPerson.id, updatedData);
     } else {
       setConfirmLoading(true);
       await addPerson(updatedData);

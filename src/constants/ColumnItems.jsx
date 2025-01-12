@@ -53,7 +53,7 @@ export const employeeColumnItems = (
           size="small"
           variant="outlined"
           onClick={() => {
-            handleView(record.employeeId);
+            handleView(record.id);
           }}
         >
           <EditOutlined />
@@ -71,7 +71,7 @@ export const employeeColumnItems = (
           <Popconfirm
             title="Restore the Employee"
             description="Are you sure to restore?"
-            onConfirm={() => restoreAnEmployee(record.employeeId)}
+            onConfirm={() => restoreAnEmployee(record.id)}
             okText="Yes"
             cancelText="No"
           >
