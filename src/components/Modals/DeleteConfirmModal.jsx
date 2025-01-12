@@ -9,7 +9,7 @@ const DeleteConfirmModal = ({ deleteModal, setDeleteModal, deletePerson }) => {
 
   const handleOk = () => {
     setConfirmLoading(true);
-    deletePerson(selectedPerson.employeeId); //!change employee id to id
+    deletePerson(selectedPerson.id);
     setConfirmLoading(false);
     setDeleteModal({ open: false, selectedPerson: null });
   };
