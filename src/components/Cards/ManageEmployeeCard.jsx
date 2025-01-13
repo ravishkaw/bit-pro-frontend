@@ -5,6 +5,7 @@ const ManageEmployeeCard = ({
   columns,
   employee,
   handleView,
+  handleEdit,
   openDeleteModal,
 }) => {
   const newColumns = columns.filter((column) => column.title !== "Actions");
@@ -12,9 +13,14 @@ const ManageEmployeeCard = ({
   return (
     <Card
       actions={[
+        <EyeOutlined
+          onClick={() => {
+            handleView(employee.id);
+          }}
+        />,
         <EditOutlined
           onClick={() => {
-            handleView(employee.employeeId);
+            handleEdit(employee.id);
           }}
         />,
         <DeleteOutlined

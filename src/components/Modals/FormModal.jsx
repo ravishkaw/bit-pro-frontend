@@ -225,17 +225,19 @@ const FormModal = ({
           <div style={{ marginTop: 16 }}>{steps[current].content}</div>
 
           {/* Buttons */}
-          <Flex justify="space-between">
-            <Button
-              color="default"
-              variant="dashed"
-              onClick={() => {
-                form.resetFields();
-                setCurrent(0);
-              }}
-            >
-              Reset
-            </Button>
+          <Flex justify={isEditing ? "end" : "space-between"}>
+            {!isEditing && (
+              <Button
+                color="default"
+                variant="dashed"
+                onClick={() => {
+                  form.resetFields();
+                  setCurrent(0);
+                }}
+              >
+                Reset
+              </Button>
+            )}
             <Space>
               {current === 0 && (
                 <Button onClick={() => closeModal()}>Cancel</Button>

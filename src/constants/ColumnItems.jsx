@@ -8,6 +8,7 @@ import {
 
 export const employeeColumnItems = (
   handleView,
+  handleEdit,
   openDeleteModal,
   restoreAnEmployee
 ) => [
@@ -51,9 +52,20 @@ export const employeeColumnItems = (
       <Space size="small">
         <Button
           size="small"
+          color="blue"
           variant="outlined"
           onClick={() => {
             handleView(record.id);
+          }}
+        >
+          <EyeOutlined />
+        </Button>
+        <Button
+          size="small"
+          color="yellow"
+          variant="outlined"
+          onClick={() => {
+            handleEdit(record.id);
           }}
         >
           <EditOutlined />
