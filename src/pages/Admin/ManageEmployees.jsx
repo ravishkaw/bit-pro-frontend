@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button, Col, Row, Table, Typography } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import dayjs from "dayjs";
 
 import { useMobileContext } from "../../contexts/MobileContext";
 
@@ -31,10 +30,6 @@ const ManageEmployee = () => {
     selectedPerson: null,
   });
 
-  const [designations, setDesignations] = useState([
-    { value: 1, label: "Staff" },
-  ]);
-
   const { isMobile } = useMobileContext();
 
   const {
@@ -47,26 +42,8 @@ const ManageEmployee = () => {
     loading,
     paginationDetails,
     setPaginationDetails,
-    getEmployeeDesignation,
+    designations,
   } = useEmployees();
-
-  useEffect(() => {
-    // Fetch designtions and format it into the options in designation
-    const fetchDesignations = async () => {
-      try {
-        const response = await getEmployeeDesignation();
-        const mappedDesignations = response.map((designation) => ({
-          value: designation.id,
-          label: designation.name,
-        }));
-        setDesignations(mappedDesignations);
-      } catch (error) {
-        console.error("Failed to fetch designations:", error);
-      }
-    };
-
-    fetchDesignations();
-  }, []);
 
   // Open form modal for add new and edit employee
   const openFormModal = (isEditing, selectedEmployee = null) => {
@@ -77,37 +54,15 @@ const ManageEmployee = () => {
     });
   };
 
-  // Close edit / add form modal
-  const closeFormModal = () => {
-    setModalState({
-      open: false,
-      isEditing: false,
-      selectedPerson: null,
-    });
-  };
-
-  // Fetch and return formatted employee
-  const oneEmployee = async (employeeid) => {
-    // Fetch employee from id
-    const employee = await loadOneEmployee(employeeid);
-    const updatedEmployee = {
-      ...employee,
-      dob: dayjs(employee.dob),
-      designation: employee.designation.id,
-      employeeStatus: employee.employeeStatus.name,
-    };
-    return updatedEmployee;
-  };
-
   // Handle view
   const handleView = async (employeeid) => {
-    const employee = await oneEmployee(employeeid);
+    const employee = await loadOneEmployee(employeeid);
     setViewModal({ open: true, selectedPerson: employee });
   };
 
   // Handle edit
   const handleEdit = async (employeeid) => {
-    const employee = await oneEmployee(employeeid);
+    const employee = await loadOneEmployee(employeeid);
     openFormModal(true, employee);
   };
 
@@ -135,9 +90,6 @@ const ManageEmployee = () => {
     });
   };
 
-  // Map the fetched employees into datasource and add empty array as a fallback
-  const dataSource = employees ? employees : [];
-
   return (
     <>
       <Row>
@@ -161,7 +113,7 @@ const ManageEmployee = () => {
               columns={columns}
               // bordered
               rowKey="empNo"
-              dataSource={dataSource}
+              dataSource={employees}
               loading={loading}
               pagination={{
                 ...paginationDetails,
@@ -180,7 +132,7 @@ const ManageEmployee = () => {
             (loading ? (
               <SkeletonCards />
             ) : (
-              dataSource.map((employee) => {
+              employees.map((employee) => {
                 return (
                   <ManageEmployeeCard
                     key={employee.id}
@@ -197,34 +149,33 @@ const ManageEmployee = () => {
             ))}
 
           {/* Add / edit form modal */}
-          {dataSource.length > 0 && (
-            <FormModal
-              personType="Employee"
-              addPerson={addAnEmployee}
-              updatePerson={updateAnEmployee}
-              designations={designations}
-              modalState={modalState}
-              closeModal={closeFormModal}
-            />
-          )}
+          <FormModal
+            personType="Employee"
+            addPerson={addAnEmployee}
+            updatePerson={updateAnEmployee}
+            designations={designations}
+            modalState={modalState}
+            setModalState={setModalState}
+          />
 
-          {/* view modal */}
-          {dataSource.length > 0 && (
-            <ViewPerson
-              personType="Employee"
-              viewModal={viewModal}
-              setViewModal={setViewModal}
-            />
-          )}
+          {employees && employees.length > 0 && (
+            <>
+              {/* View modal */}
+              <ViewPerson
+                personType="Employee"
+                viewModal={viewModal}
+                setViewModal={setViewModal}
+                handleEdit={handleEdit}
+              />
 
-          {/* Delete confirmatin form modal */}
-          {dataSource.length > 0 && (
-            <DeleteConfirmModal
-              personType="Employee"
-              deleteModal={deleteModal}
-              setDeleteModal={setDeleteModal}
-              deletePerson={deleteAnEmployee}
-            />
+              {/* Delete confirmation modal */}
+              <DeleteConfirmModal
+                personType="Employee"
+                deleteModal={deleteModal}
+                setDeleteModal={setDeleteModal}
+                deletePerson={deleteAnEmployee}
+              />
+            </>
           )}
         </Col>
       </Row>

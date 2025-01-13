@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
 
 import {
   fetchEmployees,
@@ -14,11 +15,13 @@ import { fetchAllDesignations } from "../services/designation";
 
 const useEmployees = () => {
   const [employees, setEmployees] = useState([]);
+  const [designations, setDesignations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [paginationDetails, setPaginationDetails] = useState({
     current: 1,
     pageSize: 10,
+    total: 0,
   });
 
   // Crud Operation Api
@@ -38,78 +41,7 @@ const useEmployees = () => {
       }));
       setEmployees(resp.data);
     } catch (err) {
-      setError(err.message);
-      toast.error(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadEmployees();
-  }, [paginationDetails.current, paginationDetails.pageSize]);
-
-  const loadOneEmployee = async (employeeId) => {
-    setLoading(true);
-    try {
-      const resp = await fetchOneEmployee(employeeId);
-      return resp;
-    } catch (err) {
-      setError(err.message);
-      toast.error(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const addAnEmployee = async (values) => {
-    setLoading(true);
-    try {
-      await addEmployee(values);
-      toast.success("Employee added successfully");
-      loadEmployees();
-    } catch (err) {
-      setError(err.message);
-      toast.error(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateAnEmployee = async (employeeId, values) => {
-    setLoading(true);
-    try {
-      await updateEmployee(employeeId, values);
-      toast.success("Employee updated successfully");
-      loadEmployees();
-    } catch (err) {
-      setError(err.message);
-      toast.error(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const deleteAnEmployee = async (employeeId) => {
-    setLoading(true);
-    try {
-      await deleteEmployee(employeeId);
-      toast.success("Employee deleted successfully");
-      loadEmployees();
-    } catch (err) {
-      setError(err.message);
-      toast.error(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const restoreAnEmployee = async (employeeId) => {
-    setLoading(true);
-    try {
-      await restoreEmployee(employeeId);
-      loadEmployees();
-    } catch (err) {
+      setEmployees([]);
       setError(err.message);
       toast.error(err.message);
     } finally {
@@ -119,12 +51,89 @@ const useEmployees = () => {
 
   const getEmployeeDesignation = async () => {
     try {
-      const resp = await fetchAllDesignations();
-      return resp;
+      const response = await fetchAllDesignations();
+      const mappedDesignations = response.map((designation) => ({
+        value: designation.id,
+        label: designation.name,
+      }));
+      setDesignations(mappedDesignations);
+    } catch (err) {
+      setDesignations([]);
+      setError(err.message);
+    }
+  };
+
+  useEffect(() => {
+    loadEmployees();
+  }, [paginationDetails.current, paginationDetails.pageSize]);
+
+  useEffect(() => {
+    getEmployeeDesignation();
+  }, []);
+
+  // Get one employee details
+  const loadOneEmployee = async (employeeId) => {
+    setLoading(true);
+    try {
+      const employee = await fetchOneEmployee(employeeId);
+      // format data into form shape
+      const updatedEmployee = {
+        ...employee,
+        dob: dayjs(employee.dob),
+        designation: employee.designation.id,
+        employeeStatus: employee.employeeStatus.name,
+      };
+      return updatedEmployee;
     } catch (err) {
       setError(err.message);
-      return [];
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  //Add handle api call function to handle edit add delete and restore
+  const handleApiCall = async (apiCallFn, successMessage) => {
+    setLoading(true);
+    try {
+      await apiCallFn();
+      toast.success(successMessage);
+      loadEmployees();
+    } catch (err) {
+      setError(err.message);
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Add new employee
+  const addAnEmployee = async (values) => {
+    handleApiCall(() => addEmployee(values), "Employee added successfully");
+  };
+
+  // Update an employee
+  const updateAnEmployee = async (employeeId, values) => {
+    handleApiCall(
+      () => updateEmployee(employeeId, values),
+      "Employee updated successfully"
+    );
+  };
+
+  // Delete an employee
+  const deleteAnEmployee = async (employeeId) => {
+    handleApiCall(
+      () => deleteEmployee(employeeId),
+      "Employee deleted successfully"
+    );
+  };
+
+  // Restore an employee
+  const restoreAnEmployee = async (employeeId) => {
+    handleApiCall(
+      () => restoreEmployee(employeeId),
+      "Employee restored successfully"
+    );
   };
 
   return {
@@ -138,7 +147,7 @@ const useEmployees = () => {
     error,
     getEmployeeDesignation,
     paginationDetails,
-    setPaginationDetails,
+    designations,
   };
 };
 

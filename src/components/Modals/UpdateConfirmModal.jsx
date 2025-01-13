@@ -56,10 +56,10 @@ const UpdateConfirmModal = ({
             </Space>
           </Title>
           <Divider />
-          {updatedValues.map((values) => (
-            <>
+          {updatedValues.map((values, index) => (
+            <div key={index}>
               <Text>{values}</Text> <br />
-            </>
+            </div>
           ))}
           <Divider />
           <Title level={5}>Are you sure to update?</Title>

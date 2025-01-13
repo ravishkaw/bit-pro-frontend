@@ -18,7 +18,7 @@ const FormModal = ({
   updatePerson,
   designations,
   modalState,
-  closeModal,
+  setModalState,
 }) => {
   const [current, setCurrent] = useState(0);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -59,6 +59,14 @@ const FormModal = ({
     }
   }, [open, isEditing, selectedPerson, form]);
 
+  // Close edit / add form modal
+  const closeModal = () => {
+    setModalState({
+      open: false,
+      isEditing: false,
+      selectedPerson: null,
+    });
+  };
   // Handle next button and also validate fields
   const next = async () => {
     try {
