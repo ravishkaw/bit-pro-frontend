@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import {
   Button,
   Col,
@@ -8,6 +9,7 @@ import {
   Space,
   Typography,
 } from "antd";
+import { useReactToPrint } from "react-to-print";
 
 const { Title, Text } = Typography;
 
@@ -17,6 +19,14 @@ const ViewPerson = ({ personType, viewModal, setViewModal, handleEdit }) => {
   const closeViewModal = () => {
     setViewModal({ open: false, selectedPerson: null });
   };
+
+  const contentRef = useRef(null);
+  const printFn = useReactToPrint({
+    contentRef: contentRef,
+    documentTitle: `${personType} Details`,
+    pageStyle: true,
+    copyShadowRoots: true,
+  });
 
   return (
     <>
@@ -29,7 +39,7 @@ const ViewPerson = ({ personType, viewModal, setViewModal, handleEdit }) => {
       >
         <Title level={1}>Not Finished</Title>
         <Divider />
-        <div style={contentStyle}>
+        <div ref={contentRef}>
           <Title level={5}>Personal Information</Title>
 
           <Row gutter={[16, 16]}>
@@ -120,11 +130,7 @@ const ViewPerson = ({ personType, viewModal, setViewModal, handleEdit }) => {
           </Button>
           <Space>
             <Button onClick={() => closeViewModal()}>Close</Button>
-            <Button
-              color="primary"
-              variant="solid"
-              onClick={() => window.print()}
-            >
+            <Button color="primary" variant="solid" onClick={() => printFn()}>
               Print
             </Button>
           </Space>
@@ -134,11 +140,3 @@ const ViewPerson = ({ personType, viewModal, setViewModal, handleEdit }) => {
   );
 };
 export default ViewPerson;
-
-const contentStyle = {
-  heigth: "50vh",
-  maxHeight: "50vh",
-  overflowY: "auto",
-  overflowX: "hidden",
-  scrollbarWidth: "thin",
-};

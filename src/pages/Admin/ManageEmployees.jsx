@@ -90,6 +90,10 @@ const ManageEmployee = () => {
     });
   };
 
+  const paginationEntries = () => {
+    return `Showing ${employees?.length} entries of ${paginationDetails.total} employees`;
+  };
+
   return (
     <>
       <Row>
@@ -119,6 +123,8 @@ const ManageEmployee = () => {
                 ...paginationDetails,
                 showSizeChanger: true,
                 pageSizeOptions: ["5", "10", "20"],
+                showTotal: paginationEntries,
+                position: ["bottomCenter"],
               }}
               scroll={{
                 x: "max-content",

@@ -21,6 +21,7 @@ const useEmployees = () => {
   const [paginationDetails, setPaginationDetails] = useState({
     current: 1,
     pageSize: 10,
+    total: 0,
   });
 
   // Crud Operation Api
