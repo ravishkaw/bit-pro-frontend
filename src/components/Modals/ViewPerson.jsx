@@ -10,6 +10,7 @@ import {
   Typography,
 } from "antd";
 import { useReactToPrint } from "react-to-print";
+import dayjs from "dayjs";
 
 const { Title, Text } = Typography;
 
@@ -33,94 +34,84 @@ const ViewPerson = ({ personType, viewModal, setViewModal, handleEdit }) => {
       <Modal
         title={`${personType} Details`}
         open={open}
+        onCancel={closeViewModal}
         maskClosable={false}
         width={850}
         footer={null}
       >
-        <Title level={1}>Not Finished</Title>
-        <Divider />
         <div ref={contentRef}>
           <Title level={5}>Personal Information</Title>
-
           <Row gutter={[16, 16]}>
             <Col span={12}>
-              Full Name : <Text>{selectedPerson?.fullName || "-"}</Text>
+              <b> Full Name : </b>
+              <Text>{selectedPerson?.fullName || "-"}</Text>
             </Col>
             <Col span={12}>
-              Calling Name : <Text>{selectedPerson?.callingName || "-"}</Text>
+              <b> Calling Name : </b>
+              <Text>{selectedPerson?.callingName || "-"}</Text>
             </Col>
             <Col span={12}>
-              Nationality : <Text>{selectedPerson?.nationality || "-"}</Text>
+              <b> Nationality : </b>
+              <Text>{selectedPerson?.nationality || "-"}</Text>
             </Col>
             <Col span={12}>
-              Date of Birth : <Text>{selectedPerson?.nationality || "-"}</Text>
+              <b> Gender : </b>
+              <Text>{selectedPerson?.gender || "-"}</Text>
             </Col>
             <Col span={12}>
-              Id Type : <Text>{selectedPerson?.idType || "-"}</Text>
+              <b> Date of Birth :</b>
+              <Text>
+                {dayjs(selectedPerson?.dob).format("YYYY-MM-DD") || "-"}
+              </Text>
             </Col>
             <Col span={12}>
-              Id Number : <Text>{selectedPerson?.idNumber || "-"}</Text>
+              <b> Civil Status : </b>
+              <Text>{selectedPerson?.civilStatus || "-"}</Text>
             </Col>
           </Row>
 
           <Divider />
-          <Title level={4}>Contact Information</Title>
+          <Title level={5}>Contact Information</Title>
           <Row gutter={[16, 16]}>
             <Col span={12}>
-              Full Name : <Text>{selectedPerson?.fullName || "-"}</Text>
+              Address : <Text>{selectedPerson?.address || "-"}</Text>
             </Col>
             <Col span={12}>
-              Calling Name : <Text>{selectedPerson?.callingName || "-"}</Text>
+              Mobile No : <Text>{selectedPerson?.mobileNo || "-"}</Text>
             </Col>
             <Col span={12}>
-              Nationality : <Text>{selectedPerson?.nationality || "-"}</Text>
+              Email : <Text>{selectedPerson?.email || "-"}</Text>
             </Col>
             <Col span={12}>
-              Date of Birth : <Text>{selectedPerson?.nationality || "-"}</Text>
-            </Col>
-            <Col span={12}>
-              Id Type : <Text>{selectedPerson?.idType || "-"}</Text>
-            </Col>
-            <Col span={12}>
-              Id Number : <Text>{selectedPerson?.idNumber || "-"}</Text>
+              Emergency No : <Text>{selectedPerson?.emergencyNo || "-"}</Text>
             </Col>
           </Row>
-          <Divider />
-          {personType == "Employee" && (
+
+          {personType === "Employee" && (
             <>
-              <Title level={4}>Employement Information</Title>{" "}
+              <Divider />
+              <Title level={5}>Employment Information</Title>
               <Row gutter={[16, 16]}>
                 <Col span={12}>
-                  Full Name : <Text>{selectedPerson?.fullName || "-"}</Text>
+                  Employee No : <Text>{selectedPerson?.empNo || "-"}</Text>
                 </Col>
                 <Col span={12}>
-                  Calling Name :{" "}
-                  <Text>{selectedPerson?.callingName || "-"}</Text>
+                  Designation :<Text>{selectedPerson?.designation || "-"}</Text>
                 </Col>
                 <Col span={12}>
-                  Nationality :{" "}
-                  <Text>{selectedPerson?.nationality || "-"}</Text>
-                </Col>
-                <Col span={12}>
-                  Date of Birth :{" "}
-                  <Text>{selectedPerson?.nationality || "-"}</Text>
-                </Col>
-                <Col span={12}>
-                  Id Type : <Text>{selectedPerson?.idType || "-"}</Text>
-                </Col>
-                <Col span={12}>
-                  Id Number : <Text>{selectedPerson?.idNumber || "-"}</Text>
+                  Employee Status :
+                  <Text>{selectedPerson?.employeeStatus || "-"}</Text>
                 </Col>
               </Row>
-              {JSON.stringify(selectedPerson)}
             </>
           )}
         </div>
+
         <Divider />
         <Flex justify="space-between">
           <Button
             onClick={() => {
-              handleEdit(selectedPerson.id);
+              handleEdit(selectedPerson?.id);
               closeViewModal();
             }}
             variant="outlined"
@@ -139,4 +130,5 @@ const ViewPerson = ({ personType, viewModal, setViewModal, handleEdit }) => {
     </>
   );
 };
+
 export default ViewPerson;
