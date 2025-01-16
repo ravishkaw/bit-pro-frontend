@@ -14,11 +14,13 @@ const ManageEmployeeCard = ({
     <Card
       actions={[
         <EyeOutlined
+          style={{ color: "blue" }}
           onClick={() => {
             handleView(employee.id);
           }}
         />,
         <EditOutlined
+          style={{ color: "#fadb14" }}
           onClick={() => {
             handleEdit(employee.id);
           }}
