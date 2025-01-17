@@ -2,7 +2,6 @@ import { Route, Routes } from "react-router";
 
 // Public and Shared Routes
 import Login from "../components/Auth/Login";
-import Home from "../pages/Shared/Home";
 import Unauthorized from "../pages/Shared/Unauthorized";
 import NotFound from "../pages/Shared/NotFound";
 
@@ -18,8 +17,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       {/* Public Routes */}
-      <Route index element={<Home />} />
-      <Route path="/login" element={<Login />} />
+      <Route index element={<Login />} />
 
       {/* Private Routes */}
       {/* Admin */}
@@ -33,7 +31,7 @@ const AppRoutes = () => {
           </PrivateRoute>
         }
       />
-      
+
       {/* Manager */}
       <Route
         path="/manager/*"
