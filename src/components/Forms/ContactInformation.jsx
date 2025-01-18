@@ -37,7 +37,7 @@ const ContactInformation = () => {
         </Col>
         <Col xs={24} sm={12}>
           <Form.Item
-            name="emergencyContact"
+            name="emergencyNo"
             label="Emergency Contact Number"
             rules={emergencyContactValidation}
             hasFeedback
