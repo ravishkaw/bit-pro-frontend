@@ -42,18 +42,18 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
 
   // Update relevant fields when formData changes
   useEffect(() => {
-    const { fullName, idType } = formData || {};
+    const { fullName, idType, nationality } = formData || {};
 
     setFullName(fullName || "");
     setIdType(idType || "");
+    setNationality(nationality || "");
     form.setFieldsValue({ idType });
 
     // Reset callingName field if fullName is empty
     if (!fullName) {
       form.resetFields(["callingName"]);
     }
-  }, [formData?.fullName, formData?.idType, form]);
-
+  }, [formData?.fullName, formData?.idType, formData?.nationality, form]);
 
   // Updates the calling name options based on full name input
   useEffect(() => {
@@ -257,7 +257,7 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
                 { label: "Female", value: "female" },
                 { label: "Other", value: "other" },
               ]}
-              disabled={nic && nationality === "Sri Lankan"}
+              disabled={idType == "nic" && nationality === "Sri Lankan"}
             />
           </Form.Item>
         </Col>
