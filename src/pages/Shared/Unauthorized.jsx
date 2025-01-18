@@ -1,6 +1,19 @@
+import { Button, Result } from "antd";
+import { useNavigate } from "react-router";
+
 const Unauthorized = () => {
+  const navigate = useNavigate();
   return (
-    <div>Unauthorized</div>
-  )
-}
-export default Unauthorized
+    <Result
+      status="403"
+      // title="403"
+      subTitle="Sorry, you are not authorized to access this page."
+      extra={
+        <Button type="primary" onClick={() => navigate("/")}>
+          Back Home
+        </Button>
+      }
+    />
+  );
+};
+export default Unauthorized;

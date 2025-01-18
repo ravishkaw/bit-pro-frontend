@@ -16,7 +16,7 @@ const AdminRoutes = () => {
       currentPath.startsWith("/admin") &&
       !validAdminRoutes.includes(currentPath)
     ) {
-      navigate("/admin");
+      navigate("/notfound");
     }
   }, [navigate]);
   
