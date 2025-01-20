@@ -20,13 +20,13 @@ export const getChangedFieldValues = (
       let initialDisplayValue = initialValue;
       let updatedDisplayValue = updatedValue;
 
-      if (formattedKey === "dob") {
+      if (key === "dob") {
         formattedKey = "Date of Birth";
         initialDisplayValue = dayjs(initialValue).format("YYYY-MM-DD");
         updatedDisplayValue = dayjs(updatedValue).format("YYYY-MM-DD");
       }
 
-      if (formattedKey === "gender" || formattedKey === "civil status") {
+      if (key === "gender" || key === "civilStatus") {
         initialDisplayValue = capitalize(formatText(initialValue));
         updatedDisplayValue = capitalize(formatText(updatedValue));
       }

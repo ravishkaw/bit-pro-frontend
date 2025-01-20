@@ -54,6 +54,8 @@ const UpdateConfirmModal = ({
               />
               Following data got changed!
             </Space>
+            <br />
+            <Title level={5}>from {updatedData.fullName}</Title>
           </Title>
           <Divider />
           {updatedValues.map((values, index) => (
