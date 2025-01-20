@@ -10,7 +10,8 @@ import PersonalInfo from "../Forms/PersonalInfo";
 import ContactInformation from "../Forms/ContactInformation";
 import EmploymentInformation from "../Forms/EmploymentInformation";
 import UpdateConfirmModal from "./UpdateConfirmModal";
-import dayjs from "dayjs";
+
+import { getChangedFieldValues } from "../../utils/form";
 
 const FormModal = ({
   personType,
@@ -52,7 +53,7 @@ const FormModal = ({
         setInitialFormData({});
       }
     } else {
-      form.resetFields();
+      // form.resetFields();
       setCurrent(0);
       setFormData({});
       setInitialFormData({});
@@ -93,51 +94,6 @@ const FormModal = ({
     }, 0);
   };
 
-  // in edit mode, get the changed values of the form and return it to confirmation modal
-  const getChangedFieldValues = (initialData, updatedData) => {
-    const changes = [];
-
-    Object.keys(updatedData).forEach((key) => {
-      const initialValue = initialData[key];
-      const updatedValue = updatedData[key];
-
-      if (initialValue !== updatedValue) {
-        let formattedKey = key
-          .replace(/([a-z])([A-Z])/g, "$1 $2")
-          .replace(/_/g, " ")
-          .toLowerCase();
-
-        let initialDisplayValue = initialValue;
-        let updatedDisplayValue = updatedValue;
-
-        if (formattedKey === "dob") {
-          formattedKey = "Date of Birth";
-          initialDisplayValue = dayjs(initialValue).format("YYYY-MM-DD");
-          updatedDisplayValue = dayjs(updatedValue).format("YYYY-MM-DD");
-        }
-
-        if (key === "designation") {
-          designations.forEach((designation) => {
-            if (updatedValue === designation.value) {
-              updatedDisplayValue = designation.label;
-            }
-            if (initialValue === designation.value) {
-              initialDisplayValue = designation.label;
-            }
-          });
-        }
-
-        const changeMessage = `${
-          formattedKey.charAt(0).toUpperCase() + formattedKey.slice(1)
-        } changed from "${initialDisplayValue}" to "${updatedDisplayValue}"`;
-
-        changes.push(changeMessage);
-      }
-    });
-
-    return changes;
-  };
-
   // Show the update confirmation modal with updated data
   const showUpdateModal = (updatedValues, selectedPersonId, updatedData) => {
     setUpdateConfirmModal({
@@ -164,7 +120,12 @@ const FormModal = ({
     };
 
     if (isEditing) {
-      const updatedValues = getChangedFieldValues(initialFormData, data);
+      const updatedValues = getChangedFieldValues(
+        initialFormData,
+        data,
+        personType,
+        designations
+      );
       showUpdateModal(updatedValues, selectedPerson.id, updatedData);
     } else {
       setConfirmLoading(true);
@@ -201,15 +162,15 @@ const FormModal = ({
   ];
 
   // Set the steps items
-  let items = steps.map((item) => ({
-    key: item.title,
-    title: item.title,
-    icon: item.icon,
-  }));
-
-  if (personType !== "Employee") {
-    items = items.filter((item) => item.title != "Job Information");
-  }
+  let items = steps
+    .filter(
+      (item) => personType == "Employee" || item.title != "Job Information"
+    )
+    .map((item) => ({
+      key: item.title,
+      title: item.title,
+      icon: item.icon,
+    }));
 
   return (
     <>
@@ -247,9 +208,7 @@ const FormModal = ({
               </Button>
             )}
             <Space>
-              {current === 0 && (
-                <Button onClick={() => closeModal()}>Cancel</Button>
-              )}
+              {current === 0 && <Button onClick={closeModal}>Cancel</Button>}
               {current > 0 && <Button onClick={prev}>Previous</Button>}
               {current < items.length - 1 && (
                 <Button type="primary" onClick={next}>
