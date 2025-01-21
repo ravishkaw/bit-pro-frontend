@@ -1,8 +1,14 @@
-import { Layout } from "antd";
-import { useMobileContext } from "../../../contexts/MobileContext";
+import { Button, Col, Layout, Row } from "antd";
+import { LogoutOutlined } from "@ant-design/icons";
+
 import SiderContent from "./SiderContent";
+import companyLogo from "../../../assets/logo.png";
+
+import { useMobileContext } from "../../../contexts/MobileContext";
+import { useAuth } from "../../../contexts/AuthContext";
 
 const AppSider = () => {
+  const { logout } = useAuth();
   const { collapsed } = useMobileContext();
 
   return (
@@ -14,7 +20,23 @@ const AppSider = () => {
       collapsedWidth="0"
       width={250}
     >
-      <SiderContent />
+      <Row justify="center" align="middle" gutter={[0, 24]}>
+        <Col span={24}>
+          <img
+            src={companyLogo}
+            alt="Company Logo"
+            style={{ height: "200px", width: "100%" }}
+          />
+        </Col>
+        <Col span={24}>
+          <SiderContent />
+        </Col>
+        <Col>
+          <Button type="text" onClick={logout} aria-label="Log out">
+            <LogoutOutlined style={{ fontSize: "1.5rem" }} /> Log Out
+          </Button>
+        </Col>
+      </Row>
     </Layout.Sider>
   );
 };

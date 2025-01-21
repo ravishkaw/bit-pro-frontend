@@ -1,10 +1,16 @@
-import { Layout, Button, Row, Col } from "antd";
-import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
+import { Layout, Button, Row, Col, Badge, Avatar, Space } from "antd";
+import {
+  MenuUnfoldOutlined,
+  MenuFoldOutlined,
+  BellOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
+
 import { useAuth } from "../../../contexts/AuthContext";
 import { useMobileContext } from "../../../contexts/MobileContext";
 
 const AppHeader = () => {
-  const { logout } = useAuth();
+  const { user } = useAuth();
   const { collapsed, setCollapsed } = useMobileContext();
 
   return (
@@ -22,13 +28,29 @@ const AppHeader = () => {
             }}
           />
         </Col>
+        <Col></Col>
         <Col>
-          <h3>Villa Water Lilly</h3>
-        </Col>
-        <Col>
-          <Button type="primary" onClick={() => logout()}>
-            Logout
-          </Button>
+          <Space size="large" align="center">
+            <Badge count={5} size="small">
+              <BellOutlined
+                style={{
+                  fontSize: "1.25rem",
+                  lineHeight: "1.25rem",
+                  verticalAlign: "middle",
+                }}
+                aria-label="Notifications"
+              />
+            </Badge>
+            <Space size="small" align="center">
+              <Avatar
+                style={{ width: "40px", height: "40px" }}
+                src="https://api.dicebear.com/7.x/miniavs/svg?seed=8"
+                icon={<UserOutlined />}
+                alt="User Avatar"
+              />
+              <span>Good morning, {user.name}</span>
+            </Space>
+          </Space>
         </Col>
       </Row>
     </Layout.Header>
