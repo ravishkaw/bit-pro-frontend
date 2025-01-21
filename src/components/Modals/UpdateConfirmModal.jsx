@@ -52,10 +52,10 @@ const UpdateConfirmModal = ({
               <InfoCircleOutlined
                 style={{ color: "yellow", fontSize: "2rem" }}
               />
-              Following data got changed!
+              Following data got changed
             </Space>
             <br />
-            <Title level={5}>from {updatedData.fullName}</Title>
+            <Text level={5}>from {updatedData.fullName}</Text>
           </Title>
           <Divider />
           {updatedValues.map((values, index) => (

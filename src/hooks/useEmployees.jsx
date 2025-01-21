@@ -80,7 +80,6 @@ const useEmployees = () => {
       const updatedEmployee = {
         ...employee,
         dob: dayjs(employee.dob),
-        designation: employee.designation.id,
         employeeStatus: employee.employeeStatus.name,
       };
       return updatedEmployee;

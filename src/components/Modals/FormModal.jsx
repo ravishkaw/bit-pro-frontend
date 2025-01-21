@@ -44,9 +44,13 @@ const FormModal = ({
   useEffect(() => {
     if (open) {
       if (isEditing && selectedPerson) {
-        setFormData(selectedPerson);
-        setInitialFormData(selectedPerson);
-        form.setFieldsValue(selectedPerson);
+        const updatedPerson = {
+          ...selectedPerson,
+          designation: selectedPerson.designation.id,
+        };
+        setFormData(updatedPerson);
+        setInitialFormData(updatedPerson);
+        form.setFieldsValue(updatedPerson);
       } else {
         form.resetFields();
         setFormData({});

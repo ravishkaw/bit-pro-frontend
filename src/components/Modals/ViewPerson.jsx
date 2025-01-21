@@ -1,18 +1,18 @@
 import { useRef } from "react";
 import {
   Button,
-  Col,
+  Descriptions,
   Divider,
   Flex,
   Modal,
-  Row,
   Space,
   Typography,
 } from "antd";
 import { useReactToPrint } from "react-to-print";
 import dayjs from "dayjs";
+import { capitalize, formatText } from "../../utils/textUtils";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const ViewPerson = ({ personType, viewModal, setViewModal, handleEdit }) => {
   const { open, selectedPerson } = viewModal;
@@ -24,15 +24,67 @@ const ViewPerson = ({ personType, viewModal, setViewModal, handleEdit }) => {
   const contentRef = useRef(null);
   const printFn = useReactToPrint({
     contentRef: contentRef,
-    documentTitle: `${personType} Details`,
     pageStyle: true,
-    copyShadowRoots: true,
   });
+
+  const personalInfo = [
+    { key: "1", label: "Full Name", value: selectedPerson?.fullName },
+    { key: "2", label: "Calling Name", value: selectedPerson?.callingName },
+    { key: "3", label: "Nationality", value: selectedPerson?.nationality },
+    {
+      key: "4",
+      label: "Gender",
+      value: selectedPerson && capitalize(formatText(selectedPerson?.gender)),
+    },
+    {
+      key: "5",
+      label: "Date of Birth",
+      value: selectedPerson?.dob
+        ? dayjs(selectedPerson.dob).format("YYYY-MM-DD")
+        : null,
+    },
+    {
+      key: "6",
+      label: "Civil Status",
+      value:
+        selectedPerson && capitalize(formatText(selectedPerson?.civilStatus)),
+    },
+  ];
+
+  const contactInfo = [
+    { key: "1", label: "Address", value: selectedPerson?.address },
+    { key: "2", label: "Mobile No", value: selectedPerson?.mobileNo },
+    { key: "3", label: "Email", value: selectedPerson?.email },
+    { key: "4", label: "Emergency No", value: selectedPerson?.emergencyNo },
+  ];
+
+  const employmentInfo = [
+    { key: "1", label: "Employee No", value: selectedPerson?.empNo },
+    {
+      key: "2",
+      label: "Designation",
+      value: selectedPerson?.designation?.name,
+    },
+    {
+      key: "3",
+      label: "Employee Status",
+      value: selectedPerson?.employeeStatus,
+    },
+  ];
+
+  const renderDescriptions = (title, data) => (
+    <Descriptions title={title}>
+      {data.map(({ key, label, value }) => (
+        <Descriptions.Item key={key} label={label}>
+          {value ? value : "-"}
+        </Descriptions.Item>
+      ))}
+    </Descriptions>
+  );
 
   return (
     <>
       <Modal
-        title={`${personType} Details`}
         open={open}
         onCancel={closeViewModal}
         maskClosable={false}
@@ -40,69 +92,16 @@ const ViewPerson = ({ personType, viewModal, setViewModal, handleEdit }) => {
         footer={null}
       >
         <div ref={contentRef}>
-          <Title level={5}>Personal Information</Title>
-          <Row gutter={[16, 16]}>
-            <Col span={12}>
-              <b> Full Name : </b>
-              <Text>{selectedPerson?.fullName || "-"}</Text>
-            </Col>
-            <Col span={12}>
-              <b> Calling Name : </b>
-              <Text>{selectedPerson?.callingName || "-"}</Text>
-            </Col>
-            <Col span={12}>
-              <b> Nationality : </b>
-              <Text>{selectedPerson?.nationality || "-"}</Text>
-            </Col>
-            <Col span={12}>
-              <b> Gender : </b>
-              <Text>{selectedPerson?.gender || "-"}</Text>
-            </Col>
-            <Col span={12}>
-              <b> Date of Birth :</b>
-              <Text>
-                {dayjs(selectedPerson?.dob).format("YYYY-MM-DD") || "-"}
-              </Text>
-            </Col>
-            <Col span={12}>
-              <b> Civil Status : </b>
-              <Text>{selectedPerson?.civilStatus || "-"}</Text>
-            </Col>
-          </Row>
-
+          <Title level={3}>{`${personType} Details`}</Title>
           <Divider />
-          <Title level={5}>Contact Information</Title>
-          <Row gutter={[16, 16]}>
-            <Col span={12}>
-              Address : <Text>{selectedPerson?.address || "-"}</Text>
-            </Col>
-            <Col span={12}>
-              Mobile No : <Text>{selectedPerson?.mobileNo || "-"}</Text>
-            </Col>
-            <Col span={12}>
-              Email : <Text>{selectedPerson?.email || "-"}</Text>
-            </Col>
-            <Col span={12}>
-              Emergency No : <Text>{selectedPerson?.emergencyNo || "-"}</Text>
-            </Col>
-          </Row>
+          {renderDescriptions("Personal Information", personalInfo)}
+          <Divider />
+          {renderDescriptions("Contact Information", contactInfo)}
 
           {personType === "Employee" && (
             <>
               <Divider />
-              <Title level={5}>Employment Information</Title>
-              <Row gutter={[16, 16]}>
-                <Col span={12}>
-                  Employee No : <Text>{selectedPerson?.empNo || "-"}</Text>
-                </Col>
-                <Col span={12}>
-                  Designation :<Text>{selectedPerson?.designation || "-"}</Text>
-                </Col>
-                <Col span={12}>
-                  Employee Status :
-                  <Text>{selectedPerson?.employeeStatus || "-"}</Text>
-                </Col>
-              </Row>
+              {renderDescriptions("Employment Information", employmentInfo)}
             </>
           )}
         </div>
