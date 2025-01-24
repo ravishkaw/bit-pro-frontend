@@ -10,6 +10,7 @@ import {
 } from "antd";
 import { useReactToPrint } from "react-to-print";
 import dayjs from "dayjs";
+
 import { capitalize, formatText } from "../../utils/textUtils";
 
 const { Title } = Typography;
@@ -92,7 +93,9 @@ const ViewPerson = ({ personType, viewModal, setViewModal, handleEdit }) => {
         footer={null}
       >
         <div ref={contentRef}>
-          <Title level={3}>{`${personType} Details`}</Title>
+          <Title
+            level={3}
+          >{`${personType} Details - ${selectedPerson?.fullName}`}</Title>
           <Divider />
           {renderDescriptions("Personal Information", personalInfo)}
           <Divider />

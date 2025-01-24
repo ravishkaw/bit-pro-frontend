@@ -90,8 +90,8 @@ const ManageEmployee = () => {
     });
   };
 
-  const paginationEntries = () => {
-    return `Showing ${employees?.length} entries of ${paginationDetails.total} employees`;
+  const paginationEntries = (total, range) => {
+    return `Showing ${range[0]}-${range[1]} entries of ${total} employees`;
   };
 
   return (
