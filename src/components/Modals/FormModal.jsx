@@ -179,6 +179,7 @@ const FormModal = ({
   return (
     <>
       <Modal
+        key={selectedPerson?.id || "new"}
         title={isEditing ? `Edit ${personType}` : `Add New ${personType}`}
         open={open}
         onCancel={closeModal}
