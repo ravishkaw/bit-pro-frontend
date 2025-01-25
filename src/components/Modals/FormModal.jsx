@@ -72,6 +72,7 @@ const FormModal = ({
       selectedPerson: null,
     });
   };
+  
   // Handle next button and also validate fields
   const next = async () => {
     try {
@@ -179,13 +180,13 @@ const FormModal = ({
   return (
     <>
       <Modal
-        key={selectedPerson?.id || "new"}
         title={isEditing ? `Edit ${personType}` : `Add New ${personType}`}
         open={open}
         onCancel={closeModal}
         maskClosable={false}
         width={850}
         footer={null}
+        forceRender
       >
         <Form form={form} layout="vertical" labelWrap onFinish={onFinish}>
           {/* Steps */}
