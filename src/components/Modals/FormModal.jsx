@@ -57,8 +57,6 @@ const FormModal = ({
         setInitialFormData({});
       }
     } else {
-      // form.resetFields();
-      setCurrent(0);
       setFormData({});
       setInitialFormData({});
     }
@@ -72,7 +70,7 @@ const FormModal = ({
       selectedPerson: null,
     });
   };
-  
+
   // Handle next button and also validate fields
   const next = async () => {
     try {
@@ -187,6 +185,9 @@ const FormModal = ({
         width={850}
         footer={null}
         forceRender
+        afterClose={() => {
+          setCurrent(0);
+        }}
       >
         <Form form={form} layout="vertical" labelWrap onFinish={onFinish}>
           {/* Steps */}
