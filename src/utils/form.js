@@ -52,3 +52,9 @@ export const getChangedFieldValues = (
 
   return changes;
 };
+
+export const triggerFormFieldsValidation = (form) => {
+  setTimeout(() => {
+    form.validateFields();
+  }, 0);
+};

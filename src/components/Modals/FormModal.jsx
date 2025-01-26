@@ -11,7 +11,10 @@ import ContactInformation from "../Forms/ContactInformation";
 import EmploymentInformation from "../Forms/EmploymentInformation";
 import UpdateConfirmModal from "./UpdateConfirmModal";
 
-import { getChangedFieldValues } from "../../utils/form";
+import {
+  getChangedFieldValues,
+  triggerFormFieldsValidation,
+} from "../../utils/form";
 
 const FormModal = ({
   personType,
@@ -42,21 +45,17 @@ const FormModal = ({
     form will be populated depend on isEditing
    */
   useEffect(() => {
-    if (open) {
-      if (isEditing && selectedPerson) {
-        const updatedPerson = {
-          ...selectedPerson,
-          designation: selectedPerson.designation.id,
-        };
-        setFormData(updatedPerson);
-        setInitialFormData(updatedPerson);
-        form.setFieldsValue(updatedPerson);
-      } else {
-        form.resetFields();
-        setFormData({});
-        setInitialFormData({});
-      }
-    } else {
+    if (open && isEditing && selectedPerson) {
+      const updatedPerson = {
+        ...selectedPerson,
+        designation: selectedPerson.designation.id,
+      };
+      setFormData(updatedPerson);
+      setInitialFormData(updatedPerson);
+      form.setFieldsValue(updatedPerson);
+      triggerFormFieldsValidation(form);
+    } else if (open) {
+      form.resetFields();
       setFormData({});
       setInitialFormData({});
     }
@@ -80,9 +79,7 @@ const FormModal = ({
       form.setFieldsValue(newData);
       setCurrent(current + 1);
       if (isEditing) {
-        setTimeout(() => {
-          form.validateFields();
-        }, 0);
+        triggerFormFieldsValidation(form);
       }
     } catch (error) {
       console.log("Validation Failed:", error);
@@ -92,9 +89,7 @@ const FormModal = ({
   // handle previous button also validate previous page to show feedback
   const prev = () => {
     setCurrent(current - 1);
-    setTimeout(() => {
-      form.validateFields();
-    }, 0);
+    triggerFormFieldsValidation(form);
   };
 
   // Show the update confirmation modal with updated data
@@ -140,6 +135,12 @@ const FormModal = ({
     }
   };
 
+  const afterModalClose = () => {
+    setCurrent(0);
+    setFormData({});
+    setInitialFormData({});
+  };
+
   /*
     Form steps
     Job information only shows when personType is employee
@@ -180,14 +181,12 @@ const FormModal = ({
       <Modal
         title={isEditing ? `Edit ${personType}` : `Add New ${personType}`}
         open={open}
-        onCancel={closeModal}
-        maskClosable={false}
         width={850}
         footer={null}
-        forceRender
-        afterClose={() => {
-          setCurrent(0);
-        }}
+        maskClosable={false}
+        onCancel={closeModal}
+        afterClose={afterModalClose}
+        destroyOnClose
       >
         <Form form={form} layout="vertical" labelWrap onFinish={onFinish}>
           {/* Steps */}
