@@ -238,7 +238,6 @@ const FormModal = ({
 
       {selectedPerson && (
         <UpdateConfirmModal
-          personType="Employee"
           updatePerson={updatePerson}
           updateConfirmModal={updateConfirmModal}
           setUpdateConfirmModal={setUpdateConfirmModal}
