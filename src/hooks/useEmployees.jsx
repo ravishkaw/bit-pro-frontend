@@ -21,6 +21,8 @@ const useEmployees = () => {
   const [paginationDetails, setPaginationDetails] = useState({
     current: 1,
     pageSize: 10,
+    sortBy: "empNo",
+    sortOrder: "descend",
     total: 0,
   });
 
@@ -31,11 +33,11 @@ const useEmployees = () => {
       // Fetch employees page starts with 0 but in antd starts with 1
       const resp = await fetchEmployees(
         paginationDetails.current - 1,
-        paginationDetails.pageSize
-        // !Add these with table sorter
-        // sortBy,
-        // sortOrder
+        paginationDetails.pageSize,
+        paginationDetails.sortBy,
+        paginationDetails.sortOrder
       );
+
       setEmployees(resp.data);
       setPaginationDetails((prev) => ({
         ...prev,
@@ -67,7 +69,12 @@ const useEmployees = () => {
 
   useEffect(() => {
     loadEmployees();
-  }, [paginationDetails.current, paginationDetails.pageSize]);
+  }, [
+    paginationDetails.current,
+    paginationDetails.pageSize,
+    paginationDetails.sortBy,
+    paginationDetails.sortOrder,
+  ]);
 
   useEffect(() => {
     getEmployeeDesignation();

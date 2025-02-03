@@ -15,16 +15,18 @@ export const employeeColumnItems = (
   {
     title: "Employee No",
     dataIndex: "empNo",
-    // fixed: "left",
+    sorter: true,
   },
   {
     title: "Full Name",
     dataIndex: "fullName",
+    sorter: true,
     fixed: "left",
   },
   {
     title: "Calling Name",
     dataIndex: "callingName",
+    sorter: true,
   },
   {
     title: "Phone",
@@ -37,11 +39,13 @@ export const employeeColumnItems = (
   {
     title: "Designation",
     dataIndex: "designation",
+    sorter: true,
     render: (_, record) => record.designation?.name || "N/A",
   },
   {
     title: "Status",
     dataIndex: "employeeStatus",
+    sorter: true,
     render: (_, record) => record.employeeStatus?.name || "N/A",
   },
   {

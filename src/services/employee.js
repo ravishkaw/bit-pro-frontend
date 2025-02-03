@@ -7,13 +7,23 @@ const EMPLOYEE_BASE_URL = `${BASE_URL}/employee`;
 export const fetchEmployees = async (
   pageNumber,
   pageSize,
-  sortBy = "empNo",
-  sortOrder = "desc"
+  sortBy,
+  sortOrder
 ) => {
   try {
-    const response = await axios.get(
-      `${EMPLOYEE_BASE_URL}/get-all?pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=${sortBy}&sortOrder=${sortOrder}`
-    );
+    const response = await axios.get(`${EMPLOYEE_BASE_URL}/get-all`, {
+      params: {
+        pageNumber,
+        pageSize,
+        sortBy: sortBy ? sortBy : "empNo",
+        sortOrder: sortOrder
+          ? sortOrder == "descend"
+            ? "desc"
+            : "asc"
+          : "desc",
+      },
+    });
+
     return response.data;
   } catch (error) {
     console.error("Error fetching employees:", error);

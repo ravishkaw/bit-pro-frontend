@@ -25,13 +25,15 @@ const ProfileTableCard = ({
   };
 
   // Handle the pagination details and page size
-  const handlePageChange = (pagination) => {
+  const handlePageChange = (pagination, filters, sorter) => {
     const isPageSizeChanged =
       pagination.pageSize !== paginationDetails.pageSize;
 
     setPaginationDetails({
       current: isPageSizeChanged ? 1 : pagination.current,
       pageSize: pagination.pageSize,
+      sortBy: sorter.field,
+      sortOrder: sorter.order,
     });
     window.scrollTo(top);
   };
