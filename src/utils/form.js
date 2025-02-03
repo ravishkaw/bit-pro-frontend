@@ -31,7 +31,7 @@ export const getChangedFieldValues = (
         updatedDisplayValue = capitalize(formatText(updatedValue));
       }
 
-      if (personType === "Employee" && key === "designation") {
+      if (personType === "employee" && key === "designation") {
         designations.forEach((designation) => {
           if (updatedValue === designation.value) {
             updatedDisplayValue = designation.label;

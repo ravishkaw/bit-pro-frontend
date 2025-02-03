@@ -3,7 +3,7 @@ import axios from "axios";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const EMPLOYEE_BASE_URL = `${BASE_URL}/employee`;
 
-// Fetch All employee Details From The DB
+// Fetch All employee Details From The DB with pagination
 export const fetchEmployees = async (
   pageNumber,
   pageSize,
@@ -12,9 +12,20 @@ export const fetchEmployees = async (
 ) => {
   try {
     const response = await axios.get(
-      `${EMPLOYEE_BASE_URL}/employees?pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=${sortBy}&sortOrder=${sortOrder}`
+      `${EMPLOYEE_BASE_URL}/get-all?pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=${sortBy}&sortOrder=${sortOrder}`
     );
     return response.data;
+  } catch (error) {
+    console.error("Error fetching employees:", error);
+    throw error;
+  }
+};
+
+// Fetch All employee Details From The DB without pagination
+export const fetchEmployeesNoPagination = async () => {
+  try {
+    const response = await axios.get(`${EMPLOYEE_BASE_URL}/get-all-no-params`);
+    return response;
   } catch (error) {
     console.error("Error fetching employees:", error);
     throw error;

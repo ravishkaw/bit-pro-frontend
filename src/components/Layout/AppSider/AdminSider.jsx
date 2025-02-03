@@ -1,6 +1,6 @@
 import { Menu } from "antd";
 import { useNavigate } from "react-router";
-import { AdminSiderItems } from "../../../constants/SiderItems";
+import { AdminSiderItems } from "./SiderItems";
 import { useEffect, useState } from "react";
 
 const AdminSider = () => {

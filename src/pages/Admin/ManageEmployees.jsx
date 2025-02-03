@@ -1,7 +1,7 @@
 import { Button, Col, Row, Typography } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
-import { employeeColumnItems } from "../../constants/ColumnItems";
+import { employeeColumnItems } from "../../components/DataDisplay/Table/ColumnItems";
 
 import useEmployees from "../../hooks/useEmployees";
 import useProfileModalStates from "../../hooks/useProfileModalStates";
@@ -28,7 +28,7 @@ const ManageEmployee = () => {
     restoreAnEmployee,
     loading,
     paginationDetails,
-    handlePageChange,
+    setPaginationDetails,
     designations,
   } = useEmployees();
 
@@ -124,7 +124,7 @@ const ManageEmployee = () => {
             dataSource={employees}
             loading={loading}
             paginationDetails={paginationDetails}
-            handlePageChange={handlePageChange}
+            setPaginationDetails={setPaginationDetails}
             handleView={handleView}
             handleEdit={handleEdit}
             openDeleteModal={openDeleteModal}

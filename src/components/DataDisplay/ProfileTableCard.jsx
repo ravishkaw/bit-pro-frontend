@@ -1,9 +1,9 @@
-import { Table } from "antd";
+import { Pagination, Table } from "antd";
 
 import { useMobileContext } from "../../contexts/MobileContext";
 
-import SkeletonCards from "../../components/Cards/SkeletonCards";
-import ProfileCard from "../Cards/ProfileCard";
+import SkeletonCards from "./Cards/SkeletonCards";
+import ProfileCard from "./Cards/ProfileCard";
 
 const ProfileTableCard = ({
   personType,
@@ -12,7 +12,7 @@ const ProfileTableCard = ({
   dataSource,
   loading,
   paginationDetails,
-  handlePageChange,
+  setPaginationDetails,
   handleView,
   handleEdit,
   openDeleteModal,
@@ -22,6 +22,27 @@ const ProfileTableCard = ({
 
   const paginationEntries = (total, range) => {
     return `Showing ${range[0]}-${range[1]} entries of ${total} employees`;
+  };
+
+  // Handle the pagination details and page size
+  const handlePageChange = (pagination) => {
+    const isPageSizeChanged =
+      pagination.pageSize !== paginationDetails.pageSize;
+
+    setPaginationDetails({
+      current: isPageSizeChanged ? 1 : pagination.current,
+      pageSize: pagination.pageSize,
+    });
+    window.scrollTo(top);
+  };
+
+  const handleCardPageChange = (page, pageSize) => {
+    setPaginationDetails({
+      ...paginationDetails,
+      current: page,
+      pageSize: pageSize,
+    });
+    window.scrollTo(top);
   };
 
   //Render Table or a Card Depend on Screen Size Breakpoint : 768px
@@ -50,20 +71,29 @@ const ProfileTableCard = ({
   return loading ? (
     <SkeletonCards />
   ) : (
-    dataSource.map((data) => {
-      return (
-        <ProfileCard
-          key={data.id}
-          personType={personType}
-          columns={columns}
-          data={data}
-          handleView={handleView}
-          handleEdit={handleEdit}
-          openDeleteModal={openDeleteModal}
-          restorePerson={restorePerson}
-        />
-      );
-    })
+    <>
+      {dataSource.map((data) => {
+        return (
+          <ProfileCard
+            key={data.id}
+            personType={personType}
+            columns={columns}
+            data={data}
+            handleView={handleView}
+            handleEdit={handleEdit}
+            openDeleteModal={openDeleteModal}
+            restorePerson={restorePerson}
+          />
+        );
+      })}
+      <Pagination
+        total={paginationDetails.total}
+        showSizeChanger
+        pageSizeOptions={["5", "10", "20"]}
+        onChange={handleCardPageChange}
+        align="center"
+      />
+    </>
   );
 };
 

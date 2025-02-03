@@ -25,6 +25,7 @@ const useEmployees = () => {
   });
 
   // Crud Operation Api
+  // Load all employees and employees with pagination details
   const loadEmployees = async () => {
     try {
       // Fetch employees page starts with 0 but in antd starts with 1
@@ -35,11 +36,11 @@ const useEmployees = () => {
         // sortBy,
         // sortOrder
       );
+      setEmployees(resp.data);
       setPaginationDetails((prev) => ({
         ...prev,
         total: resp.totalElements,
       }));
-      setEmployees(resp.data);
     } catch (err) {
       setEmployees([]);
       setError(err.message);
@@ -49,6 +50,7 @@ const useEmployees = () => {
     }
   };
 
+  // Fetch employee designations
   const getEmployeeDesignation = async () => {
     try {
       const response = await fetchAllDesignations();
@@ -108,14 +110,17 @@ const useEmployees = () => {
 
   // Add new employee
   const addAnEmployee = async (values) => {
-    handleApiCall(() => addEmployee(values), "Employee added successfully");
+    handleApiCall(
+      () => addEmployee(values),
+      `Employee ${values?.fullName} added successfully`
+    );
   };
 
   // Update an employee
   const updateAnEmployee = async (employeeId, values) => {
     handleApiCall(
       () => updateEmployee(employeeId, values),
-      "Employee updated successfully"
+      `Employee ${values?.fullName} updated successfully`
     );
   };
 
@@ -123,7 +128,7 @@ const useEmployees = () => {
   const deleteAnEmployee = async (employeeId) => {
     handleApiCall(
       () => deleteEmployee(employeeId),
-      "Employee deleted successfully"
+      `Employee with employee id ${employeeId} deleted successfully`
     );
   };
 
@@ -131,19 +136,8 @@ const useEmployees = () => {
   const restoreAnEmployee = async (employeeId) => {
     handleApiCall(
       () => restoreEmployee(employeeId),
-      "Employee restored successfully"
+      `Employee with employee id ${employeeId} restored successfully`
     );
-  };
-
-  // Handle the pagination details and page size
-  const handlePageChange = (pagination) => {
-    const isPageSizeChanged =
-      pagination.pageSize !== paginationDetails.pageSize;
-
-    setPaginationDetails({
-      current: isPageSizeChanged ? 1 : pagination.current,
-      pageSize: pagination.pageSize,
-    });
   };
 
   return {
@@ -157,7 +151,7 @@ const useEmployees = () => {
     error,
     designations,
     paginationDetails,
-    handlePageChange,
+    setPaginationDetails,
   };
 };
 
