@@ -68,5 +68,4 @@ const siderStyle = {
   bottom: 0,
   overflow: "auto",
   scrollbarWidth: "thin",
-  scrollbarGutter: "stable",
 };
