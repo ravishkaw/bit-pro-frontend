@@ -90,12 +90,11 @@ const ViewPerson = ({ personType, viewModal, setViewModal, handleEdit }) => {
         onCancel={closeViewModal}
         maskClosable={false}
         width={850}
-        footer={null}
-      >
+        footer={null}>
         <div ref={contentRef}>
-          <Title
-            level={3}
-          >{`${personType} Details - ${selectedPerson?.fullName}`}</Title>
+          <Title level={3}>{`${capitalize(personType)} Details - ${
+            selectedPerson?.fullName
+          }`}</Title>
           <Divider />
           {renderDescriptions("Personal Information", personalInfo)}
           <Divider />
@@ -117,8 +116,7 @@ const ViewPerson = ({ personType, viewModal, setViewModal, handleEdit }) => {
               closeViewModal();
             }}
             variant="outlined"
-            color="primary"
-          >
+            color="primary">
             Edit
           </Button>
           <Space>
