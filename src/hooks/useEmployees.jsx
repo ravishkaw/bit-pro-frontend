@@ -10,7 +10,6 @@ import {
   deleteEmployee,
   restoreEmployee,
 } from "../services/employee";
-
 import { fetchAllDesignations } from "../services/designation";
 
 const useEmployees = () => {
@@ -18,6 +17,7 @@ const useEmployees = () => {
   const [designations, setDesignations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   const [paginationDetails, setPaginationDetails] = useState({
     current: 1,
     pageSize: 10,
@@ -135,6 +135,17 @@ const useEmployees = () => {
     );
   };
 
+  // Handle the pagination details and page size
+  const handlePageChange = (pagination) => {
+    const isPageSizeChanged =
+      pagination.pageSize !== paginationDetails.pageSize;
+
+    setPaginationDetails({
+      current: isPageSizeChanged ? 1 : pagination.current,
+      pageSize: pagination.pageSize,
+    });
+  };
+
   return {
     employees,
     loadOneEmployee,
@@ -146,7 +157,7 @@ const useEmployees = () => {
     error,
     designations,
     paginationDetails,
-    setPaginationDetails,
+    handlePageChange,
   };
 };
 

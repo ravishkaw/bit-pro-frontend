@@ -1,37 +1,24 @@
-import { useState } from "react";
-import { Button, Col, Row, Table, Typography } from "antd";
+import { Button, Col, Row, Typography } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
+
+import { employeeColumnItems } from "../../constants/ColumnItems";
+
+import useEmployees from "../../hooks/useEmployees";
+import useProfileModalStates from "../../hooks/useProfileModalStates";
 
 import { useMobileContext } from "../../contexts/MobileContext";
 
-import { employeeColumnItems } from "../../constants/ColumnItems";
-import useEmployees from "../../hooks/useEmployees";
+import ProfileTableCard from "../../components/DataDisplay/ProfileTableCard";
 
-import ManageEmployeeCard from "../../components/Cards/ManageEmployeeCard";
-import FormModal from "../../components/Modals/FormModal";
-import SkeletonCards from "../../components/Cards/SkeletonCards";
-import DeleteConfirmModal from "../../components/Modals/DeleteConfirmModal";
 import ViewPerson from "../../components/Modals/ViewPerson";
+import ProfileFormModal from "../../components/Modals/ProfileFormModal";
+import DeleteConfirmModal from "../../components/Modals/DeleteConfirmModal";
+import UpdateConfirmModal from "../../components/Modals/UpdateConfirmModal";
 
 const ManageEmployee = () => {
-  const [modalState, setModalState] = useState({
-    open: false,
-    isEditing: false,
-    selectedPerson: null,
-  });
-
-  const [viewModal, setViewModal] = useState({
-    open: false,
-    selectedPerson: null,
-  });
-
-  const [deleteModal, setDeleteModal] = useState({
-    open: false,
-    selectedPerson: null,
-  });
+  const personType = "employee";
 
   const { isMobile } = useMobileContext();
-
   const {
     employees,
     loadOneEmployee,
@@ -41,13 +28,24 @@ const ManageEmployee = () => {
     restoreAnEmployee,
     loading,
     paginationDetails,
-    setPaginationDetails,
+    handlePageChange,
     designations,
   } = useEmployees();
 
+  const {
+    profileFormModalState,
+    setProfileFormModalState,
+    updateConfirmModal,
+    setUpdateConfirmModal,
+    viewModal,
+    setViewModal,
+    deleteModal,
+    setDeleteModal,
+  } = useProfileModalStates();
+
   // Open form modal for add new and edit employee
-  const openFormModal = (isEditing, selectedEmployee = null) => {
-    setModalState({
+  const openProfileFormModal = (isEditing, selectedEmployee = null) => {
+    setProfileFormModalState({
       open: true,
       isEditing,
       selectedPerson: selectedEmployee,
@@ -63,15 +61,34 @@ const ManageEmployee = () => {
   // Handle edit
   const handleEdit = async (employeeid) => {
     const employee = await loadOneEmployee(employeeid);
-    openFormModal(true, employee);
+    openProfileFormModal(true, employee);
   };
 
-  // open the delete confirmation modal
+  // Open the delete confirmation modal
   const openDeleteModal = (record) => {
     setDeleteModal({ open: true, selectedPerson: record });
   };
 
-  // Table coloumns
+  // Show the update confirmation modal with updated data
+  const showUpdateModal = (updatedValues, selectedPersonId, updatedData) => {
+    setUpdateConfirmModal({
+      open: true,
+      updatedValues,
+      selectedPersonId,
+      updatedData,
+    });
+  };
+
+  // Close the form modal
+  const closeFormModal = () => {
+    setProfileFormModalState({
+      open: false,
+      isEditing: false,
+      selectedPerson: null,
+    });
+  };
+
+  // Table columns
   const columns = employeeColumnItems(
     handleView,
     handleEdit,
@@ -79,104 +96,74 @@ const ManageEmployee = () => {
     restoreAnEmployee
   );
 
-  // handle the pagination details
-  const handlePageChange = (pagination) => {
-    const isPageSizeChanged =
-      pagination.pageSize !== paginationDetails.pageSize;
-
-    setPaginationDetails({
-      current: isPageSizeChanged ? 1 : pagination.current,
-      pageSize: pagination.pageSize,
-    });
-  };
-
-  const paginationEntries = (total, range) => {
-    return `Showing ${range[0]}-${range[1]} entries of ${total} employees`;
-  };
-
   return (
     <>
       <Row>
         <Col span={24}>
-          <Row justify="space-between">
-            <Col>
-              <Typography.Title level={2}>Manage Employees</Typography.Title>
+          <Row justify="space-between" wrap={false}>
+            <Col sm={10}>
+              <Typography.Title level={isMobile ? 4 : 3}>
+                Manage Employees
+              </Typography.Title>
             </Col>
             <Col>
-              <Button type="primary" onClick={() => openFormModal(false)}>
+              <Button
+                type="primary"
+                onClick={() => openProfileFormModal(false)}>
                 <PlusOutlined />
                 Add New Employee
               </Button>
             </Col>
           </Row>
 
-          {/* Render Table or a Card Depend on Screen Size 
-          Breakpoint : 768px */}
-          {!isMobile && (
-            <Table
-              columns={columns}
-              // bordered
-              rowKey="empNo"
-              dataSource={employees}
-              loading={loading}
-              pagination={{
-                ...paginationDetails,
-                showSizeChanger: true,
-                pageSizeOptions: ["5", "10", "20"],
-                showTotal: paginationEntries,
-                position: ["bottomCenter"],
-              }}
-              scroll={{
-                x: "max-content",
-              }}
-              onChange={handlePageChange}
-            />
-          )}
-
-          {/* Cards for mobile view instead of table */}
-          {isMobile &&
-            (loading ? (
-              <SkeletonCards />
-            ) : (
-              employees.map((employee) => {
-                return (
-                  <ManageEmployeeCard
-                    key={employee.id}
-                    loading={loading}
-                    columns={columns}
-                    employee={employee}
-                    handleView={handleView}
-                    handleEdit={handleEdit}
-                    openDeleteModal={openDeleteModal}
-                    restoreAnEmployee={restoreAnEmployee}
-                  />
-                );
-              })
-            ))}
+          {/* Data view table and card for mobile */}
+          <ProfileTableCard
+            personType={personType}
+            columns={columns}
+            rowKey="empNo"
+            dataSource={employees}
+            loading={loading}
+            paginationDetails={paginationDetails}
+            handlePageChange={handlePageChange}
+            handleView={handleView}
+            handleEdit={handleEdit}
+            openDeleteModal={openDeleteModal}
+            restorePerson={restoreAnEmployee}
+          />
 
           {/* Add / edit form modal */}
-          <FormModal
-            personType="Employee"
+          <ProfileFormModal
+            personType={personType}
             addPerson={addAnEmployee}
             updatePerson={updateAnEmployee}
             designations={designations}
-            modalState={modalState}
-            setModalState={setModalState}
+            profileFormModalState={profileFormModalState}
+            setProfileFormModalState={setProfileFormModalState}
+            showUpdateModal={showUpdateModal}
+            closeFormModal={closeFormModal}
           />
 
           {employees && employees.length > 0 && (
             <>
               {/* View modal */}
               <ViewPerson
-                personType="Employee"
+                personType={personType}
                 viewModal={viewModal}
                 setViewModal={setViewModal}
                 handleEdit={handleEdit}
               />
 
+              {/* Update confirmation modal */}
+              <UpdateConfirmModal
+                updatePerson={updateAnEmployee}
+                updateConfirmModal={updateConfirmModal}
+                setUpdateConfirmModal={setUpdateConfirmModal}
+                closeModal={closeFormModal}
+              />
+
               {/* Delete confirmation modal */}
               <DeleteConfirmModal
-                personType="Employee"
+                personType={personType}
                 deleteModal={deleteModal}
                 setDeleteModal={setDeleteModal}
                 deletePerson={deleteAnEmployee}
@@ -188,4 +175,5 @@ const ManageEmployee = () => {
     </>
   );
 };
+
 export default ManageEmployee;

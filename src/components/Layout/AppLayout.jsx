@@ -6,8 +6,12 @@ import AppSider from "./AppSider/AppSider";
 import AppHeader from "./AppHeader/AppHeader";
 import AppContent from "./AppContent/AppContent";
 import { Outlet } from "react-router";
+import { useMobileContext } from "../../contexts/MobileContext";
 
 const AppLayout = () => {
+  const { collapsed, setCollapsed, isMobile, drawerOpen, setDrawerOpen } =
+    useMobileContext();
+
   return (
     <>
       <ConfigProvider theme={colorPallete}>
@@ -15,11 +19,21 @@ const AppLayout = () => {
           hasSider
           style={{
             minHeight: "100vh",
-          }}
-        >
-          <AppSider />
+          }}>
+          <AppSider
+            isMobile={isMobile}
+            collapsed={collapsed}
+            setCollapsed={setCollapsed}
+            drawerOpen={drawerOpen}
+            setDrawerOpen={setDrawerOpen}
+          />
           <Layout>
-            <AppHeader />
+            <AppHeader
+              isMobile={isMobile}
+              collapsed={collapsed}
+              setCollapsed={setCollapsed}
+              setDrawerOpen={setDrawerOpen}
+            />
             <AppContent>
               <Outlet />
             </AppContent>

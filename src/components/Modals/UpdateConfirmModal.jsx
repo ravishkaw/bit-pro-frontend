@@ -9,8 +9,6 @@ const UpdateConfirmModal = ({
   updateConfirmModal,
   setUpdateConfirmModal,
   closeModal,
-  form,
-  setFormData,
 }) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
 
@@ -28,8 +26,6 @@ const UpdateConfirmModal = ({
       selectedPersonId: null,
       updatedData: null,
     });
-    form.resetFields();
-    setFormData({});
     closeModal();
   };
 
@@ -44,7 +40,7 @@ const UpdateConfirmModal = ({
   };
 
   return (
-    <Modal centered open={open} closable={false} footer={null}>
+    <Modal centered open={open} closable={false} footer={null} destroyOnClose>
       {updatedValues != null && updatedValues.length > 0 ? (
         <>
           <Title level={4} style={{ textAlign: "center" }}>

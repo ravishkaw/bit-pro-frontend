@@ -101,7 +101,7 @@ const ViewPerson = ({ personType, viewModal, setViewModal, handleEdit }) => {
           <Divider />
           {renderDescriptions("Contact Information", contactInfo)}
 
-          {personType === "Employee" && (
+          {personType === "employee" && (
             <>
               <Divider />
               {renderDescriptions("Employment Information", employmentInfo)}
