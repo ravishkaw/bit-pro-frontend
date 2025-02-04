@@ -1,15 +1,14 @@
-import { Button, Col, Row, Typography } from "antd";
+import { Button, Col, Flex, Row, Typography } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-
-import { employeeColumnItems } from "../../components/DataDisplay/Table/ColumnItems";
 
 import useEmployees from "../../hooks/useEmployees";
 import useProfileModalStates from "../../hooks/useProfileModalStates";
 
 import { useMobileContext } from "../../contexts/MobileContext";
 
-import ProfileTableCard from "../../components/DataDisplay/ProfileTableCard";
+import { employeeColumnItems } from "../../components/DataDisplay/Table/ColumnItems";
 
+import ProfileTableCard from "../../components/DataDisplay/ProfileTableCard";
 import ViewPerson from "../../components/Modals/ViewPerson";
 import ProfileFormModal from "../../components/Modals/ProfileFormModal";
 import DeleteConfirmModal from "../../components/Modals/DeleteConfirmModal";
@@ -100,21 +99,16 @@ const ManageEmployee = () => {
     <>
       <Row>
         <Col span={24}>
-          <Row justify="space-between" wrap={false}>
-            <Col sm={10}>
-              <Typography.Title level={isMobile ? 4 : 3}>
-                Manage Employees
-              </Typography.Title>
-            </Col>
-            <Col>
-              <Button
-                type="primary"
-                onClick={() => openProfileFormModal(false)}>
-                <PlusOutlined />
-                Add New Employee
-              </Button>
-            </Col>
-          </Row>
+          <Flex justify="space-between" align="center">
+            <Typography.Title level={isMobile ? 4 : 3}>
+              Manage Employees
+            </Typography.Title>
+
+            <Button type="primary" onClick={() => openProfileFormModal(false)}>
+              <PlusOutlined />
+              Add New Employee
+            </Button>
+          </Flex>
 
           {/* Data view table and card for mobile */}
           <ProfileTableCard

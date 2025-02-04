@@ -100,3 +100,21 @@ export const employeeColumnItems = (
     ),
   },
 ];
+
+export const userColumnItems = () => [
+  {
+    title: "Username",
+    dataIndex: "username",
+    sorter: true,
+  },
+  {
+    title: "Email",
+    dataIndex: "email",
+    sorter: true,
+  },
+  {
+    title: "Email",
+    dataIndex: "email",
+    sorter: true,
+  },
+];

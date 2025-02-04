@@ -25,9 +25,9 @@ export const AdminSiderItems = [
     icon: <IdcardOutlined />,
   },
   {
-    key: "/admin/manage-guests",
-    label: "Manage Guests",
-    icon: <TeamOutlined />,
+    key: "/admin/manage-users",
+    label: "Manage Users",
+    icon: <UserOutlined />,
   },
   {
     key: "/admin/manage-rooms",
