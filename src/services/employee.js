@@ -31,11 +31,13 @@ export const fetchEmployees = async (
   }
 };
 
-// Fetch All employee Details From The DB without pagination
-export const fetchEmployeesNoPagination = async () => {
+// Fetch All employee Details without user accounts
+export const fetchEmployeesWithoutUserAccounts = async () => {
   try {
-    const response = await axios.get(`${EMPLOYEE_BASE_URL}/get-all-no-params`);
-    return response;
+    const response = await axios.get(
+      `${EMPLOYEE_BASE_URL}/get-without-user-accounts`
+    );
+    return response.data;
   } catch (error) {
     console.error("Error fetching employees:", error);
     throw error;

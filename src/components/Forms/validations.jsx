@@ -110,4 +110,32 @@ export const formValidations = {
         " Note can contain letters, numbers, and punctuation, and must be between 1 and 500 characters long",
     },
   ],
+
+  usernameValidation: [
+    { required: true, message: "Please input your password!" },
+    { min: 2, message: "Username must be at least 2 characters" },
+  ],
+
+  passwordValidation: [
+    { required: true, message: "Please input your password!" },
+    { min: 8, message: "Password must be at least 8 characters" },
+    {
+      pattern:
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
+      message:
+        "Password must contain uppercase, lowercase, number and special character",
+    },
+  ],
+
+  passwordConfirmValidation: [
+    { required: true, message: "Please confirm your password!" },
+    ({ getFieldValue }) => ({
+      validator(_, value) {
+        if (!value || getFieldValue("password") === value) {
+          return Promise.resolve();
+        }
+        return Promise.reject(new Error("The two passwords do not match!"));
+      },
+    }),
+  ],
 };

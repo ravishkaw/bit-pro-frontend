@@ -2,11 +2,11 @@ import { Button, Col, Flex, Row, Typography } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
 import useEmployees from "../../hooks/useEmployees";
-import useProfileModalStates from "../../hooks/useProfileModalStates";
+import useModalStates from "../../hooks/useModalStates";
 
 import { useMobileContext } from "../../contexts/MobileContext";
 
-import { employeeColumnItems } from "../../components/DataDisplay/Table/ColumnItems";
+import { employeeColumnItems } from "../../components/Table/EmployeeColumnItems";
 
 import ProfileTableCard from "../../components/DataDisplay/ProfileTableCard";
 import ViewPerson from "../../components/Modals/ViewPerson";
@@ -32,24 +32,18 @@ const ManageEmployee = () => {
   } = useEmployees();
 
   const {
-    profileFormModalState,
-    setProfileFormModalState,
+    formModalState,
     updateConfirmModal,
     setUpdateConfirmModal,
     viewModal,
     setViewModal,
     deleteModal,
     setDeleteModal,
-  } = useProfileModalStates();
-
-  // Open form modal for add new and edit employee
-  const openProfileFormModal = (isEditing, selectedEmployee = null) => {
-    setProfileFormModalState({
-      open: true,
-      isEditing,
-      selectedPerson: selectedEmployee,
-    });
-  };
+    openFormModal,
+    closeFormModal,
+    openDeleteModal,
+    showUpdateModal,
+  } = useModalStates();
 
   // Handle view
   const handleView = async (employeeid) => {
@@ -60,31 +54,7 @@ const ManageEmployee = () => {
   // Handle edit
   const handleEdit = async (employeeid) => {
     const employee = await loadOneEmployee(employeeid);
-    openProfileFormModal(true, employee);
-  };
-
-  // Open the delete confirmation modal
-  const openDeleteModal = (record) => {
-    setDeleteModal({ open: true, selectedPerson: record });
-  };
-
-  // Show the update confirmation modal with updated data
-  const showUpdateModal = (updatedValues, selectedPersonId, updatedData) => {
-    setUpdateConfirmModal({
-      open: true,
-      updatedValues,
-      selectedPersonId,
-      updatedData,
-    });
-  };
-
-  // Close the form modal
-  const closeFormModal = () => {
-    setProfileFormModalState({
-      open: false,
-      isEditing: false,
-      selectedPerson: null,
-    });
+    openFormModal(true, employee);
   };
 
   // Table columns
@@ -99,12 +69,12 @@ const ManageEmployee = () => {
     <>
       <Row>
         <Col span={24}>
-          <Flex justify="space-between" align="center">
+          <Flex justify="space-between">
             <Typography.Title level={isMobile ? 4 : 3}>
               Manage Employees
             </Typography.Title>
 
-            <Button type="primary" onClick={() => openProfileFormModal(false)}>
+            <Button type="primary" onClick={() => openFormModal(false)}>
               <PlusOutlined />
               Add New Employee
             </Button>
@@ -131,8 +101,7 @@ const ManageEmployee = () => {
             addPerson={addAnEmployee}
             updatePerson={updateAnEmployee}
             designations={designations}
-            profileFormModalState={profileFormModalState}
-            setProfileFormModalState={setProfileFormModalState}
+            formModalState={formModalState}
             showUpdateModal={showUpdateModal}
             closeFormModal={closeFormModal}
           />

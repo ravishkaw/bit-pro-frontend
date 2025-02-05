@@ -50,6 +50,11 @@ const ViewPerson = ({ personType, viewModal, setViewModal, handleEdit }) => {
       value:
         selectedPerson && capitalize(formatText(selectedPerson?.civilStatus)),
     },
+    {
+      key: "7",
+      label: "Note",
+      value: selectedPerson?.note,
+    },
   ];
 
   const contactInfo = [
@@ -90,7 +95,8 @@ const ViewPerson = ({ personType, viewModal, setViewModal, handleEdit }) => {
         onCancel={closeViewModal}
         maskClosable={false}
         width={850}
-        footer={null}>
+        footer={null}
+      >
         <div ref={contentRef}>
           <Title level={3}>{`${capitalize(personType)} Details - ${
             selectedPerson?.fullName
@@ -116,7 +122,8 @@ const ViewPerson = ({ personType, viewModal, setViewModal, handleEdit }) => {
               closeViewModal();
             }}
             variant="outlined"
-            color="primary">
+            color="primary"
+          >
             Edit
           </Button>
           <Space>

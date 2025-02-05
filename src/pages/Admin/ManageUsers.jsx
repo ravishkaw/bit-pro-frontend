@@ -1,43 +1,39 @@
-import { Col, Flex, Row, Typography, Table, Form, Input, Card } from "antd";
+import { Col, Flex, Row, Typography, Table, Button } from "antd";
 
-import { userColumnItems } from "../../components/DataDisplay/Table/ColumnItems";
+import useUsers from "../../hooks/useUsers";
+import useModalStates from "../../hooks/useModalStates";
+
+import { userColumnItems } from "../../components/Table/UsersColumnItems";
+import UserFormModal from "../../components/Modals/UserFormModal";
 
 const ManageUsers = () => {
-  const columns = userColumnItems();
+  const { loading, users } = useUsers();
 
+  const { formModalState, openFormModal, closeFormModal } = useModalStates();
+
+  const { open } = formModalState;
+
+  const columns = userColumnItems();
   return (
     <>
       <Row>
         <Col span={24}>
-          <Flex justify="space-between" align="">
+          <Flex justify="space-between">
             <Typography.Title level={3}>Manage Users</Typography.Title>
+            <Button type="primary" onClick={() => openFormModal(false)}>
+              Add new User
+            </Button>
           </Flex>
 
-          <Row gutter={[20, 20]}>
-            <Col xs={24} md={8}>
-              <Card>
-                <Form
-                  labelCol={{ span: 6 }}
-                  wrapperCol={{ span: 18 }}
-                  labelAlign="left"
-                >
-                  <Form.Item name="username" label="Username" hasFeedback>
-                    <Input placeholder="username" />
-                  </Form.Item>
+          <Table
+            rowKey="id"
+            columns={columns}
+            dataSource={users}
+            loading={loading}
+            scroll={{ x: "max-content" }}
+          />
 
-                  <Form.Item name="email" label="Email" hasFeedback>
-                    <Input
-                      placeholder="E.g., john.doe@example.com"
-                      type="email"
-                    />
-                  </Form.Item>
-                </Form>
-              </Card>
-            </Col>
-            <Col xs={24} md={16}>
-              <Table columns={columns} />
-            </Col>
-          </Row>
+          <UserFormModal open={open} closeFormModal={closeFormModal} />
         </Col>
       </Row>
     </>

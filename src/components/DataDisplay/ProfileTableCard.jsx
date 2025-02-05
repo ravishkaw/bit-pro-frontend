@@ -2,8 +2,8 @@ import { Pagination, Table } from "antd";
 
 import { useMobileContext } from "../../contexts/MobileContext";
 
-import SkeletonCards from "./Cards/SkeletonCards";
-import ProfileCard from "./Cards/ProfileCard";
+import SkeletonCards from "../Cards/SkeletonCards";
+import ProfileCard from "../Cards/ProfileCard";
 
 const ProfileTableCard = ({
   personType,

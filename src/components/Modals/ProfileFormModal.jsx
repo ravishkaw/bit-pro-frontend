@@ -19,7 +19,7 @@ const ProfileFormModal = ({
   personType,
   addPerson,
   designations,
-  profileFormModalState,
+  formModalState,
   showUpdateModal,
   closeFormModal,
 }) => {
@@ -30,7 +30,7 @@ const ProfileFormModal = ({
 
   const [form] = Form.useForm();
 
-  const { open, isEditing, selectedPerson } = profileFormModalState;
+  const { open, isEditing, selectedPerson } = formModalState;
 
   useEffect(() => {
     if (open && isEditing && selectedPerson) {

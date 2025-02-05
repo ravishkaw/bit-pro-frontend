@@ -46,7 +46,8 @@ const ProfileCard = ({
           onClick={() => openDeleteModal(data)}
         />,
       ]}
-      style={{ marginBottom: 10 }}>
+      style={{ marginBottom: 10 }}
+    >
       {newColumns.map((column, index) => {
         let value = data[column.dataIndex];
         if (
