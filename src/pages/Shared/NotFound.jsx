@@ -1,6 +1,7 @@
 import { Result, Button } from "antd";
 import { useNavigate } from "react-router";
 
+// 404 not found page
 const NotFound = () => {
   const navigate = useNavigate();
   return (
@@ -16,4 +17,5 @@ const NotFound = () => {
     />
   );
 };
+
 export default NotFound;

@@ -1,6 +1,8 @@
-import { QuestionCircleOutlined } from "@ant-design/icons";
 import { Tooltip } from "antd";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 
+// Tooltip to show with label
+// label - Form input label , title - Tooltip message
 const FormInputTooltip = ({ label, title }) => {
   return (
     <span>
@@ -11,4 +13,5 @@ const FormInputTooltip = ({ label, title }) => {
     </span>
   );
 };
+
 export default FormInputTooltip;

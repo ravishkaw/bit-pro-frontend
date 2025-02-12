@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+// Handle modal states
+// Profile Form Modal, Update Confirmation Modal, view Modal, Delete Confirmation Modal )
 const useModalStates = () => {
   // Form modal state for Add / Edit forms
   const [formModalState, setFormModalState] = useState({

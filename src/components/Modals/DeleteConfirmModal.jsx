@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Modal, Space, Typography } from "antd";
-import { InfoCircleOutlined, WarningFilled } from "@ant-design/icons";
+import { Modal, Typography } from "antd";
+import { WarningFilled } from "@ant-design/icons";
 
+// Delte confirmation modal
 const DeleteConfirmModal = ({ deleteModal, setDeleteModal, deletePerson }) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
 
@@ -35,9 +36,12 @@ const DeleteConfirmModal = ({ deleteModal, setDeleteModal, deletePerson }) => {
         <WarningFilled style={{ color: "red", fontSize: "3rem" }} />
         <br />
         <br />
-        {`Are you sure to Delete ${selectedPerson?.fullName}`}
+        {`Are you sure to Delete ${
+          selectedPerson?.fullName || selectedPerson?.username
+        }`}
       </Typography.Title>
     </Modal>
   );
 };
+
 export default DeleteConfirmModal;

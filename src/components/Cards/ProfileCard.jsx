@@ -1,6 +1,7 @@
 import { Card, Col, Row } from "antd";
 import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
 
+// Mobile card to view profile details
 const ProfileCard = ({
   personType,
   columns,
@@ -49,12 +50,13 @@ const ProfileCard = ({
       style={{ marginBottom: 10 }}
     >
       {newColumns.map((column, index) => {
+        // set data into value
         let value = data[column.dataIndex];
         if (
           column.dataIndex === "designation" ||
           column.dataIndex === "employeeStatus"
         ) {
-          value = data[column.dataIndex].name;
+          value = data[column.dataIndex].name; // designation :{id:1, name:"admin"}
         }
 
         return (

@@ -1,23 +1,32 @@
-import { Divider, Flex, Modal } from "antd";
+import { Divider, Modal } from "antd";
 import UserForm from "../Forms/UserForm";
 
-const UserFormModal = ({ open, closeFormModal }) => {
+// Modal of user form 
+const UserFormModal = ({
+  formModalState,
+  closeFormModal,
+  addAnUser,
+  updateAnUser,
+}) => {
+  const { open, isEditing, selectedPerson } = formModalState;
+
   return (
     <Modal
-      title={
-        <Flex justify="space-between">
-          <h3>System User</h3>
-          <p>Required</p>
-        </Flex>
-      }
+      title="System User"
       open={open}
       onCancel={closeFormModal}
       width={600}
-      extra="required"
       destroyOnClose
+      footer={null}
     >
       <Divider />
-      <UserForm />
+      <UserForm
+        closeFormModal={closeFormModal}
+        isEditing={isEditing}
+        selectedPerson={selectedPerson}
+        addAnUser={addAnUser}
+        updateAnUser={updateAnUser}
+      />
     </Modal>
   );
 };

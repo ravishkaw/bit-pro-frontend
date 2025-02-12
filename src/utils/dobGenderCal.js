@@ -1,3 +1,5 @@
+// Generate date of birth and gender based on nic number of srilanka
+// Date of birth can be vary from the original one!!!
 export const dobGenderCal = (nicNumber) => {
   let nicNumberString = nicNumber.toString();
   let year;

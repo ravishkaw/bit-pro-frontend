@@ -4,12 +4,12 @@ import { useMobileContext } from "../../contexts/MobileContext";
 import usePageChange from "../../hooks/usePageChange";
 
 import SkeletonCards from "../Cards/SkeletonCards";
-import ProfileCard from "../Cards/ProfileCard";
-import TableTitle from "../Table/TableTitle";
 import MobileCardSearch from "./MobileCardSearch";
+import TableTitle from "../Table/TableTitle";
+import UserCard from "../Cards/UserCard";
 
-// Table and card component of profiles
-const ProfileTableCard = ({
+// Table and card component of users
+const UserTableCard = ({
   personType,
   columns,
   rowKey,
@@ -18,15 +18,13 @@ const ProfileTableCard = ({
   paginationDetails,
   setPaginationDetails,
   openFormModal,
-  handleView,
-  handleEdit,
   openDeleteModal,
-  restorePerson,
+  handleEdit,
 }) => {
   const { isMobile } = useMobileContext();
 
   const paginationEntries = (total, range) => {
-    return `Showing ${range[0]}-${range[1]} entries of ${total} employees`;
+    return `Showing ${range[0]}-${range[1]} entries of ${total} users`;
   };
 
   const { handleCardPageChange, handlePageChange } = usePageChange(
@@ -47,11 +45,11 @@ const ProfileTableCard = ({
 
   //Render Table or a Card Depend on Screen Size Breakpoint : 768px
   if (!isMobile) {
+    // Table for desktop view
     return (
-      // Table for desktop view
       <Table
-        columns={columns}
         rowKey={rowKey}
+        columns={columns}
         dataSource={dataSource}
         loading={loading}
         title={() => (
@@ -88,20 +86,18 @@ const ProfileTableCard = ({
       {/* Card mapping */}
       {dataSource.map((data) => {
         return (
-          <ProfileCard
+          <UserCard
             key={data.id}
             personType={personType}
             columns={columns}
             data={data}
-            handleView={handleView}
-            handleEdit={handleEdit}
             openDeleteModal={openDeleteModal}
-            restorePerson={restorePerson}
+            handleEdit={handleEdit}
           />
         );
       })}
 
-      {/* pagination for mobile cards - no sorting*/}
+      {/* Pagination for mobile cards - no sorting */}
       <Pagination
         total={paginationDetails.total}
         current={paginationDetails.current}
@@ -109,11 +105,11 @@ const ProfileTableCard = ({
         showSizeChanger
         simple
         pageSizeOptions={["5", "10", "20"]}
-        onChange={handleCardPageChange}
         align="center"
+        onChange={handleCardPageChange}
       />
     </>
   );
 };
 
-export default ProfileTableCard;
+export default UserTableCard;

@@ -4,6 +4,7 @@ import { InfoCircleOutlined } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
 
+// update confirmatin modal
 const UpdateConfirmModal = ({
   updatePerson,
   updateConfirmModal,
@@ -41,6 +42,7 @@ const UpdateConfirmModal = ({
 
   return (
     <Modal centered open={open} closable={false} footer={null} destroyOnClose>
+      {/* check and show changes were made or not */}
       {updatedValues != null && updatedValues.length > 0 ? (
         <>
           <Title level={4} style={{ textAlign: "center" }}>
@@ -91,4 +93,5 @@ const UpdateConfirmModal = ({
     </Modal>
   );
 };
+
 export default UpdateConfirmModal;

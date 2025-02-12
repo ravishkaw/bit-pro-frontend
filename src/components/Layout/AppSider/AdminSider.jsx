@@ -2,13 +2,18 @@ import { Menu } from "antd";
 import { useNavigate } from "react-router";
 import { AdminSiderItems } from "./SiderItems";
 import { useEffect, useState } from "react";
+import { useHeaderTitleContext } from "../../../contexts/HeaderTitleContext";
 
+// Admin sider content
 const AdminSider = () => {
-  const navigate = useNavigate();
   const [selectedKey, setSelectedKey] = useState(location.pathname);
+  const { findLabel } = useHeaderTitleContext();
+  const navigate = useNavigate();
 
+  // sets the selected key of menu items based on url
   useEffect(() => {
     setSelectedKey(location.pathname);
+    findLabel(location.pathname, AdminSiderItems);
   }, [location.pathname]);
 
   return (
@@ -20,4 +25,5 @@ const AdminSider = () => {
     />
   );
 };
+
 export default AdminSider;

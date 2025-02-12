@@ -8,7 +8,8 @@ export const fetchEmployees = async (
   pageNumber,
   pageSize,
   sortBy,
-  sortOrder
+  sortOrder,
+  searchQuery
 ) => {
   try {
     const response = await axios.get(`${EMPLOYEE_BASE_URL}/get-all`, {
@@ -21,6 +22,7 @@ export const fetchEmployees = async (
             ? "desc"
             : "asc"
           : "desc",
+        searchQuery,
       },
     });
 

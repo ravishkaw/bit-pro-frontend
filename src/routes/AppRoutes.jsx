@@ -13,18 +13,20 @@ import RoleBasedRoutes from "./RoleBasedRoutes";
 import AdminRoutes from "../pages/Admin/Routes";
 import ManagerRoutes from "../pages/Manager/Routes";
 
+// Handle all the routes of the app
 const AppRoutes = () => {
   return (
     <Routes>
       {/* Public Routes */}
       <Route index element={<Login />} />
 
-      {/* Private Routes */}
+      {/* Private Routes to check logged in or note */}
       {/* Admin */}
       <Route
         path="/admin/*"
         element={
           <PrivateRoute>
+            {/* routes based on the roles */}
             <RoleBasedRoutes role="admin">
               <AdminRoutes />
             </RoleBasedRoutes>
@@ -43,6 +45,8 @@ const AppRoutes = () => {
           </PrivateRoute>
         }
       />
+
+      {/* Any other not matching one  */}
       <Route path="*" element={<NotFound />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
     </Routes>

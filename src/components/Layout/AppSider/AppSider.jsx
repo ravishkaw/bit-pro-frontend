@@ -1,43 +1,51 @@
-import { Button, Col, Layout, Row, Drawer, ConfigProvider } from "antd";
-import { LogoutOutlined, MenuFoldOutlined } from "@ant-design/icons";
+import { Button, Col, Layout, Row, Drawer, ConfigProvider, Flex } from "antd";
+import { MenuFoldOutlined } from "@ant-design/icons";
 
 import SiderContent from "./SiderContent";
+
 import companyLogo from "../../../assets/logo.png";
+import companyLogoCollapsed from "../../../assets/logoCollapsed.png";
 
-import { useAuth } from "../../../contexts/AuthContext";
-
+// Main sider component - Uses sider for desktop and drawer for mobile
 const AppSider = ({ isMobile, collapsed, drawerOpen, setDrawerOpen }) => {
-  const { logout } = useAuth();
-
+  // Main sider content to render in sider and drawer
   const siderContent = (
     <Row align="middle" justify="center" gutter={[0, 24]}>
-      <Col span={24} style={{ textAlign: "center" }}>
-        <img
-          src={companyLogo}
-          alt="Company Logo"
-          style={{ height: "200px", width: "100%" }}
-        />
+      <Col span={24} style={{ textAlign: "center", height: "200px" }}>
+        <Flex justify="center" align="center" style={{ height: "100%" }}>
+          {collapsed ? (
+            <img
+              src={companyLogoCollapsed}
+              alt="Company Logo"
+              style={{ height: "auto", width: "80%" }}
+            />
+          ) : (
+            <img
+              src={companyLogo}
+              alt="Company Logo"
+              style={{ height: "auto", width: "80%" }}
+            />
+          )}
+        </Flex>
       </Col>
       <Col span={24}>
         <SiderContent />
       </Col>
-      <Col span={24} style={{ textAlign: "center" }}>
-        <Button type="text" onClick={logout}>
-          <LogoutOutlined style={{ fontSize: "1rem" }} />
-          {!collapsed && "Log Out"}
-        </Button>
-      </Col>
     </Row>
   );
 
+  // desktop - sider , mobile - drawer
   return isMobile ? (
+    // paddingLG removes drawer padding
     <ConfigProvider theme={{ token: { paddingLG: 0 } }}>
       <Drawer
         placement="left"
         onClose={() => setDrawerOpen(!drawerOpen)}
         open={drawerOpen}
         width={250}
-        closable={false}>
+        closable={false}
+        style={{ borderRadius: 8 }}
+      >
         <Button
           type="text"
           icon={<MenuFoldOutlined />}
@@ -53,7 +61,8 @@ const AppSider = ({ isMobile, collapsed, drawerOpen, setDrawerOpen }) => {
       trigger={null}
       collapsible
       collapsed={collapsed}
-      width={250}>
+      width={250}
+    >
       {siderContent}
     </Layout.Sider>
   );
@@ -68,4 +77,5 @@ const siderStyle = {
   bottom: 0,
   overflow: "auto",
   scrollbarWidth: "thin",
+  borderRadius: 8,
 };

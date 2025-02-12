@@ -1,6 +1,7 @@
 import { useAuth } from "../../../contexts/AuthContext";
 import AdminSider from "./AdminSider";
 
+// Show the relevant sider for the user based on their system role
 const SiderContent = () => {
   const { user } = useAuth();
 
@@ -14,4 +15,5 @@ const SiderContent = () => {
     return <div>Staff Sider Content</div>;
   }
 };
+
 export default SiderContent;

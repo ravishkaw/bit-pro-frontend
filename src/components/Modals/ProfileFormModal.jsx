@@ -15,10 +15,12 @@ import {
   triggerFormFieldsValidation,
 } from "../../utils/form";
 
+// Profile modal for view add and update profile form
 const ProfileFormModal = ({
   personType,
   addPerson,
   designations,
+  employeeStatus,
   formModalState,
   showUpdateModal,
   closeFormModal,
@@ -32,6 +34,7 @@ const ProfileFormModal = ({
 
   const { open, isEditing, selectedPerson } = formModalState;
 
+  // sets data based on form modal state
   useEffect(() => {
     if (open && isEditing && selectedPerson) {
       const updatedPerson = {
@@ -49,13 +52,16 @@ const ProfileFormModal = ({
     }
   }, [open, isEditing, selectedPerson, form]);
 
+  // Next button of the step form
   const next = async () => {
     try {
-      const values = await form.validateFields();
+      const values = await form.validateFields(); // validate values before goes to next step
       const newData = { ...formData, ...values };
       setFormData(newData);
       form.setFieldsValue(newData);
       setCurrent(current + 1);
+
+      // trigger form validation in edit mode
       if (isEditing) {
         triggerFormFieldsValidation(form);
       }
@@ -64,14 +70,17 @@ const ProfileFormModal = ({
     }
   };
 
+  // Previous button of the step form
   const prev = () => {
     setCurrent(current - 1);
-    triggerFormFieldsValidation(form);
+    triggerFormFieldsValidation(form); // trigger validation
   };
 
   const onFinish = async (values) => {
+    // get data from all the input fields
     const data = { ...formData, ...values };
 
+    // Format the data to match the format of backend
     const updatedData = {
       ...data,
       designation: {
@@ -83,6 +92,7 @@ const ProfileFormModal = ({
     };
 
     if (isEditing) {
+      // Get the changed values and pass it into confirmation modal
       const updatedValues = getChangedFieldValues(
         initialFormData,
         data,
@@ -100,6 +110,7 @@ const ProfileFormModal = ({
     }
   };
 
+  // After close modal operations
   const afterModalClose = () => {
     setCurrent(0);
     setFormData({});
@@ -107,6 +118,7 @@ const ProfileFormModal = ({
     setInitialFormData({});
   };
 
+  // Steps of the step form
   const steps = [
     {
       title: "Personal Information",
@@ -122,11 +134,17 @@ const ProfileFormModal = ({
     },
     {
       title: "Job Information",
-      content: <EmploymentInformation designations={designations} />,
+      content: (
+        <EmploymentInformation
+          designations={designations}
+          employeeStatus={employeeStatus}
+        />
+      ),
       icon: <IdcardOutlined />,
     },
   ];
 
+  // Map steps into the Antd step component based on person type
   const items = steps
     .filter(
       (item) => personType == "employee" || item.title != "Job Information"

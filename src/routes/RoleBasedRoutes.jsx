@@ -2,6 +2,7 @@ import { useNavigate } from "react-router";
 import { useAuth } from "../contexts/AuthContext";
 import { useEffect } from "react";
 
+// Check the user roles 
 const RoleBasedRoutes = ({ role, children }) => {
   const navigate = useNavigate();
   const { user } = useAuth();

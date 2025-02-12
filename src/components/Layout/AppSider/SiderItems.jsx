@@ -13,6 +13,8 @@ import {
   LockOutlined,
 } from "@ant-design/icons";
 
+// Sider items for the system roles
+// Admin
 export const AdminSiderItems = [
   {
     key: "/admin",

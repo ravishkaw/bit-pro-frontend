@@ -1,6 +1,7 @@
 import { Button, Result } from "antd";
 import { useNavigate } from "react-router";
 
+// Unauthorized page
 const Unauthorized = () => {
   const navigate = useNavigate();
   return (
@@ -16,4 +17,5 @@ const Unauthorized = () => {
     />
   );
 };
+
 export default Unauthorized;

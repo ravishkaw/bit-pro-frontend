@@ -1,39 +1,79 @@
-import { Col, Flex, Row, Typography, Table, Button } from "antd";
+import { Col, Row } from "antd";
 
 import useUsers from "../../hooks/useUsers";
 import useModalStates from "../../hooks/useModalStates";
 
 import { userColumnItems } from "../../components/Table/UsersColumnItems";
 import UserFormModal from "../../components/Modals/UserFormModal";
+import UserTableCard from "../../components/DataDisplay/UserTableCard";
+import DeleteConfirmModal from "../../components/Modals/DeleteConfirmModal";
 
+// Admin Manage Users Page
 const ManageUsers = () => {
-  const { loading, users } = useUsers();
+  const personType = "user";
 
-  const { formModalState, openFormModal, closeFormModal } = useModalStates();
+  const {
+    loading,
+    users,
+    loadOneUser,
+    addAnUser,
+    updateAnUser,
+    deleteAnUser,
+    paginationDetails,
+    setPaginationDetails,
+  } = useUsers();
 
-  const { open } = formModalState;
+  const {
+    formModalState,
+    openFormModal,
+    closeFormModal,
+    deleteModal,
+    setDeleteModal,
+    openDeleteModal,
+  } = useModalStates();
 
-  const columns = userColumnItems();
+  // Handle edit
+  const handleEdit = async (userId) => {
+    const user = await loadOneUser(userId);
+    openFormModal(true, user);
+  };
+
+  const columns = userColumnItems(openDeleteModal, handleEdit);
   return (
     <>
       <Row>
         <Col span={24}>
-          <Flex justify="space-between">
-            <Typography.Title level={3}>Manage Users</Typography.Title>
-            <Button type="primary" onClick={() => openFormModal(false)}>
-              Add new User
-            </Button>
-          </Flex>
-
-          <Table
-            rowKey="id"
+          <UserTableCard
+            personType={personType}
             columns={columns}
+            rowKey="username"
             dataSource={users}
             loading={loading}
-            scroll={{ x: "max-content" }}
+            paginationDetails={paginationDetails}
+            setPaginationDetails={setPaginationDetails}
+            handleEdit={handleEdit}
+            openFormModal={openFormModal}
+            openDeleteModal={openDeleteModal}
           />
 
-          <UserFormModal open={open} closeFormModal={closeFormModal} />
+          <UserFormModal
+            formModalState={formModalState}
+            closeFormModal={closeFormModal}
+            addAnUser={addAnUser}
+            updateAnUser={updateAnUser}
+          />
+
+          {users && users.length > 0 && (
+            <>
+              {/* Delete confirmation modal */}
+              <DeleteConfirmModal
+                personType={personType}
+                deleteModal={deleteModal}
+                setDeleteModal={setDeleteModal}
+                deletePerson={deleteAnUser}
+              />
+            </>
+          )}
         </Col>
       </Row>
     </>

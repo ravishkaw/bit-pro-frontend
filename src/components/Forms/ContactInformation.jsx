@@ -1,6 +1,7 @@
 import { Col, Form, Input, Row } from "antd";
 import { formValidations } from "./validations";
 
+// Second Step of Profile info form - Get contact information
 const ContactInformation = () => {
   const {
     addressValidation,
@@ -49,4 +50,5 @@ const ContactInformation = () => {
     </>
   );
 };
+
 export default ContactInformation;

@@ -8,6 +8,7 @@ import en from "i18n-nationality/langs/en.json";
 import { formValidations } from "./validations";
 import { dobGenderCal } from "../../utils/dobGenderCal";
 
+// First Step of Profile info form - Get personal information
 const PersonalInfo = ({ form, formData, modelOpen }) => {
   const [fullName, setFullName] = useState(formData?.fullName || "");
   const [callingNameOptions, setCallingNameOptions] = useState([]);
@@ -148,6 +149,7 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
             />
           </Form.Item>
         </Col>
+
         <Col xs={24} sm={8}>
           <Form.Item
             name="callingName"
@@ -288,4 +290,5 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
     </>
   );
 };
+
 export default PersonalInfo;

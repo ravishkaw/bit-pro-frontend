@@ -1,12 +1,13 @@
 import { Button, Space, Tag } from "antd";
-import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
-export const userColumnItems = () => [
+// column items of user table
+export const userColumnItems = (openDeleteModal, handleEdit) => [
   {
     title: "Employee Name",
     dataIndex: "employeeId",
     render: (_, record) => record.employeeId?.fullName,
-    sorter: true,
+    // sorter: true,
     fixed: "left",
   },
   {
@@ -17,6 +18,7 @@ export const userColumnItems = () => [
   {
     title: "Email",
     dataIndex: "email",
+    sorter: true,
   },
   {
     title: "Account Status",
@@ -39,27 +41,30 @@ export const userColumnItems = () => [
           {roles.name}
         </Tag>
       )),
-      align: "center",
-    },
-    {
-      title: "Actions",
-      key: "operation",
-      fixed: "right",
-      align: "center",
-      render: (_, record) => (
-        <Space size="small">
-        {/* <Button size="small" color="blue" variant="outlined" onClick={() => {}}>
-          <EyeOutlined />
-          </Button> */}
+    align: "center",
+    width: "20%",
+  },
+  {
+    title: "Actions",
+    key: "operation",
+    fixed: "right",
+    align: "center",
+    render: (_, record) => (
+      <Space size="small">
         <Button
           size="small"
           color="yellow"
           variant="outlined"
-          onClick={() => {}}
+          onClick={() => handleEdit(record.id)}
         >
           <EditOutlined />
         </Button>
-        <Button size="small" variant="outlined" danger onClick={() => {}}>
+        <Button
+          size="small"
+          variant="outlined"
+          danger
+          onClick={() => openDeleteModal(record)}
+        >
           <DeleteOutlined />
         </Button>
       </Space>

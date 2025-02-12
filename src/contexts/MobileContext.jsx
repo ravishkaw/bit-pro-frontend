@@ -2,17 +2,21 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 const MobileContext = createContext();
 
+// set the mobile context when screen resizing. main breakpoint is 768px
 export const MobileProvider = ({ children }) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const [collapsed, setCollapsed] = useState(isMobile);
+  const [collapsed, setCollapsed] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
       const isMobileView = window.innerWidth < 768;
       setIsMobile(isMobileView);
-      setCollapsed(isMobileView);
-      setDrawerOpen(false);
+
+      if (isMobileView) {
+        setCollapsed(false);
+        setDrawerOpen(false);
+      }
     };
 
     window.addEventListener("resize", handleResize);
@@ -28,7 +32,8 @@ export const MobileProvider = ({ children }) => {
         setCollapsed,
         drawerOpen,
         setDrawerOpen,
-      }}>
+      }}
+    >
       {children}
     </MobileContext.Provider>
   );

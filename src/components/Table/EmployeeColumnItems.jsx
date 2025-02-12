@@ -1,4 +1,4 @@
-import { Button, Space, Popconfirm } from "antd";
+import { Button, Space, Popconfirm, Tag } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -6,6 +6,15 @@ import {
   UndoOutlined,
 } from "@ant-design/icons";
 
+// Tag colors for employee status
+const statusColors = {
+  Active: "green",
+  Resigned: "red",
+  "On Leave": "orange",
+  Deleted: "gray",
+};
+
+// Employee table column items
 export const employeeColumnItems = (
   handleView,
   handleEdit,
@@ -46,7 +55,12 @@ export const employeeColumnItems = (
     title: "Status",
     dataIndex: "employeeStatus",
     sorter: true,
-    render: (_, record) => record.employeeStatus?.name || "N/A",
+    render: (_, record) => {
+      const statusName = record.employeeStatus?.name || "N/A";
+      return (
+        <Tag color={statusColors[statusName] || "default"}>{statusName}</Tag>
+      );
+    },
   },
   {
     title: "Actions",

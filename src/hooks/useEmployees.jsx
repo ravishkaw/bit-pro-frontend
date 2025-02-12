@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 
+import handleApiCall from "./useApiHandler";
 import {
   fetchEmployees,
   fetchOneEmployee,
@@ -11,11 +12,14 @@ import {
   restoreEmployee,
 } from "../services/employee";
 import { fetchAllDesignations } from "../services/designation";
+import { fetchAllEmployeeStatus } from "../services/employeeStatus";
 
+// Handle all employee based service calls
 const useEmployees = () => {
   const [employees, setEmployees] = useState([]);
   const [designations, setDesignations] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [employeeStatus, setEmployeeStatus] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const [paginationDetails, setPaginationDetails] = useState({
@@ -24,18 +28,21 @@ const useEmployees = () => {
     sortBy: "empNo",
     sortOrder: "descend",
     total: 0,
+    searchQuery: "",
   });
 
   // Crud Operation Api
   // Load all employees and employees with pagination details
   const loadEmployees = async () => {
     try {
+      setLoading(true);
       // Fetch employees page starts with 0 but in antd starts with 1
       const resp = await fetchEmployees(
         paginationDetails.current - 1,
         paginationDetails.pageSize,
         paginationDetails.sortBy,
-        paginationDetails.sortOrder
+        paginationDetails.sortOrder,
+        paginationDetails.searchQuery
       );
 
       setEmployees(resp.data);
@@ -67,6 +74,21 @@ const useEmployees = () => {
     }
   };
 
+  // Fetch employee status
+  const getEmployeeStatus = async () => {
+    try {
+      const response = await fetchAllEmployeeStatus();
+      const mappedStatus = response.map((status) => ({
+        value: status.name,
+        label: status.name,
+      }));
+      setEmployeeStatus(mappedStatus);
+    } catch (err) {
+      setEmployeeStatus([]);
+      setError(err.message);
+    }
+  };
+
   useEffect(() => {
     loadEmployees();
   }, [
@@ -74,10 +96,12 @@ const useEmployees = () => {
     paginationDetails.pageSize,
     paginationDetails.sortBy,
     paginationDetails.sortOrder,
+    paginationDetails.searchQuery,
   ]);
 
   useEffect(() => {
     getEmployeeDesignation();
+    getEmployeeStatus();
   }, []);
 
   // Get one employee details
@@ -100,26 +124,13 @@ const useEmployees = () => {
     }
   };
 
-  //Add handle api call function to handle edit add delete and restore
-  const handleApiCall = async (apiCallFn, successMessage) => {
-    setLoading(true);
-    try {
-      await apiCallFn();
-      toast.success(successMessage);
-      loadEmployees();
-    } catch (err) {
-      setError(err.message);
-      toast.error(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // Add new employee
   const addAnEmployee = async (values) => {
     handleApiCall(
       () => addEmployee(values),
-      `Employee ${values?.fullName} added successfully`
+      `Employee ${values?.fullName} added successfully`,
+      setLoading,
+      loadEmployees
     );
   };
 
@@ -127,7 +138,9 @@ const useEmployees = () => {
   const updateAnEmployee = async (employeeId, values) => {
     handleApiCall(
       () => updateEmployee(employeeId, values),
-      `Employee ${values?.fullName} updated successfully`
+      `Employee ${values?.fullName} updated successfully`,
+      setLoading,
+      loadEmployees
     );
   };
 
@@ -135,7 +148,9 @@ const useEmployees = () => {
   const deleteAnEmployee = async (employeeId) => {
     handleApiCall(
       () => deleteEmployee(employeeId),
-      `Employee with employee id ${employeeId} deleted successfully`
+      `Employee with employee id ${employeeId} deleted successfully`,
+      setLoading,
+      loadEmployees
     );
   };
 
@@ -143,7 +158,9 @@ const useEmployees = () => {
   const restoreAnEmployee = async (employeeId) => {
     handleApiCall(
       () => restoreEmployee(employeeId),
-      `Employee with employee id ${employeeId} restored successfully`
+      `Employee with employee id ${employeeId} restored successfully`,
+      setLoading,
+      loadEmployees
     );
   };
 
@@ -157,6 +174,7 @@ const useEmployees = () => {
     loading,
     error,
     designations,
+    employeeStatus,
     paginationDetails,
     setPaginationDetails,
   };

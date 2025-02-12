@@ -1,6 +1,7 @@
-import { Form, Input, Radio, Select } from "antd";
+import { Form, Radio, Select } from "antd";
 
-const EmploymentInformation = ({ designations }) => {
+// Third Step of Profile info form - Get employee information. only available to employee form
+const EmploymentInformation = ({ designations, employeeStatus }) => {
   return (
     <>
       <Form.Item
@@ -15,6 +16,7 @@ const EmploymentInformation = ({ designations }) => {
           options={designations}
         />
       </Form.Item>
+      
       <Form.Item
         name="employeeStatus"
         label="Employee Status"
@@ -24,12 +26,7 @@ const EmploymentInformation = ({ designations }) => {
         <Radio.Group
           optionType="button"
           buttonStyle="solid"
-          options={[
-            { value: "Active", label: "Active" },
-            { value: "Resigned", label: "Resigned" },
-            { value: "On Leave", label: "On Leave" },
-            // { value: "Deleted", label: "Deleted" },
-          ]}
+          options={employeeStatus}
         />
       </Form.Item>
     </>

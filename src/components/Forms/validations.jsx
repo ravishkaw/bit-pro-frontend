@@ -1,3 +1,4 @@
+// Custom validations for form inputs
 export const formValidations = {
   firstNameValidation: [
     { required: true, message: "First name is required" },
@@ -112,12 +113,13 @@ export const formValidations = {
   ],
 
   usernameValidation: [
-    { required: true, message: "Please input your password!" },
+    { required: true, message: "Please input your username!" },
     { min: 2, message: "Username must be at least 2 characters" },
   ],
 
   passwordValidation: [
-    { required: true, message: "Please input your password!" },
+    //required false by default to avoid changes in update/ edit mode
+    // { required: true, message: "Please input your password!" },
     { min: 8, message: "Password must be at least 8 characters" },
     {
       pattern:
@@ -128,7 +130,8 @@ export const formValidations = {
   ],
 
   passwordConfirmValidation: [
-    { required: true, message: "Please confirm your password!" },
+    //required false by default to avoid changes in update/ edit mode
+    // { required: true, message: "Please confirm your password!" },
     ({ getFieldValue }) => ({
       validator(_, value) {
         if (!value || getFieldValue("password") === value) {

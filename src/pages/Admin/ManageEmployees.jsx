@@ -1,10 +1,7 @@
-import { Button, Col, Flex, Row, Typography } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { Col, Row } from "antd";
 
 import useEmployees from "../../hooks/useEmployees";
 import useModalStates from "../../hooks/useModalStates";
-
-import { useMobileContext } from "../../contexts/MobileContext";
 
 import { employeeColumnItems } from "../../components/Table/EmployeeColumnItems";
 
@@ -14,10 +11,10 @@ import ProfileFormModal from "../../components/Modals/ProfileFormModal";
 import DeleteConfirmModal from "../../components/Modals/DeleteConfirmModal";
 import UpdateConfirmModal from "../../components/Modals/UpdateConfirmModal";
 
+// Admin Manage Employees Page
 const ManageEmployee = () => {
   const personType = "employee";
 
-  const { isMobile } = useMobileContext();
   const {
     employees,
     loadOneEmployee,
@@ -29,6 +26,7 @@ const ManageEmployee = () => {
     paginationDetails,
     setPaginationDetails,
     designations,
+    employeeStatus,
   } = useEmployees();
 
   const {
@@ -69,17 +67,6 @@ const ManageEmployee = () => {
     <>
       <Row>
         <Col span={24}>
-          <Flex justify="space-between">
-            <Typography.Title level={isMobile ? 4 : 3}>
-              Manage Employees
-            </Typography.Title>
-
-            <Button type="primary" onClick={() => openFormModal(false)}>
-              <PlusOutlined />
-              Add New Employee
-            </Button>
-          </Flex>
-
           {/* Data view table and card for mobile */}
           <ProfileTableCard
             personType={personType}
@@ -89,6 +76,7 @@ const ManageEmployee = () => {
             loading={loading}
             paginationDetails={paginationDetails}
             setPaginationDetails={setPaginationDetails}
+            openFormModal={openFormModal}
             handleView={handleView}
             handleEdit={handleEdit}
             openDeleteModal={openDeleteModal}
@@ -101,6 +89,7 @@ const ManageEmployee = () => {
             addPerson={addAnEmployee}
             updatePerson={updateAnEmployee}
             designations={designations}
+            employeeStatus={employeeStatus}
             formModalState={formModalState}
             showUpdateModal={showUpdateModal}
             closeFormModal={closeFormModal}

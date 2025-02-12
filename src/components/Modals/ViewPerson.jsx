@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import {
   Button,
   Descriptions,
@@ -8,50 +7,57 @@ import {
   Space,
   Typography,
 } from "antd";
-import { useReactToPrint } from "react-to-print";
+import usePrintContent from "../../hooks/usePrintContent";
 import dayjs from "dayjs";
 
 import { capitalize, formatText } from "../../utils/textUtils";
 
 const { Title } = Typography;
 
+// Modal of view person
 const ViewPerson = ({ personType, viewModal, setViewModal, handleEdit }) => {
+  // React print  configuration
+  const { contentRef, printFn } = usePrintContent();
+
   const { open, selectedPerson } = viewModal;
 
   const closeViewModal = () => {
     setViewModal({ open: false, selectedPerson: null });
   };
 
-  const contentRef = useRef(null);
-  const printFn = useReactToPrint({
-    contentRef: contentRef,
-    pageStyle: true,
-  });
-
+  // All value mappings
   const personalInfo = [
     { key: "1", label: "Full Name", value: selectedPerson?.fullName },
     { key: "2", label: "Calling Name", value: selectedPerson?.callingName },
-    { key: "3", label: "Nationality", value: selectedPerson?.nationality },
     {
-      key: "4",
-      label: "Gender",
-      value: selectedPerson && capitalize(formatText(selectedPerson?.gender)),
-    },
-    {
-      key: "5",
+      key: "3",
       label: "Date of Birth",
       value: selectedPerson?.dob
         ? dayjs(selectedPerson.dob).format("YYYY-MM-DD")
         : null,
     },
+    { key: "4", label: "Nationality", value: selectedPerson?.nationality },
+    { key: "5", label: "ID Type", value: selectedPerson?.idType.toUpperCase() },
     {
       key: "6",
+      label: `${
+        (selectedPerson && capitalize(selectedPerson?.idType)) || "Id"
+      } Number`,
+      value: selectedPerson?.idNumber.toUpperCase(),
+    },
+    {
+      key: "7",
+      label: "Gender",
+      value: selectedPerson && capitalize(formatText(selectedPerson?.gender)),
+    },
+    {
+      key: "8",
       label: "Civil Status",
       value:
         selectedPerson && capitalize(formatText(selectedPerson?.civilStatus)),
     },
     {
-      key: "7",
+      key: "9",
       label: "Note",
       value: selectedPerson?.note,
     },
@@ -78,6 +84,7 @@ const ViewPerson = ({ personType, viewModal, setViewModal, handleEdit }) => {
     },
   ];
 
+  // Render above data into antd descriptions
   const renderDescriptions = (title, data) => (
     <Descriptions title={title}>
       {data.map(({ key, label, value }) => (
@@ -106,6 +113,7 @@ const ViewPerson = ({ personType, viewModal, setViewModal, handleEdit }) => {
           <Divider />
           {renderDescriptions("Contact Information", contactInfo)}
 
+          {/* Show only in employees */}
           {personType === "employee" && (
             <>
               <Divider />
