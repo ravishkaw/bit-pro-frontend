@@ -84,7 +84,7 @@ const UserTableCard = ({
       />
 
       {/* Card mapping */}
-      {dataSource.map((data) => {
+      {dataSource?.map((data) => {
         return (
           <UserCard
             key={data.id}

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axiosInstance from "./axiosInstance";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const USERS_BASE_URL = `${BASE_URL}/users`;
@@ -11,65 +11,38 @@ export const fetchAllUsers = async (
   sortOrder,
   searchQuery
 ) => {
-  try {
-    const resp = await axios.get(`${USERS_BASE_URL}/get-all`, {
-      params: {
-        pageNumber,
-        pageSize,
-        sortBy: sortBy ? sortBy : "id",
-        sortOrder: sortOrder
-          ? sortOrder == "descend"
-            ? "desc"
-            : "asc"
-          : "desc",
-        searchQuery,
-      },
-    });
-    return resp.data;
-  } catch (error) {
-    console.error("Error fetching users:", error);
-    throw error;
-  }
+  const resp = await axiosInstance.get(`${USERS_BASE_URL}/get-all`, {
+    params: {
+      pageNumber,
+      pageSize,
+      sortBy: sortBy ? sortBy : "id",
+      sortOrder: sortOrder ? (sortOrder == "descend" ? "desc" : "asc") : "desc",
+      searchQuery,
+    },
+  });
+  return resp.data;
 };
 
 // Fetch single user
 export const fetchUser = async (userId) => {
-  try {
-    const resp = await axios.get(`${USERS_BASE_URL}/user/${userId}`);
-    return resp.data;
-  } catch (error) {
-    console.error("Error fetching user:", error);
-    throw error;
-  }
+  const resp = await axiosInstance.get(`${USERS_BASE_URL}/user/${userId}`);
+  return resp.data;
 };
 
 // Add user Details
 export const addUser = async (values) => {
-  try {
-    await axios.post(`${USERS_BASE_URL}/user`, values);
-  } catch (error) {
-    console.error("Error adding user:", error);
-    throw error;
-  }
+  await axiosInstance.post(`${USERS_BASE_URL}/user`, values);
 };
 
 // Update user
 export const updateUser = async (userId, values) => {
-  try {
-    await axios.put(`${USERS_BASE_URL}/user/${userId}`, values);
-  } catch (error) {
-    console.error("Error updating user:", error);
-    throw error;
-  }
+  await axiosInstance.put(`${USERS_BASE_URL}/user/${userId}`, values);
 };
 
 // Delete user
 export const deleteUser = async (userId) => {
-  try {
-    const response = await axios.delete(`${USERS_BASE_URL}/user/${userId}`);
-    return response.data;
-  } catch (error) {
-    console.error("Error deleting user:", error);
-    throw error;
-  }
+  const response = await axiosInstance.delete(
+    `${USERS_BASE_URL}/user/${userId}`
+  );
+  return response.data;
 };

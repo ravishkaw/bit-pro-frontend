@@ -27,7 +27,7 @@ const AppRoutes = () => {
         element={
           <PrivateRoute>
             {/* routes based on the roles */}
-            <RoleBasedRoutes role="admin">
+            <RoleBasedRoutes role="role_admin">
               <AdminRoutes />
             </RoleBasedRoutes>
           </PrivateRoute>
@@ -39,7 +39,7 @@ const AppRoutes = () => {
         path="/manager/*"
         element={
           <PrivateRoute>
-            <RoleBasedRoutes role="manager">
+            <RoleBasedRoutes role="role_manager">
               <ManagerRoutes />
             </RoleBasedRoutes>
           </PrivateRoute>

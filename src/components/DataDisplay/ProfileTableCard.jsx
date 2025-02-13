@@ -86,7 +86,7 @@ const ProfileTableCard = ({
       />
 
       {/* Card mapping */}
-      {dataSource.map((data) => {
+      {dataSource?.map((data) => {
         return (
           <ProfileCard
             key={data.id}

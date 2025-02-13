@@ -3,7 +3,7 @@ import { useAuth } from "../../../contexts/AuthContext";
 
 // Dropdown items of the profile avatar
 export const avatarDropdownItems = () => {
-  const { logout } = useAuth();
+  const { handleLogout } = useAuth();
 
   return [
     {
@@ -15,7 +15,7 @@ export const avatarDropdownItems = () => {
       key: "2",
       icon: <LogoutOutlined />,
       label: "Log Out",
-      onClick: logout,
+      onClick: handleLogout,
     },
   ];
 };

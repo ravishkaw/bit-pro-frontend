@@ -1,25 +1,60 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import { message } from "antd";
+import { login, logout, session } from "../services/api";
 
-//Authentication context of the app. User authentication controls from here
 const AuthContext = createContext();
 
-// Check whethre user is stored in local storage
-const localUser = () => {
-  const user = localStorage.getItem("user");
-  return user ? JSON.parse(user) : null;
-};
-
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(localUser);
+  const [user, setUser] = useState(null);
 
-  // Login and logout 
-  const login = (userData) => setUser(userData);
-  const logout = () => setTimeout(() => setUser(null), 1000);
+  const checkSession = async () => {
+    try {
+      const response = await session();      
+      setUser({
+        username: response.username,
+        role: response?.roles[0]?.name.toLowerCase(),
+      });
+    } catch (error) {
+      console.error("Session check failed:", error);
+    }
+  };
 
-  localStorage.setItem("user", JSON.stringify(user));
+  useEffect(() => {
+    checkSession();
+  }, []);
+
+  const handleLogin = async (loginFormData) => {
+    try {
+      const response = await login(loginFormData);
+      if (response) {
+        setUser({
+          username: response.username,
+          role: response?.roles[0]?.name.toLowerCase(),
+        });
+        message.success("Login successful!");
+        return true;
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+      message.error(error.response?.data?.message || "Login failed");
+      return false;
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setUser(null);
+      message.success("Logged out successfully");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      message.error("Logout failed");
+    }
+  };
+
 
   return (
-    <AuthContext.Provider value={{ user, setUser, login, logout }}>
+    <AuthContext.Provider value={{ user, handleLogin, handleLogout }}>
       {children}
     </AuthContext.Provider>
   );

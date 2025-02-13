@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button, Form, Input, message, Typography } from "antd";
+import { Button, Form, Input, Typography } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
 
@@ -10,28 +10,17 @@ const { Link } = Typography;
 // Login form
 const LoginForm = () => {
   const navigate = useNavigate();
-  const { setUser, user } = useAuth();
+  const { user, handleLogin } = useAuth();
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
-  // Simulate async login API (replace with real DB/API call)
-  const fakeLoginApi = (role) =>
-    new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ user: { name: "John Doe", role } });
-      }, 1000); // Simulate network delay
-    });
-
   // Unified login handler
-  const handleLogin = async (role) => {
+  const onFinish = async (loginFormData) => {
     setLoading(true);
     try {
-      const response = await fakeLoginApi(role);
-      setUser(response.user);
-      message.success("Login successful!");
+      await handleLogin(loginFormData);
     } catch (error) {
       console.error("Login failed", error);
-      message.error("Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -41,8 +30,8 @@ const LoginForm = () => {
   useEffect(() => {
     if (user) {
       const routes = {
-        admin: "/admin",
-        manager: "/manager",
+        role_admin: "/admin",
+        Manager: "/manager",
         user: "/",
       };
       navigate(routes[user.role] || "/");
@@ -54,7 +43,7 @@ const LoginForm = () => {
       form={form}
       name="normal_login"
       initialValues={{ remember: true }}
-      onFinish={() => handleLogin("")}
+      onFinish={onFinish}
       layout="vertical"
       requiredMark="optional"
       style={{ width: "100%" }}
@@ -95,26 +84,6 @@ const LoginForm = () => {
         </Button>
       </Form.Item>
 
-      {/* Fake Login Buttons */}
-      <Form.Item label="Fake Logins">
-        <Button
-          block
-          onClick={() => handleLogin("admin")}
-          disabled={loading}
-          loading={loading}
-          style={{ marginBottom: 8 }}
-        >
-          Login as Admin
-        </Button>
-        <Button
-          block
-          onClick={() => handleLogin("manager")}
-          disabled={loading}
-          loading={loading}
-        >
-          Login as Manager
-        </Button>
-      </Form.Item>
     </Form>
   );
 };
