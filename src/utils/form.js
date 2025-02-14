@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 export const getChangedFieldValues = (
   initialData,
   updatedData,
-  personType,
+  object,
   designations
 ) => {
   const changes = [];
@@ -31,7 +31,7 @@ export const getChangedFieldValues = (
         updatedDisplayValue = capitalize(formatText(updatedValue));
       }
 
-      if (personType === "employee" && key === "designation") {
+      if (object === "employee" && key === "designation") {
         designations.forEach((designation) => {
           if (updatedValue === designation.value) {
             updatedDisplayValue = designation.label;

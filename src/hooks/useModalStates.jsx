@@ -7,7 +7,7 @@ const useModalStates = () => {
   const [formModalState, setFormModalState] = useState({
     open: false,
     isEditing: false,
-    selectedPerson: null,
+    selectedObject: null,
   });
 
   // Form modal state for update confirmation modal
@@ -21,13 +21,13 @@ const useModalStates = () => {
   // Form modal state for data view modal
   const [viewModal, setViewModal] = useState({
     open: false,
-    selectedPerson: null,
+    selectedObject: null,
   });
 
   // Form modal state for delete confirmation modal
   const [deleteModal, setDeleteModal] = useState({
     open: false,
-    selectedPerson: null,
+    selectedObject: null,
   });
 
   // Open the add/ edit form modal
@@ -35,7 +35,7 @@ const useModalStates = () => {
     setFormModalState({
       open: true,
       isEditing: isEditing,
-      selectedPerson: selectedUser,
+      selectedObject: selectedUser,
     });
   };
 
@@ -44,13 +44,13 @@ const useModalStates = () => {
     setFormModalState({
       open: false,
       isEditing: false,
-      selectedPerson: null,
+      selectedObject: null,
     });
   };
 
   // Open the delete confirmation modal
   const openDeleteModal = (record) => {
-    setDeleteModal({ open: true, selectedPerson: record });
+    setDeleteModal({ open: true, selectedObject: record });
   };
 
   // Show the update confirmation modal with updated data

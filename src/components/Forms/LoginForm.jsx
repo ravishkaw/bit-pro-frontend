@@ -30,8 +30,8 @@ const LoginForm = () => {
   useEffect(() => {
     if (user) {
       const routes = {
-        role_admin: "/admin",
-        Manager: "/manager",
+        admin: "/admin",
+        manager: "/manager",
         user: "/",
       };
       navigate(routes[user.role] || "/");
@@ -83,7 +83,6 @@ const LoginForm = () => {
           Log in
         </Button>
       </Form.Item>
-
     </Form>
   );
 };

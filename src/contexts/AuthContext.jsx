@@ -7,13 +7,18 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
+  // messages
+  const [messageApi, contextHolder] = message.useMessage();
+
+  // check session from the stored cookie and log in
   const checkSession = async () => {
     try {
-      const response = await session();      
+      const response = await session();
       setUser({
         username: response.username,
         role: response?.roles[0]?.name.toLowerCase(),
       });
+      messageApi.success("Session verified. Login successful!");
     } catch (error) {
       console.error("Session check failed:", error);
     }
@@ -31,12 +36,12 @@ export const AuthProvider = ({ children }) => {
           username: response.username,
           role: response?.roles[0]?.name.toLowerCase(),
         });
-        message.success("Login successful!");
+        messageApi.success("Login successful");
         return true;
       }
     } catch (error) {
       console.error("Login failed:", error);
-      message.error(error.response?.data?.message || "Login failed");
+      messageApi.error(error.response?.data?.message || "Login failed");
       return false;
     }
   };
@@ -45,16 +50,16 @@ export const AuthProvider = ({ children }) => {
     try {
       await logout();
       setUser(null);
-      message.success("Logged out successfully");
+      messageApi.success("Logged out successfully");
     } catch (error) {
       console.error("Logout failed:", error);
-      message.error("Logout failed");
+      messageApi.error("Logout failed");
     }
   };
 
-
   return (
     <AuthContext.Provider value={{ user, handleLogin, handleLogout }}>
+      {contextHolder}
       {children}
     </AuthContext.Provider>
   );

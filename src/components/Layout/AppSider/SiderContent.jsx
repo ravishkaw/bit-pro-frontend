@@ -5,9 +5,9 @@ import AdminSider from "./AdminSider";
 const SiderContent = () => {
   const { user } = useAuth();
 
-  if (user?.role === "role_admin") {
+  if (user?.role === "admin") {
     return <AdminSider />;
-  } else if (user?.role === "role_manager") {
+  } else if (user?.role === "manager") {
     return <div>Manager Sider Content</div>;
   } else if (user?.role === "receptionist") {
     return <div>Receptionist Sider Content</div>;

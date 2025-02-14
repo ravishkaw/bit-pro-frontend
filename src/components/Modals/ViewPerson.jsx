@@ -15,7 +15,7 @@ import { capitalize, formatText } from "../../utils/textUtils";
 const { Title } = Typography;
 
 // Modal of view person
-const ViewPerson = ({ personType, viewModal, setViewModal, handleEdit }) => {
+const ViewPerson = ({ object, viewModal, setViewModal, handleEdit }) => {
   // React print  configuration
   const { contentRef, printFn } = usePrintContent();
 
@@ -105,7 +105,7 @@ const ViewPerson = ({ personType, viewModal, setViewModal, handleEdit }) => {
         footer={null}
       >
         <div ref={contentRef}>
-          <Title level={3}>{`${capitalize(personType)} Details - ${
+          <Title level={3}>{`${capitalize(object)} Details - ${
             selectedPerson?.fullName
           }`}</Title>
           <Divider />
@@ -114,7 +114,7 @@ const ViewPerson = ({ personType, viewModal, setViewModal, handleEdit }) => {
           {renderDescriptions("Contact Information", contactInfo)}
 
           {/* Show only in employees */}
-          {personType === "employee" && (
+          {object === "employee" && (
             <>
               <Divider />
               {renderDescriptions("Employment Information", employmentInfo)}

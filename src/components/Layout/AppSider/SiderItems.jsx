@@ -22,30 +22,28 @@ export const AdminSiderItems = [
     icon: <DashboardOutlined />,
   },
   {
-    key: "/admin/manage-employees",
+    key: "/admin/employees",
     label: "Manage Employees",
     icon: <IdcardOutlined />,
   },
   {
-    key: "/admin/manage-users",
+    key: "/admin/users",
     label: "Manage Users",
     icon: <UserOutlined />,
-  },
-  {
-    key: "/admin/manage-rooms",
-    label: "Manage Rooms",
-    icon: <HomeOutlined />,
-  },
-  {
-    key: "/admin/manage-bookings",
-    label: "Manage Bookings",
-    icon: <ScheduleOutlined />,
   },
   {
     key: "/admin/privileges",
     label: "Privileges",
     icon: <LockOutlined />,
   },
-
- 
+  {
+    key: "/admin/rooms",
+    label: "Manage Rooms",
+    icon: <HomeOutlined />,
+  },
+  {
+    key: "/admin/bookings",
+    label: "Manage Bookings",
+    icon: <ScheduleOutlined />,
+  },
 ];

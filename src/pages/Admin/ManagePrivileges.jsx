@@ -1,28 +1,28 @@
 import { Col, Row } from "antd";
 
-import useUsers from "../../hooks/useUsers";
 import useModalStates from "../../hooks/useModalStates";
+import usePrivileges from "../../hooks/usePrivileges";
 
-import TableCard from "../../components/DataDisplay/TableCard";
-import { userColumnItems } from "../../components/Table/UsersColumnItems";
+import PrivilegeColumnItems from "../../components/Table/PrivilegeColumnItems";
 import GenericModal from "../../components/Modals/GenericModal";
-import UserForm from "../../components/Forms/UserForm";
 import DeleteConfirmModal from "../../components/Modals/DeleteConfirmModal";
+import TableCard from "../../components/DataDisplay/TableCard";
+import PrivilegeForm from "../../components/Forms/PrivilegeForm";
 
-// Admin Manage Users Page
-const ManageUsers = () => {
-  const object = "user";
+const ManagePrivileges = () => {
+  const object = "privilege";
 
   const {
     loading,
-    users,
-    loadOneUser,
-    addAnUser,
-    updateAnUser,
-    deleteAnUser,
+    privileges,
+    roles,
     paginationDetails,
     setPaginationDetails,
-  } = useUsers();
+    loadOnePrivilege,
+    addNewPrivilege,
+    updateAPrivilege,
+    deleteAPrivilege,
+  } = usePrivileges();
 
   const {
     formModalState,
@@ -33,15 +33,15 @@ const ManageUsers = () => {
     openDeleteModal,
   } = useModalStates();
 
-  const { open, isEditing, selectedObject } = formModalState;
-
   // Handle edit
-  const handleEdit = async (userId) => {
-    const user = await loadOneUser(userId);
-    openFormModal(true, user);
+  const handleEdit = async (privilegeId) => {
+    const privilege = await loadOnePrivilege(privilegeId);    
+    openFormModal(true, privilege);
   };
 
-  const columns = userColumnItems(openDeleteModal, handleEdit);
+  const { open, isEditing, selectedObject } = formModalState;
+
+  const columns = PrivilegeColumnItems(openDeleteModal, handleEdit);
   return (
     <>
       <Row>
@@ -49,8 +49,8 @@ const ManageUsers = () => {
           <TableCard
             object={object}
             columns={columns}
-            rowKey="username"
-            dataSource={users}
+            rowKey="id"
+            dataSource={privileges}
             loading={loading}
             paginationDetails={paginationDetails}
             setPaginationDetails={setPaginationDetails}
@@ -60,29 +60,30 @@ const ManageUsers = () => {
           />
 
           <GenericModal
-            title="System User"
+            title="Add new privilege"
             open={open}
             onCancel={closeFormModal}
             width={600}
             footer={null}
           >
-            <UserForm
+            <PrivilegeForm
+              roles={roles}
               closeFormModal={closeFormModal}
               isEditing={isEditing}
               selectedObject={selectedObject}
-              addAnUser={addAnUser}
-              updateAnUser={updateAnUser}
+              addNewPrivilege={addNewPrivilege}
+              updateAPrivilege={updateAPrivilege}
             />
           </GenericModal>
 
-          {users && users.length > 0 && (
+          {privileges && privileges.length > 0 && (
             <>
               {/* Delete confirmation modal */}
               <DeleteConfirmModal
                 object={object}
                 deleteModal={deleteModal}
                 setDeleteModal={setDeleteModal}
-                deleteFunction={deleteAnUser}
+                deleteFunction={deleteAPrivilege}
               />
             </>
           )}
@@ -91,5 +92,4 @@ const ManageUsers = () => {
     </>
   );
 };
-
-export default ManageUsers;
+export default ManagePrivileges;

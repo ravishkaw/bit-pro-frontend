@@ -4,7 +4,7 @@ const { Search } = Input;
 
 // Title component of table with select pagination, search and add new
 const TableTitle = ({
-  personType,
+  object,
   openFormModal,
   paginationDetails,
   setPaginationDetails,
@@ -36,7 +36,7 @@ const TableTitle = ({
           onChange={handlePageSizeChange}
         />
         <Search
-          placeholder={`Search ${personType}`}
+          placeholder={`Search ${object}`}
           onSearch={handleSearch}
           defaultValue={paginationDetails?.searchQuery || ""}
           allowClear
@@ -49,7 +49,7 @@ const TableTitle = ({
         onClick={() => openFormModal(false)}
         icon={<PlusOutlined />}
       >
-        Add new {personType}
+        Add new {object}
       </Button>
     </Flex>
   );

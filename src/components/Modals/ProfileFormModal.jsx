@@ -17,7 +17,7 @@ import {
 
 // Profile modal for view add and update profile form
 const ProfileFormModal = ({
-  personType,
+  object,
   addPerson,
   designations,
   employeeStatus,
@@ -32,14 +32,14 @@ const ProfileFormModal = ({
 
   const [form] = Form.useForm();
 
-  const { open, isEditing, selectedPerson } = formModalState;
+  const { open, isEditing, selectedObject } = formModalState;
 
   // sets data based on form modal state
   useEffect(() => {
-    if (open && isEditing && selectedPerson) {
+    if (open && isEditing && selectedObject) {
       const updatedPerson = {
-        ...selectedPerson,
-        designation: selectedPerson.designation.id,
+        ...selectedObject,
+        designation: selectedObject.designation.id,
       };
       setFormData(updatedPerson);
       setInitialFormData(updatedPerson);
@@ -50,7 +50,7 @@ const ProfileFormModal = ({
       setFormData({});
       setInitialFormData({});
     }
-  }, [open, isEditing, selectedPerson, form]);
+  }, [open, isEditing, selectedObject, form]);
 
   // Next button of the step form
   const next = async () => {
@@ -96,10 +96,10 @@ const ProfileFormModal = ({
       const updatedValues = getChangedFieldValues(
         initialFormData,
         data,
-        personType,
+        object,
         designations
       );
-      showUpdateModal(updatedValues, selectedPerson.id, updatedData);
+      showUpdateModal(updatedValues, selectedObject.id, updatedData);
     } else {
       setConfirmLoading(true);
       await addPerson(updatedData);
@@ -147,7 +147,7 @@ const ProfileFormModal = ({
   // Map steps into the Antd step component based on person type
   const items = steps
     .filter(
-      (item) => personType == "employee" || item.title != "Job Information"
+      (item) => object == "employee" || item.title != "Job Information"
     )
     .map((item) => ({
       key: item.title,
@@ -157,7 +157,7 @@ const ProfileFormModal = ({
 
   return (
     <Modal
-      title={isEditing ? `Edit ${personType}` : `Add New ${personType}`}
+      title={isEditing ? `Edit ${object}` : `Add New ${object}`}
       open={open}
       width={850}
       footer={null}

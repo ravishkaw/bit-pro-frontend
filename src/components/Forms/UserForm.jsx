@@ -18,7 +18,7 @@ import { triggerFormFieldsValidation } from "../../utils/form";
 const UserForm = ({
   closeFormModal,
   isEditing,
-  selectedPerson,
+  selectedObject,
   addAnUser,
   updateAnUser,
 }) => {
@@ -46,8 +46,8 @@ const UserForm = ({
       }))
     : [
         {
-          value: selectedPerson?.employeeId?.fullName,
-          label: selectedPerson?.employeeId?.fullName,
+          value: selectedObject?.employeeId?.fullName,
+          label: selectedObject?.employeeId?.fullName,
         },
       ];
 
@@ -69,19 +69,19 @@ const UserForm = ({
 
   // Handle edit populate the wanted fields
   useEffect(() => {
-    if (open && isEditing && selectedPerson) {
+    if (open && isEditing && selectedObject) {
       form.setFieldsValue({
-        ...selectedPerson,
-        employeeId: selectedPerson?.employeeId?.fullName,
-        accountStatus: selectedPerson?.accountStatus,
-        role: selectedPerson.role?.map((role) => role.id),
+        ...selectedObject,
+        employeeId: selectedObject?.employeeId?.fullName,
+        accountStatus: selectedObject?.accountStatus,
+        role: selectedObject.role?.map((role) => role.id),
       });
-      setSelectedEmployeeId(selectedPerson?.employeeId?.id);
+      setSelectedEmployeeId(selectedObject?.employeeId?.id);
       triggerFormFieldsValidation(form);
     } else if (open) {
       form.resetFields();
     }
-  }, [open, isEditing, selectedPerson, form]);
+  }, [open, isEditing, selectedObject, form]);
 
   const onFinish = async () => {
     const data = form.getFieldsValue();
@@ -99,7 +99,7 @@ const UserForm = ({
     setConfirmLoading(true);
     try {
       if (isEditing) {
-        await updateAnUser(selectedPerson.id, updatedData);
+        await updateAnUser(selectedObject.id, updatedData);
       } else {
         await addAnUser(updatedData);
         form.resetFields();

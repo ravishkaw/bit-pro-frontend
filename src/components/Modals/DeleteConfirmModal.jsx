@@ -3,20 +3,24 @@ import { Modal, Typography } from "antd";
 import { WarningFilled } from "@ant-design/icons";
 
 // Delte confirmation modal
-const DeleteConfirmModal = ({ deleteModal, setDeleteModal, deletePerson }) => {
+const DeleteConfirmModal = ({
+  deleteModal,
+  setDeleteModal,
+  deleteFunction,
+}) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
 
-  const { open, selectedPerson } = deleteModal;
+  const { open, selectedObject } = deleteModal;
 
   const handleOk = () => {
     setConfirmLoading(true);
-    deletePerson(selectedPerson.id);
+    deleteFunction(selectedObject.id);
     setConfirmLoading(false);
-    setDeleteModal({ open: false, selectedPerson: null });
+    setDeleteModal({ open: false, selectedObject: null });
   };
 
   const handleCancel = () => {
-    setDeleteModal({ open: false, selectedPerson: null });
+    setDeleteModal({ open: false, selectedObject: null });
   };
 
   return (
@@ -37,7 +41,11 @@ const DeleteConfirmModal = ({ deleteModal, setDeleteModal, deletePerson }) => {
         <br />
         <br />
         {`Are you sure to Delete ${
-          selectedPerson?.fullName || selectedPerson?.username
+          selectedObject?.fullName ||
+          selectedObject?.username ||
+          selectedObject?.moduleId?.name +
+            " privilege of " +
+            selectedObject?.roleId?.name
         }`}
       </Typography.Title>
     </Modal>

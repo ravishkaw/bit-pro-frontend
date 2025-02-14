@@ -7,19 +7,21 @@ import NotFound from "../Shared/NotFound";
 import Dashboard from "./Dashboard";
 import ManageEmployees from "./ManageEmployees";
 import ManageUsers from "./ManageUsers";
+import ManagePrivileges from "./ManagePrivileges";
 
 // Routes that belong to the admin
 const validAdminRoutes = [
   "/admin",
-  "/admin/manage-employees",
-  "/admin/manage-users",
+  "/admin/employees",
+  "/admin/users",
+  "/admin/privileges",
 ];
 
 // Handle routing of Admin
 const AdminRoutes = () => {
   const navigate = useNavigate();
 
-  // Redirect to not found 
+  // Redirect to not found
   useEffect(() => {
     const currentPath = window.location.pathname;
     if (
@@ -34,8 +36,9 @@ const AdminRoutes = () => {
     <Routes>
       <Route path="/" element={<AppLayout />}>
         <Route index element={<Dashboard />} />
-        <Route path="manage-employees" element={<ManageEmployees />} />
-        <Route path="manage-users" element={<ManageUsers />} />
+        <Route path="employees" element={<ManageEmployees />} />
+        <Route path="users" element={<ManageUsers />} />
+        <Route path="privileges" element={<ManagePrivileges />} />
 
         <Route path="notfound" element={<NotFound />} />
       </Route>

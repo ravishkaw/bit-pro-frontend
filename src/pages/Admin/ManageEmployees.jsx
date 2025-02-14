@@ -4,8 +4,7 @@ import useEmployees from "../../hooks/useEmployees";
 import useModalStates from "../../hooks/useModalStates";
 
 import { employeeColumnItems } from "../../components/Table/EmployeeColumnItems";
-
-import ProfileTableCard from "../../components/DataDisplay/ProfileTableCard";
+import TableCard from "../../components/DataDisplay/TableCard";
 import ViewPerson from "../../components/Modals/ViewPerson";
 import ProfileFormModal from "../../components/Modals/ProfileFormModal";
 import DeleteConfirmModal from "../../components/Modals/DeleteConfirmModal";
@@ -13,7 +12,7 @@ import UpdateConfirmModal from "../../components/Modals/UpdateConfirmModal";
 
 // Admin Manage Employees Page
 const ManageEmployee = () => {
-  const personType = "employee";
+  const object = "employee";
 
   const {
     employees,
@@ -68,8 +67,8 @@ const ManageEmployee = () => {
       <Row>
         <Col span={24}>
           {/* Data view table and card for mobile */}
-          <ProfileTableCard
-            personType={personType}
+          <TableCard
+            object={object}
             columns={columns}
             rowKey="empNo"
             dataSource={employees}
@@ -85,7 +84,7 @@ const ManageEmployee = () => {
 
           {/* Add / edit form modal */}
           <ProfileFormModal
-            personType={personType}
+            object={object}
             addPerson={addAnEmployee}
             updatePerson={updateAnEmployee}
             designations={designations}
@@ -99,7 +98,7 @@ const ManageEmployee = () => {
             <>
               {/* View modal */}
               <ViewPerson
-                personType={personType}
+                object={object}
                 viewModal={viewModal}
                 setViewModal={setViewModal}
                 handleEdit={handleEdit}
@@ -115,10 +114,10 @@ const ManageEmployee = () => {
 
               {/* Delete confirmation modal */}
               <DeleteConfirmModal
-                personType={personType}
+                object={object}
                 deleteModal={deleteModal}
                 setDeleteModal={setDeleteModal}
-                deletePerson={deleteAnEmployee}
+                deleteFunction={deleteAnEmployee}
               />
             </>
           )}
