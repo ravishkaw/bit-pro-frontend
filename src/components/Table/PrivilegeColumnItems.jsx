@@ -1,10 +1,12 @@
 import { Button, Space, Tag } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
+// Tag colors for operations
 const tagColor = (op) => (
   <Tag color={op ? "green" : "red"}>{op ? "Granted" : "Not Granted"}</Tag>
 );
 
+// Column items for the privilege table
 const PrivilegeColumnItems = (openDeleteModal, handleEdit) => [
   {
     title: "ID",

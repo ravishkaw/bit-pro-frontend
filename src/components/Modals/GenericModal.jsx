@@ -1,4 +1,4 @@
-import { Divider, Modal } from "antd";
+import { Modal } from "antd";
 
 // A modal to render anything inside
 const GenericModal = ({ title, open, onCancel, width, footer, children }) => {
@@ -11,7 +11,6 @@ const GenericModal = ({ title, open, onCancel, width, footer, children }) => {
       destroyOnClose
       footer={footer}
     >
-      <Divider />
       {children}
     </Modal>
   );

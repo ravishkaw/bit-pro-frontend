@@ -7,49 +7,105 @@ import NotFound from "../pages/Shared/NotFound";
 
 // Private Routes
 import PrivateRoute from "./PrivateRoute";
-import RoleBasedRoutes from "./RoleBasedRoutes";
+import ModuleAccess from "./ModuleAccess";
 
-// Users Routes
-import AdminRoutes from "../pages/Admin/Routes";
-import ManagerRoutes from "../pages/Manager/Routes";
+// App layout
+import AppLayout from "../components/Layout/AppLayout";
+
+// Pages
+import Dashboard from "../pages/Dashboard";
+import ManageEmployee from "../pages/ManageEmployees";
+import ManageUsers from "../pages/ManageUsers";
+import ManagePrivileges from "../pages/ManagePrivileges";
+import UserProfile from "../pages/UserProfile";
+import ManageRooms from "../pages/ManageRooms";
 
 // Handle all the routes of the app
 const AppRoutes = () => {
   return (
     <Routes>
       {/* Public Routes */}
+      {/* Default route (index) that renders the Login component */}
       <Route index element={<Login />} />
 
-      {/* Private Routes to check logged in or note */}
-      {/* Admin */}
-      <Route
-        path="/admin/*"
-        element={
-          <PrivateRoute>
-            {/* routes based on the roles */}
-            <RoleBasedRoutes role="admin">
-              <AdminRoutes />
-            </RoleBasedRoutes>
-          </PrivateRoute>
-        }
-      />
+      {/* AppLayout wraps all private routes */}
+      <Route path="/" element={<AppLayout />}>
+        {/* Dashboard Route */}
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
 
-      {/* Manager */}
-      <Route
-        path="/manager/*"
-        element={
-          <PrivateRoute>
-            <RoleBasedRoutes role="manager">
-              <ManagerRoutes />
-            </RoleBasedRoutes>
-          </PrivateRoute>
-        }
-      />
+        {/* Manage Employee Route */}
+        <Route
+          path="/employees"
+          element={
+            <PrivateRoute>
+              <ModuleAccess module="Employee">
+                <ManageEmployee />
+              </ModuleAccess>
+            </PrivateRoute>
+          }
+        />
 
-      {/* Any other not matching one  */}
+        {/* Manage Users Route */}
+        <Route
+          path="/users"
+          element={
+            <PrivateRoute>
+              <ModuleAccess module="User">
+                <ManageUsers />
+              </ModuleAccess>
+            </PrivateRoute>
+          }
+        />
+
+        {/* Manage Privileges Route */}
+        <Route
+          path="/privileges"
+          element={
+            <PrivateRoute>
+              <ModuleAccess module="Privilege">
+                <ManagePrivileges />
+              </ModuleAccess>
+            </PrivateRoute>
+          }
+        />
+
+        {/* Manage Privileges Route */}
+        <Route
+          path="/rooms"
+          element={
+            <PrivateRoute>
+              <ModuleAccess module="Room">
+                <ManageRooms />
+              </ModuleAccess>
+            </PrivateRoute>
+          }
+        />
+
+        {/* User Profile Route */}
+        <Route
+          path="/user-profile"
+          element={
+            <PrivateRoute>
+              <UserProfile />
+            </PrivateRoute>
+          }
+        />
+      </Route>
+
+      {/* Catch-all route for unmatched paths */}
       <Route path="*" element={<NotFound />} />
+
+      {/* Route for unauthorized access */}
       <Route path="/unauthorized" element={<Unauthorized />} />
     </Routes>
   );
 };
+
 export default AppRoutes;

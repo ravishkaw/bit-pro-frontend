@@ -1,6 +1,7 @@
 import { Card, Col, Row, Tag } from "antd";
 import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
 
+// Card for pages
 const GenericCard = ({
   columns,
   data,
@@ -85,9 +86,25 @@ const GenericCard = ({
 
         if (
           column.dataIndex === "designation" ||
-          column.dataIndex === "employeeStatus"
+          column.dataIndex === "employeeStatus" ||
+          column.dataIndex === "moduleId" ||
+          column.dataIndex === "roleId"
         ) {
           value = data[column.dataIndex].name; // designation :{id:1, name:"admin"}
+        }
+
+        if (
+          column.dataIndex === "selectOp" ||
+          column.dataIndex === "insertOp" ||
+          column.dataIndex === "updateOp" ||
+          column.dataIndex === "deleteOp"
+        ) {
+          value =
+            data[column.dataIndex] == 0 ? (
+              <Tag color="red">Not Granted</Tag>
+            ) : (
+              <Tag color="green">Granted</Tag>
+            );
         }
 
         return (

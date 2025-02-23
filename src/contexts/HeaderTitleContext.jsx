@@ -1,34 +1,34 @@
 import { useState, createContext, useContext } from "react";
 
+// Context to manage the app header title
 const HeaderTitleContext = createContext();
 
-// Based on the sider content selected, show the app header title
+// Provider to update the header title based on the selected sider item
 export const HeaderTitleProvider = ({ children }) => {
-  const [headerTitle, setHeaderTitle] = useState("Villa Water Lilly");
+  const [headerTitle, setHeaderTitle] = useState("Villa Water Lilly"); // Default title
 
-  // Find the label from sider items and set it as header title
+  // Function to find the label for the selected key in sider items
   const findLabel = (key, items) => {
     const searchLabel = (items, key) => {
       for (const item of items) {
-        // return label from top level
-        if (item.key === key) {
-          return item.label;
-        }
-        // Nested search for type = group / nested menu items
+        // If key matches, return the label
+        if (item.key === key) return item.label;
+
+        // If item has children, search recursively
         if (item.children) {
           const foundLabel = searchLabel(item.children, key);
-          if (foundLabel) {
-            return foundLabel;
-          }
+          if (foundLabel) return foundLabel;
         }
       }
-      return "Villa Waterlilly"; // Default label
+      return "Villa Waterlilly"; // Default if no match
     };
 
+    // Update header title with the found label
     const label = searchLabel(items, key);
     setHeaderTitle(label);
   };
 
+  // Pass header title and findLabel function to the app
   return (
     <HeaderTitleContext.Provider value={{ headerTitle, findLabel }}>
       {children}
@@ -36,4 +36,5 @@ export const HeaderTitleProvider = ({ children }) => {
   );
 };
 
+// Hook to easily use the header title context
 export const useHeaderTitleContext = () => useContext(HeaderTitleContext);

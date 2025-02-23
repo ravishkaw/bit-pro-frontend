@@ -1,49 +1,97 @@
 import {
   TeamOutlined,
-  MailOutlined,
   SettingOutlined,
   DashboardOutlined,
-  ScheduleOutlined,
   UserOutlined,
-  IdcardOutlined,
   HomeOutlined,
-  BoxPlotOutlined,
-  DollarOutlined,
-  LineChartOutlined,
-  LockOutlined,
+  UserAddOutlined,
+  BankOutlined,
+  CalendarOutlined,
+  DollarCircleOutlined,
+  SafetyOutlined,
+  AppstoreOutlined,
+  GiftOutlined,
 } from "@ant-design/icons";
 
-// Sider items for the system roles
-// Admin
-export const AdminSiderItems = [
+export const siderItems = [
   {
-    key: "/admin",
+    key: "/dashboard",
     label: "Dashboard",
     icon: <DashboardOutlined />,
   },
   {
-    key: "/admin/employees",
+    key: "/employees",
     label: "Manage Employees",
-    icon: <IdcardOutlined />,
+    icon: <TeamOutlined />,
+    privilege: "Employee",
   },
   {
-    key: "/admin/users",
-    label: "Manage Users",
-    icon: <UserOutlined />,
+    key: "/guests",
+    label: "Manage Guests",
+    icon: <UserAddOutlined />,
+    privilege: "Guest",
   },
   {
-    key: "/admin/privileges",
-    label: "Privileges",
-    icon: <LockOutlined />,
-  },
-  {
-    key: "/admin/rooms",
-    label: "Manage Rooms",
+    key: "rooms",
+    label: "Room and Reservations",
     icon: <HomeOutlined />,
+    children: [
+      {
+        key: "/room-reservations",
+        label: "Room Reservations",
+        icon: <CalendarOutlined />,
+        privilege: "Room Reservation",
+      },
+      {
+        key: "/rooms",
+        label: "Manage Rooms",
+        icon: <BankOutlined />,
+        privilege: "Room",
+      },
+      {
+        key: "/room-types",
+        label: "Room Types",
+        icon: <HomeOutlined />,
+        privilege: "Room Type",
+      },
+      {
+        key: "/amenities",
+        label: "Amenities",
+        icon: <GiftOutlined />,
+        privilege: "Amenity",
+      },
+      {
+        key: "/room-inventory",
+        label: "Room Inventory",
+        icon: <AppstoreOutlined />,
+        privilege: "Room Inventory",
+      },
+      {
+        key: "/room-pricing-rules",
+        label: "Room Pricing Rules",
+        icon: <DollarCircleOutlined />,
+        privilege: "Room Pricing Rule",
+      },
+    ],
   },
   {
-    key: "/admin/bookings",
-    label: "Manage Bookings",
-    icon: <ScheduleOutlined />,
+    key: "system",
+    label: "System Modules",
+    icon: <SettingOutlined />,
+    type: "group",
+    children: [
+      {
+        key: "/users",
+        label: "Manage Users",
+        icon: <UserOutlined />,
+        privilege: "User",
+      },
+      {
+        key: "/privileges",
+        label: "Privileges",
+        icon: <SafetyOutlined />,
+        privilege: "Privilege",
+      },
+    ],
   },
 ];

@@ -40,13 +40,14 @@ const DeleteConfirmModal = ({
         <WarningFilled style={{ color: "red", fontSize: "3rem" }} />
         <br />
         <br />
-        {`Are you sure to Delete ${
+        {`Are you sure you want to delete ${
           selectedObject?.fullName ||
           selectedObject?.username ||
-          selectedObject?.moduleId?.name +
-            " privilege of " +
-            selectedObject?.roleId?.name
-        }`}
+          `Room ${selectedObject?.roomNumber}` ||
+          (selectedObject?.moduleId?.name && selectedObject?.roleId?.name
+            ? `${selectedObject.moduleId.name} privilege of ${selectedObject.roleId.name}`
+            : "this item")
+        }?`}
       </Typography.Title>
     </Modal>
   );

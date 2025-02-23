@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Row, Col, Flex, Form, Select, Space, Switch } from "antd";
 import usePrivileges from "../../hooks/usePrivileges";
 
+// Privilege Form 
 const PrivilegeForm = ({
   roles,
   closeFormModal,
@@ -11,7 +12,7 @@ const PrivilegeForm = ({
   updateAPrivilege,
 }) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [selectedRole, setSelectedRole] = useState();
+  const [selectedRole, setSelectedRole] = useState(); 
   const [modules, setModules] = useState([]);
   const [form] = Form.useForm();
 

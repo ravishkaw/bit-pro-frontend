@@ -1,7 +1,12 @@
 import { toast } from "react-toastify";
 
-//Add handle api call function to handle edit add delete and restore
-const handleApiCall = async (apiCallFn, successMessage, setLoading, reload) => {
+// Utility function to handle CRUD API calls
+const handleApiCall = async (
+  apiCallFn, // Function to make the API call
+  successMessage, // Message to show on success
+  setLoading, // Function to set loading state
+  reload // Function to reload data after the operation
+) => {
   setLoading(true);
   try {
     await apiCallFn();

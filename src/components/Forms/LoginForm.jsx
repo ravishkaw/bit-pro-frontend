@@ -14,7 +14,7 @@ const LoginForm = () => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
-  // Unified login handler
+  // login handler
   const onFinish = async (loginFormData) => {
     setLoading(true);
     try {
@@ -29,12 +29,7 @@ const LoginForm = () => {
   // Redirect when user state changes
   useEffect(() => {
     if (user) {
-      const routes = {
-        admin: "/admin",
-        manager: "/manager",
-        user: "/",
-      };
-      navigate(routes[user.role] || "/");
+      navigate("/dashboard");
     }
   }, [user, navigate]);
 

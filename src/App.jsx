@@ -7,17 +7,14 @@ import { colorPalette } from "./constants/ColorPalette";
 
 const App = () => {
   return (
+    // color palette to manage the color of the app
     <ConfigProvider theme={colorPalette}>
       <Router>
         <AppRoutes />
-        <ToastContainer
-          autoClose={2000}
-          hideProgressBar
-          theme="colored"
-          newestOnTop
-        />
+        <ToastContainer newestOnTop />
       </Router>
     </ConfigProvider>
   );
 };
+
 export default App;

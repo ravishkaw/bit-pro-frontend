@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
-
 import handleApiCall from "./useApiHandler";
 import {
   fetchEmployees,
@@ -14,14 +13,14 @@ import {
 import { fetchAllDesignations } from "../services/designation";
 import { fetchAllEmployeeStatus } from "../services/employeeStatus";
 
-// Handle all employee based service calls
+// Custom hook to manage employee-related operations
 const useEmployees = () => {
-  const [employees, setEmployees] = useState([]);
-  const [designations, setDesignations] = useState([]);
-  const [employeeStatus, setEmployeeStatus] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [employees, setEmployees] = useState([]); // List of employees
+  const [designations, setDesignations] = useState([]); // Employee designations
+  const [employeeStatus, setEmployeeStatus] = useState([]); // Employee statuses
+  const [loading, setLoading] = useState(false); // Loading state
 
+  // Pagination and sorting details
   const [paginationDetails, setPaginationDetails] = useState({
     current: 1,
     pageSize: 10,
@@ -31,38 +30,32 @@ const useEmployees = () => {
     searchQuery: "",
   });
 
-  // Crud Operation Api
-  // Load all employees and employees with pagination details
+  // Fetch employees based on pagination and sorting
   const loadEmployees = async () => {
     try {
       setLoading(true);
-      // Fetch employees page starts with 0 but in antd starts with 1
       const resp = await fetchEmployees(
-        paginationDetails.current - 1,
+        paginationDetails.current - 1, // Adjust for backend's 0-based index from antd 1
         paginationDetails.pageSize,
         paginationDetails.sortBy,
         paginationDetails.sortOrder,
         paginationDetails.searchQuery
       );
-
       setEmployees(resp.data);
-      setPaginationDetails((prev) => ({
-        ...prev,
-        total: resp.totalElements,
-      }));
+      setPaginationDetails((prev) => ({ ...prev, total: resp.totalElements })); // Update total count
     } catch (err) {
       setEmployees([]);
-      setError(err.message);
       toast.error(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch employee designations
+  // Fetch and map employee designations
   const getEmployeeDesignation = async () => {
     try {
       const response = await fetchAllDesignations();
+      //mapping the designations to use in select tag
       const mappedDesignations = response.map((designation) => ({
         value: designation.id,
         label: designation.name,
@@ -70,14 +63,15 @@ const useEmployees = () => {
       setDesignations(mappedDesignations);
     } catch (err) {
       setDesignations([]);
-      setError(err.message);
+      toast.error(err.message);
     }
   };
 
-  // Fetch employee status
+  // Fetch and map employee statuses
   const getEmployeeStatus = async () => {
     try {
       const response = await fetchAllEmployeeStatus();
+      //mapping the status to use in select tag
       const mappedStatus = response.map((status) => ({
         value: status.name,
         label: status.name,
@@ -85,10 +79,11 @@ const useEmployees = () => {
       setEmployeeStatus(mappedStatus);
     } catch (err) {
       setEmployeeStatus([]);
-      setError(err.message);
+      toast.error(err.message);
     }
   };
 
+  // Load employees when pagination or sorting changes
   useEffect(() => {
     loadEmployees();
   }, [
@@ -99,32 +94,32 @@ const useEmployees = () => {
     paginationDetails.searchQuery,
   ]);
 
+  // Load designations and statuses on mount
   useEffect(() => {
     getEmployeeDesignation();
     getEmployeeStatus();
   }, []);
 
-  // Get one employee details
+  // Fetch details of a single employee
   const loadOneEmployee = async (employeeId) => {
     setLoading(true);
     try {
       const employee = await fetchOneEmployee(employeeId);
-      // format data into form shape
+      // format data into match with the form shape
       const updatedEmployee = {
         ...employee,
-        dob: dayjs(employee.dob),
+        dob: dayjs(employee.dob), // Format date
         employeeStatus: employee.employeeStatus.name,
       };
       return updatedEmployee;
     } catch (err) {
-      setError(err.message);
       toast.error(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  // Add new employee
+  // Add a new employee
   const addAnEmployee = async (values) => {
     handleApiCall(
       () => addEmployee(values),
@@ -134,7 +129,7 @@ const useEmployees = () => {
     );
   };
 
-  // Update an employee
+  // Update an existing employee
   const updateAnEmployee = async (employeeId, values) => {
     handleApiCall(
       () => updateEmployee(employeeId, values),
@@ -148,22 +143,23 @@ const useEmployees = () => {
   const deleteAnEmployee = async (employeeId) => {
     handleApiCall(
       () => deleteEmployee(employeeId),
-      `Employee with employee id ${employeeId} deleted successfully`,
+      `Employee with ID ${employeeId} deleted successfully`,
       setLoading,
       loadEmployees
     );
   };
 
-  // Restore an employee
+  // Restore a deleted employee
   const restoreAnEmployee = async (employeeId) => {
     handleApiCall(
       () => restoreEmployee(employeeId),
-      `Employee with employee id ${employeeId} restored successfully`,
+      `Employee with ID ${employeeId} restored successfully`,
       setLoading,
       loadEmployees
     );
   };
 
+  // Return states and functions for external use
   return {
     employees,
     loadOneEmployee,
@@ -172,7 +168,6 @@ const useEmployees = () => {
     deleteAnEmployee,
     restoreAnEmployee,
     loading,
-    error,
     designations,
     employeeStatus,
     paginationDetails,

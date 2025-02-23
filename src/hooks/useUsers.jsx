@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-
 import {
   addUser,
   deleteUser,
@@ -12,14 +11,14 @@ import { fetchEmployeesWithoutUserAccounts } from "../services/employee";
 import { fetchAllRoles } from "../services/role";
 import handleApiCall from "./useApiHandler";
 
-// Handle all user based service calls
+// Custom hook to manage user-related operations
 const useUsers = () => {
-  const [users, setUsers] = useState([]);
-  const [employeesNoUser, setEmployeesNoUser] = useState([]);
-  const [roles, setRoles] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [users, setUsers] = useState([]); // List of users
+  const [employeesNoUser, setEmployeesNoUser] = useState([]); // Employees without user accounts
+  const [roles, setRoles] = useState([]); // Available roles
+  const [loading, setLoading] = useState(false); // Loading state
 
+  // Pagination and sorting details
   const [paginationDetails, setPaginationDetails] = useState({
     current: 1,
     pageSize: 10,
@@ -29,46 +28,39 @@ const useUsers = () => {
     searchQuery: "",
   });
 
-  // Crud Operation Api
-  // Load all users
+  // Fetch users based on pagination and sorting
   const loadUsers = async () => {
     try {
       setLoading(true);
-      // Fetch users page starts with 0 but in antd starts with 1
       const resp = await fetchAllUsers(
-        paginationDetails.current - 1,
+        paginationDetails.current - 1, // Adjust for backend's 0-based index from antd 1
         paginationDetails.pageSize,
         paginationDetails.sortBy,
         paginationDetails.sortOrder,
         paginationDetails.searchQuery
       );
       setUsers(resp.data);
-      setPaginationDetails((prev) => ({
-        ...prev,
-        total: resp.totalElements,
-      }));
+      setPaginationDetails((prev) => ({ ...prev, total: resp.totalElements })); // Update total count
     } catch (err) {
       setUsers([]);
-      setError(err.message);
       toast.error(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  // Load employees without user accounts
+  // Fetch employees without user accounts
   const loadEmployeesWithoutUserAccounts = async () => {
     try {
       const resp = await fetchEmployeesWithoutUserAccounts();
       setEmployeesNoUser(resp);
     } catch (err) {
       setEmployeesNoUser([]);
-      setError(err.message);
       toast.error(err.message);
     }
   };
 
-  // Load roles
+  // Fetch and map roles
   const loadRoles = async () => {
     try {
       const resp = await fetchAllRoles();
@@ -79,11 +71,11 @@ const useUsers = () => {
       setRoles(mappedRoles);
     } catch (err) {
       setRoles([]);
-      setError(err.message);
       toast.error(err.message);
     }
   };
 
+  // Load users when pagination or sorting changes
   useEffect(() => {
     loadUsers();
   }, [
@@ -94,26 +86,26 @@ const useUsers = () => {
     paginationDetails.searchQuery,
   ]);
 
+  // Load employees without accounts and roles on mount
   useEffect(() => {
     loadEmployeesWithoutUserAccounts();
     loadRoles();
   }, []);
 
-  // Get one user details
+  // Fetch details of a single user
   const loadOneUser = async (userId) => {
     setLoading(true);
     try {
       const user = await fetchUser(userId);
       return user;
     } catch (err) {
-      setError(err.message);
       toast.error(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  // Add new user
+  // Add a new user
   const addAnUser = async (values) => {
     handleApiCall(
       () => addUser(values),
@@ -123,26 +115,27 @@ const useUsers = () => {
     );
   };
 
-  // update user
+  // Update an existing user
   const updateAnUser = async (userId, values) => {
     handleApiCall(
       () => updateUser(userId, values),
-      `User with ${values?.username} updated successfully`,
+      `User ${values?.username} updated successfully`,
       setLoading,
       loadUsers
     );
   };
 
-  // Delete user
+  // Delete a user
   const deleteAnUser = async (userId) => {
     handleApiCall(
       () => deleteUser(userId),
-      `User with user id ${userId} deleted successfully`,
+      `User with ID ${userId} deleted successfully`,
       setLoading,
       loadUsers
     );
   };
 
+  // Return states and functions for external use
   return {
     loading,
     users,

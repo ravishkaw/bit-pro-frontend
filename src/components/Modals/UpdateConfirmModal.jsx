@@ -6,25 +6,25 @@ const { Title, Text } = Typography;
 
 // update confirmatin modal
 const UpdateConfirmModal = ({
-  updatePerson,
+  updateFunction,
   updateConfirmModal,
   setUpdateConfirmModal,
   closeModal,
 }) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
 
-  const { open, updatedValues, selectedPersonId, updatedData } =
+  const { open, updatedValues, selectedObjectId, updatedData } =
     updateConfirmModal;
 
   //Submit data into db
   const handleOk = async () => {
     setConfirmLoading(true);
-    await updatePerson(selectedPersonId, updatedData);
+    await updateFunction(selectedObjectId, updatedData);
     setConfirmLoading(false);
     setUpdateConfirmModal({
       open: false,
       updatedValues: null,
-      selectedPersonId: null,
+      selectedObjectId: null,
       updatedData: null,
     });
     closeModal();
@@ -35,7 +35,7 @@ const UpdateConfirmModal = ({
     setUpdateConfirmModal({
       open: false,
       updatedValues: null,
-      selectedPersonId: null,
+      selectedObjectId: null,
       updatedData: null,
     });
   };

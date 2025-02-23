@@ -26,6 +26,7 @@ const TableCard = ({
 }) => {
   const { isMobile } = useMobileContext();
 
+  // Total entry message below the table with pagination
   const paginationEntries = (total, range) => {
     return `Showing ${range[0]}-${range[1]} entries of ${total} ${object}s`;
   };
