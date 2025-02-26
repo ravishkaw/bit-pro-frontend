@@ -124,9 +124,9 @@ const TableCard = ({
 
       {/* Simplified pagination for mobile view */}
       <Pagination
-        total={paginationDetails.total}
-        current={paginationDetails.current}
-        pageSize={paginationDetails.pageSize}
+        total={paginationDetails?.total || dataSource?.length}
+        current={paginationDetails?.current}
+        pageSize={paginationDetails?.pageSize}
         showSizeChanger
         simple
         pageSizeOptions={["5", "10", "20"]}
