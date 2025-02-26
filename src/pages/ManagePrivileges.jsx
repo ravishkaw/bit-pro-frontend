@@ -41,21 +41,17 @@ const ManagePrivileges = () => {
     deleteModal,
     setDeleteModal,
     openDeleteModal,
+    handleEdit,
   } = useModalStates();
 
   const { open, isEditing, selectedObject } = formModalState; // Extract modal state details
-
-  // Handle edit action: Load privilege data and open the form modal
-  const handleEdit = async (privilegeId) => {
-    const privilege = await loadOnePrivilege(privilegeId);
-    openFormModal(true, privilege);
-  };
 
   // Generate table columns dynamically using PrivilegeColumnItems
   const columns = PrivilegeColumnItems(
     privilegeModulePrivileges,
     openDeleteModal,
-    handleEdit
+    handleEdit,
+    loadOnePrivilege
   );
 
   return (

@@ -1,11 +1,13 @@
-import { Button, Space, Tag } from "antd";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Tag } from "antd";
+
+import TableActions from "./TableActions";
 
 // Column items for the user table
 export const userColumnItems = (
   userModulePrivileges,
   openDeleteModal,
-  handleEdit
+  handleEdit,
+  loadOneUser
 ) => [
   {
     title: "Employee Name",
@@ -54,31 +56,13 @@ export const userColumnItems = (
     fixed: "right",
     align: "center",
     render: (_, record) => (
-      <Space size="small">
-        {/* Show edit button if the user has update privilege */}
-        {userModulePrivileges?.update_privilege && (
-          <Button
-            size="small"
-            color="yellow"
-            variant="outlined"
-            onClick={() => handleEdit(record.id)}
-          >
-            <EditOutlined />
-          </Button>
-        )}
-
-        {/* Show delete button if the user has delete privilege */}
-        {userModulePrivileges?.delete_privilege && (
-          <Button
-            size="small"
-            variant="outlined"
-            danger
-            onClick={() => openDeleteModal(record)}
-          >
-            <DeleteOutlined />
-          </Button>
-        )}
-      </Space>
+      <TableActions
+        modulePrivilege={userModulePrivileges}
+        apiFunction={loadOneUser}
+        record={record}
+        handleEdit={handleEdit}
+        openDeleteModal={openDeleteModal}
+      />
     ),
   },
 ];

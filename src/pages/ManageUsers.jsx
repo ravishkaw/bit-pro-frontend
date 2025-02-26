@@ -40,21 +40,17 @@ const ManageUsers = () => {
     deleteModal,
     setDeleteModal,
     openDeleteModal,
+    handleEdit,
   } = useModalStates();
 
   const { open, isEditing, selectedObject } = formModalState; // Extract modal state details
-
-  // Handle edit action: Load user data and open the form modal
-  const handleEdit = async (userId) => {
-    const user = await loadOneUser(userId);
-    openFormModal(true, user);
-  };
 
   // Generate table columns dynamically using userColumnItems
   const columns = userColumnItems(
     userModulePrivileges,
     openDeleteModal,
-    handleEdit
+    handleEdit,
+    loadOneUser
   );
 
   return (

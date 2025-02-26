@@ -1,5 +1,6 @@
-import { Button, Space, Tag } from "antd";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Tag } from "antd";
+
+import TableActions from "./TableActions";
 
 // Tag colors for operations
 const tagColor = (op) => (
@@ -10,7 +11,8 @@ const tagColor = (op) => (
 const PrivilegeColumnItems = (
   privilegeModulePrivileges,
   openDeleteModal,
-  handleEdit
+  handleEdit,
+  loadOnePrivilege
 ) => [
   // {
   //   title: "ID",
@@ -60,28 +62,13 @@ const PrivilegeColumnItems = (
     fixed: "right",
     align: "center",
     render: (_, record) => (
-      <Space size="small">
-        {privilegeModulePrivileges?.update_privilege && (
-          <Button
-            size="small"
-            color="yellow"
-            variant="outlined"
-            onClick={() => handleEdit(record.id)}
-          >
-            <EditOutlined />
-          </Button>
-        )}
-        {privilegeModulePrivileges?.delete_privilege && (
-          <Button
-            size="small"
-            variant="outlined"
-            danger
-            onClick={() => openDeleteModal(record)}
-          >
-            <DeleteOutlined />
-          </Button>
-        )}
-      </Space>
+      <TableActions
+        modulePrivilege={privilegeModulePrivileges}
+        apiFunction={loadOnePrivilege}
+        record={record}
+        handleEdit={handleEdit}
+        openDeleteModal={openDeleteModal}
+      />
     ),
   },
 ];

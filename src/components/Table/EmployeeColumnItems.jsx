@@ -1,10 +1,6 @@
-import { Button, Space, Popconfirm, Tag } from "antd";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  EyeOutlined,
-  UndoOutlined,
-} from "@ant-design/icons";
+import { Tag } from "antd";
+
+import TableActions from "./TableActions";
 
 // Tag colors for employee status
 const statusColors = {
@@ -68,42 +64,15 @@ export const employeeColumnItems = (
     key: "operation",
     fixed: "right",
     render: (_, record) => (
-      <Space size="small">
-        <Button
-          size="small"
-          color="blue"
-          variant="outlined"
-          onClick={() => {
-            handleView(loadOneEmployee, record.id);
-          }}
-        >
-          <EyeOutlined />
-        </Button>
-
-        {/* Show edit button if the user has update privilege */}
-        {employeeModulePrivilege?.update_privilege && (
-          <Button
-            size="small"
-            color="yellow"
-            variant="outlined"
-            onClick={() => handleEdit(loadOneEmployee, record.id)}
-          >
-            <EditOutlined />
-          </Button>
-        )}
-
-        {/* Show delete button if the user has delete privilege */}
-        {employeeModulePrivilege?.delete_privilege && (
-          <Button
-            size="small"
-            variant="outlined"
-            danger
-            onClick={() => openDeleteModal(record)}
-          >
-            <DeleteOutlined />
-          </Button>
-        )}
-      </Space>
+      <TableActions
+        modulePrivilege={employeeModulePrivilege}
+        apiFunction={loadOneEmployee}
+        record={record}
+        handleEdit={handleEdit}
+        handleView={handleView}
+        showView={true}
+        openDeleteModal={openDeleteModal}
+      />
     ),
   },
 ];
