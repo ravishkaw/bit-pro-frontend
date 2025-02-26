@@ -1,7 +1,6 @@
 import axiosInstance from "./axiosInstance";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
-const PRIVILEGE_BASE_URL = `${BASE_URL}/privilege`;
+const PRIVILEGE_BASE_URL = "/privilege";
 
 // Fetch All Privilege Details From The DB
 export const fetchAllPrivileges = async (

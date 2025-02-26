@@ -1,7 +1,6 @@
 import axiosInstance from "./axiosInstance";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
-const USERS_BASE_URL = `${BASE_URL}/users`;
+const USERS_BASE_URL = "/users";
 
 // Fetch All user Details From The DB
 export const fetchAllUsers = async (

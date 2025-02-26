@@ -1,7 +1,6 @@
 import axiosInstance from "./axiosInstance";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
-const MODULE_BASE_URL = `${BASE_URL}/module`;
+const MODULE_BASE_URL = "/module";
 
 // Fetch All modules Details From The DB
 export const fetchAllModules = async () => {
