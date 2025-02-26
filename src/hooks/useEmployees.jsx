@@ -12,6 +12,7 @@ import {
 } from "../services/employee";
 import { fetchAllDesignations } from "../services/designation";
 import { fetchAllEmployeeStatus } from "../services/employeeStatus";
+import usePagination from "./usePagination";
 
 // Custom hook to manage employee-related operations
 const useEmployees = () => {
@@ -21,14 +22,7 @@ const useEmployees = () => {
   const [loading, setLoading] = useState(false); // Loading state
 
   // Pagination and sorting details
-  const [paginationDetails, setPaginationDetails] = useState({
-    current: 1,
-    pageSize: 10,
-    sortBy: "empNo",
-    sortOrder: "descend",
-    total: 0,
-    searchQuery: "",
-  });
+  const { paginationDetails, setPaginationDetails } = usePagination();
 
   // Fetch employees based on pagination and sorting
   const loadEmployees = async () => {

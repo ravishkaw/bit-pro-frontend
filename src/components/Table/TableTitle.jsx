@@ -8,6 +8,7 @@ const TableTitle = ({
   openFormModal,
   paginationDetails,
   setPaginationDetails,
+  privileges, // privilege of the logged user of the module
   handleSearch, // Function to handle search
 }) => {
   // Handle changes in the page size dropdown
@@ -51,13 +52,15 @@ const TableTitle = ({
 
       {/* Right Section*/}
       {/* Add New Button  */}
-      <Button
-        type="primary"
-        onClick={() => openFormModal(false)}
-        icon={<PlusOutlined />}
-      >
-        Add new {object}
-      </Button>
+      {privileges?.insert_privilege && (
+        <Button
+          type="primary"
+          onClick={() => openFormModal(false)}
+          icon={<PlusOutlined />}
+        >
+          Add new {object}
+        </Button>
+      )}
     </Flex>
   );
 };

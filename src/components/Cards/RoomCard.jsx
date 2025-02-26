@@ -5,28 +5,21 @@ import {
   EyeOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
-import { useAuth } from "../../contexts/AuthContext";
 
 const { Meta } = Card;
 const { Text } = Typography;
 
 const RoomCard = ({
   room,
+  privileges,
   handleView,
   handleEdit,
   loadOneRoom,
   openDeleteModal,
 }) => {
-  const { privileges } = useAuth();
-
-  // Find the module related to "Room" in the privileges
-  const roomModule = privileges?.find(
-    (privilegedModule) => privilegedModule.module_name === "Room"
-  );
-
   //define card actions based on privileges
   const actions = [];
-  if (roomModule.select_privilege) {
+  if (privileges.select_privilege) {
     actions.push(
       <EyeOutlined
         style={{ color: "blue" }}
@@ -34,7 +27,7 @@ const RoomCard = ({
       />
     );
   }
-  if (roomModule.update_privilege) {
+  if (privileges.update_privilege) {
     actions.push(
       <EditOutlined
         style={{ color: "#fadb14" }}
@@ -42,7 +35,7 @@ const RoomCard = ({
       />
     );
   }
-  if (roomModule.delete_privilege) {
+  if (privileges.delete_privilege) {
     actions.push(
       <DeleteOutlined
         style={{ color: "red" }}

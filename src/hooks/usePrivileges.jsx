@@ -10,23 +10,17 @@ import {
 import { fetchAllRoles } from "../services/role";
 import { fetchModuleWithoutPrivileges } from "../services/module";
 import handleApiCall from "./useApiHandler";
+import usePagination from "./usePagination";
 
 // Custom hook to handle all privilege-related service calls
 const usePrivileges = () => {
-  const [privileges, setPrivileges] = useState([]); // State to store the list of privileges
+  const [allPrivileges, setAllPrivileges] = useState([]); // State to store the list of privileges
   const [roles, setRoles] = useState([]); // Roles available in the system
   const [allModules, setAllModules] = useState([]); // All modules available in the system
   const [loading, setLoading] = useState(false); // Loading state for API calls
 
   // Pagination details for managing privilege data
-  const [paginationDetails, setPaginationDetails] = useState({
-    current: 1,
-    pageSize: 10,
-    sortBy: "id",
-    sortOrder: "descend",
-    total: 0,
-    searchQuery: "",
-  });
+  const { paginationDetails, setPaginationDetails } = usePagination();
 
   // Load all privileges based on pagination and sorting criteria
   const loadPrivileges = async () => {
@@ -39,10 +33,14 @@ const usePrivileges = () => {
         paginationDetails.sortOrder,
         paginationDetails.searchQuery
       );
-      setPrivileges(resp);
+      // filter out admin
+      const filteredPrivileges = resp.filter(
+        (allprivileges) => allprivileges.roleId.id !== 1
+      );
+      setAllPrivileges(filteredPrivileges);
       setPaginationDetails((prev) => ({ ...prev, total: resp.totalElements })); // Update total count
     } catch (err) {
-      setPrivileges([]);
+      setAllPrivileges([]);
       toast.error(err.message);
     } finally {
       setLoading(false);
@@ -54,10 +52,13 @@ const usePrivileges = () => {
     try {
       const response = await fetchAllRoles();
       //mapping the roles to use in select tag
-      const mappedRoles = response.map((role) => ({
-        value: role.id,
-        label: role.name,
-      }));
+      const mappedRoles = response
+        .map((role) => ({
+          value: role.id,
+          label: role.name,
+        }))
+        // filter admin
+        .filter((withoutAdmin) => withoutAdmin.value != 1);
       setRoles(mappedRoles);
     } catch (err) {
       toast.error(err.message);
@@ -157,7 +158,7 @@ const usePrivileges = () => {
   // Return all states and functions for external use
   return {
     loading,
-    privileges,
+    allPrivileges,
     roles,
     allModules,
     getModulesWithoutPrivileges,

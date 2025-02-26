@@ -41,12 +41,12 @@ const DeleteConfirmModal = ({
         <br />
         <br />
         {`Are you sure you want to delete ${
-          selectedObject?.fullName ||
-          selectedObject?.username ||
-          `Room ${selectedObject?.roomNumber}` ||
+          selectedObject?.fullName || // Emplpoyee, Guest
+          selectedObject?.username || // User
+          (selectedObject?.roomNumber && `Room ${selectedObject.roomNumber}`) || // Rooms
           (selectedObject?.moduleId?.name && selectedObject?.roleId?.name
-            ? `${selectedObject.moduleId.name} privilege of ${selectedObject.roleId.name}`
-            : "this item")
+            ? `${selectedObject.moduleId.name} privilege of ${selectedObject.roleId.name}` // Privilege
+            : "this item") // Any other
         }?`}
       </Typography.Title>
     </Modal>

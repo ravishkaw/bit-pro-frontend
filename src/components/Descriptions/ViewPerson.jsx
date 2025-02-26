@@ -11,6 +11,7 @@ const { Title } = Typography;
 const ViewPerson = ({
   object,
   selectedPerson,
+  privileges,
   loadOneEmployee,
   closeViewModal,
   handleEdit,
@@ -105,16 +106,20 @@ const ViewPerson = ({
 
       <Divider />
       <Flex justify="space-between">
-        <Button
-          onClick={() => {
-            closeViewModal();
-            handleEdit(loadOneEmployee, selectedPerson?.id);
-          }}
-          variant="outlined"
-          color="primary"
-        >
-          Edit
-        </Button>
+        {privileges.update_privilege ? (
+          <Button
+            onClick={() => {
+              closeViewModal();
+              handleEdit(loadOneEmployee, selectedPerson?.id);
+            }}
+            variant="outlined"
+            color="primary"
+          >
+            Edit
+          </Button>
+        ) : (
+          <span></span>
+        )}
         <Space>
           <Button onClick={() => closeViewModal()}>Close</Button>
           <Button color="primary" variant="solid" onClick={() => printFn()}>

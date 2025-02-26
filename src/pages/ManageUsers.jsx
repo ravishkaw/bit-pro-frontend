@@ -1,6 +1,9 @@
 import { Col, Row } from "antd";
+
+import { useAuth } from "../contexts/AuthContext";
 import useUsers from "../hooks/useUsers";
 import useModalStates from "../hooks/useModalStates";
+
 import TableCard from "../components/DataDisplay/TableCard";
 import { userColumnItems } from "../components/Table/UsersColumnItems";
 import GenericModal from "../components/Modals/GenericModal";
@@ -10,6 +13,13 @@ import DeleteConfirmModal from "../components/Modals/DeleteConfirmModal";
 // Admin Manage Users Page
 const ManageUsers = () => {
   const object = "user"; // Define the object type for users
+
+  // Find the module related to "User" in the privileges
+  const { privileges } = useAuth();
+
+  const userModulePrivileges = privileges?.find(
+    (privilegedModule) => privilegedModule.module_name === "User"
+  );
 
   // Destructure functions and states from custom hooks
   const {
@@ -41,7 +51,11 @@ const ManageUsers = () => {
   };
 
   // Generate table columns dynamically using userColumnItems
-  const columns = userColumnItems(openDeleteModal, handleEdit);
+  const columns = userColumnItems(
+    userModulePrivileges,
+    openDeleteModal,
+    handleEdit
+  );
 
   return (
     <>
@@ -53,6 +67,7 @@ const ManageUsers = () => {
             columns={columns}
             rowKey="username"
             dataSource={users}
+            privileges={userModulePrivileges}
             loading={loading}
             paginationDetails={paginationDetails}
             setPaginationDetails={setPaginationDetails}

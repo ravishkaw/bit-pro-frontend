@@ -1,5 +1,6 @@
 import { Row, Col, Card, Tabs, Flex, Empty, Button } from "antd";
 
+import { useAuth } from "../../contexts/AuthContext";
 import useRooms from "../../hooks/useRooms";
 import useModalStates from "../../hooks/useModalStates";
 
@@ -12,6 +13,12 @@ import ViewRoom from "../../components/Descriptions/ViewRoom";
 const ManageRooms = () => {
   let object = "room"; // Define the object type for rooms
 
+  // Find the module related to "Room" in the privileges
+  const { privileges } = useAuth();
+
+  const roomModulePrivileges = privileges?.find(
+    (privilegedModule) => privilegedModule.module_name === "Room"
+  );
   // Destructure functions and states from custom hooks
   const { rooms, loading, setSelectedTab, roomTypes, loadOneRoom } = useRooms();
 
@@ -40,11 +47,13 @@ const ManageRooms = () => {
       <Card>
         <Row gutter={[20, 20]}>
           <Col span={24}>
-            <Flex justify="end">
-              <Button type="primary" onClick={() => openFormModal(false)}>
-                Add New Room
-              </Button>
-            </Flex>
+            {roomModulePrivileges?.insert_privilege && (
+              <Flex justify="end">
+                <Button type="primary" onClick={() => openFormModal(false)}>
+                  Add New Room
+                </Button>
+              </Flex>
+            )}
             <Tabs
               items={roomTypes}
               defaultActiveKey="all"
@@ -65,6 +74,7 @@ const ManageRooms = () => {
                   <RoomCard
                     key={room.id}
                     room={room}
+                    privileges={roomModulePrivileges}
                     handleView={handleView}
                     handleEdit={handleEdit}
                     openDeleteModal={openDeleteModal}
@@ -104,6 +114,7 @@ const ManageRooms = () => {
             <ViewRoom
               object={object}
               selectedRoom={viewModal.selectedObject}
+              privileges={roomModulePrivileges}
               closeViewModal={closeViewModal}
               handleEdit={handleEdit}
               loadOneRoom={loadOneRoom}

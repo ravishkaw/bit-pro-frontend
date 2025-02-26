@@ -78,7 +78,7 @@ export const siderItems = [
     key: "system",
     label: "System Modules",
     icon: <SettingOutlined />,
-    type: "group",
+    // type: "group",
     children: [
       {
         key: "/users",

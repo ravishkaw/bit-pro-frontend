@@ -1,6 +1,9 @@
 import { Col, Row } from "antd";
+
+import { useAuth } from "../contexts/AuthContext";
 import useEmployees from "../hooks/useEmployees";
 import useModalStates from "../hooks/useModalStates";
+
 import { employeeColumnItems } from "../components/Table/EmployeeColumnItems";
 import TableCard from "../components/DataDisplay/TableCard";
 import ViewPerson from "../components/Descriptions/ViewPerson";
@@ -12,6 +15,13 @@ import UpdateConfirmModal from "../components/Modals/UpdateConfirmModal";
 // Admin Manage Employees Page
 const ManageEmployee = () => {
   const object = "employee"; // Define the object type for employees
+
+  // Find the module related to "Employee" in the privileges
+  const { privileges } = useAuth();
+
+  const employeeModulePrivilege = privileges?.find(
+    (privilegedModule) => privilegedModule.module_name === "Employee"
+  );
 
   // Destructure functions and states from custom hooks
   const {
@@ -46,6 +56,7 @@ const ManageEmployee = () => {
 
   // Generate table columns dynamically using employeeColumnItems
   const columns = employeeColumnItems(
+    employeeModulePrivilege,
     handleView,
     handleEdit,
     loadOneEmployee,
@@ -63,6 +74,7 @@ const ManageEmployee = () => {
             columns={columns}
             rowKey="empNo"
             dataSource={employees}
+            privileges={employeeModulePrivilege}
             loading={loading}
             paginationDetails={paginationDetails}
             setPaginationDetails={setPaginationDetails}
@@ -97,6 +109,7 @@ const ManageEmployee = () => {
                 <ViewPerson
                   object={object}
                   selectedPerson={viewModal.selectedObject}
+                  privileges={employeeModulePrivilege}
                   closeViewModal={closeViewModal}
                   handleEdit={handleEdit}
                   loadOneEmployee={loadOneEmployee}

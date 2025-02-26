@@ -7,12 +7,16 @@ const tagColor = (op) => (
 );
 
 // Column items for the privilege table
-const PrivilegeColumnItems = (openDeleteModal, handleEdit) => [
-  {
-    title: "ID",
-    dataIndex: "id",
-    sorter: true,
-  },
+const PrivilegeColumnItems = (
+  privilegeModulePrivileges,
+  openDeleteModal,
+  handleEdit
+) => [
+  // {
+  //   title: "ID",
+  //   dataIndex: "id",
+  //   sorter: true,
+  // },
   {
     title: "Role",
     dataIndex: "roleId",
@@ -57,22 +61,26 @@ const PrivilegeColumnItems = (openDeleteModal, handleEdit) => [
     align: "center",
     render: (_, record) => (
       <Space size="small">
-        <Button
-          size="small"
-          color="yellow"
-          variant="outlined"
-          onClick={() => handleEdit(record.id)}
-        >
-          <EditOutlined />
-        </Button>
-        <Button
-          size="small"
-          variant="outlined"
-          danger
-          onClick={() => openDeleteModal(record)}
-        >
-          <DeleteOutlined />
-        </Button>
+        {privilegeModulePrivileges?.update_privilege && (
+          <Button
+            size="small"
+            color="yellow"
+            variant="outlined"
+            onClick={() => handleEdit(record.id)}
+          >
+            <EditOutlined />
+          </Button>
+        )}
+        {privilegeModulePrivileges?.delete_privilege && (
+          <Button
+            size="small"
+            variant="outlined"
+            danger
+            onClick={() => openDeleteModal(record)}
+          >
+            <DeleteOutlined />
+          </Button>
+        )}
       </Space>
     ),
   },

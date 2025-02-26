@@ -12,6 +12,7 @@ const { Title } = Typography;
 const ViewRoom = ({
   object,
   selectedRoom,
+  privileges,
   closeViewModal,
   handleEdit,
   loadOneRoom,
@@ -103,16 +104,20 @@ const ViewRoom = ({
 
       <Divider />
       <Flex justify="space-between">
-        <Button
-          onClick={() => {
-            handleEdit(loadOneRoom, selectedRoom?.id);
-            closeViewModal();
-          }}
-          variant="outlined"
-          color="primary"
-        >
-          Edit
-        </Button>
+        {privileges.update_privilege ? (
+          <Button
+            onClick={() => {
+              handleEdit(loadOneRoom, selectedRoom?.id);
+              closeViewModal();
+            }}
+            variant="outlined"
+            color="primary"
+          >
+            Edit
+          </Button>
+        ) : (
+          <span></span>
+        )}
         <Space>
           <Button onClick={() => closeViewModal()}>Close</Button>
           <Button color="primary" variant="solid" onClick={() => printFn()}>

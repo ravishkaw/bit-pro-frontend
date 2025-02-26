@@ -1,6 +1,9 @@
 import { Col, Row } from "antd";
+
+import { useAuth } from "../contexts/AuthContext";
 import useModalStates from "../hooks/useModalStates";
 import usePrivileges from "../hooks/usePrivileges";
+
 import PrivilegeColumnItems from "../components/Table/PrivilegeColumnItems";
 import GenericModal from "../components/Modals/GenericModal";
 import DeleteConfirmModal from "../components/Modals/DeleteConfirmModal";
@@ -11,10 +14,17 @@ import PrivilegeForm from "../components/Forms/PrivilegeForm";
 const ManagePrivileges = () => {
   const object = "privilege"; // Define the object type for privileges
 
+  // Find the module related to "Privilege" in the privileges
+  const { privileges } = useAuth();
+
+  const privilegeModulePrivileges = privileges?.find(
+    (privilegedModule) => privilegedModule.module_name === "Privilege"
+  );
+
   // Destructure functions and states from custom hooks
   const {
     loading,
-    privileges,
+    allPrivileges,
     roles,
     paginationDetails,
     setPaginationDetails,
@@ -42,7 +52,11 @@ const ManagePrivileges = () => {
   };
 
   // Generate table columns dynamically using PrivilegeColumnItems
-  const columns = PrivilegeColumnItems(openDeleteModal, handleEdit);
+  const columns = PrivilegeColumnItems(
+    privilegeModulePrivileges,
+    openDeleteModal,
+    handleEdit
+  );
 
   return (
     <>
@@ -53,7 +67,8 @@ const ManagePrivileges = () => {
             object={object}
             columns={columns}
             rowKey="id"
-            dataSource={privileges}
+            dataSource={allPrivileges}
+            privileges={privilegeModulePrivileges}
             loading={loading}
             paginationDetails={paginationDetails}
             setPaginationDetails={setPaginationDetails}

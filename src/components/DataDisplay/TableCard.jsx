@@ -1,36 +1,43 @@
+// Import components
 import { Pagination, Table, Button, Flex, Input } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
+// Import custom contexts and hooks
 import { useMobileContext } from "../../contexts/MobileContext";
 import usePageChange from "../../hooks/usePageChange";
 
+// Import components
 import TableTitle from "../Table/TableTitle";
 import SkeletonCards from "../Cards/SkeletonCards";
 import GenericCard from "../Cards/GenericCard";
 
+// Destructure Search from Input component
 const { Search } = Input;
 
-// Table and card component of profiles
+// Main component that renders either a table or cards based on screen size
 const TableCard = ({
-  object,
-  columns,
-  rowKey,
-  dataSource,
-  loading,
-  paginationDetails,
+  object, // type of data being displayed (e.g., 'user', 'employee')
+  columns, // column configuration for the table
+  rowKey, // unique key for each row
+  dataSource, // displayed data (e.g., user array)
+  privileges, // privilege of the logged user for the module
+  loading, // loading state
+  paginationDetails, // pagination configuration
   setPaginationDetails,
-  openFormModal,
+  openFormModal, // function to open create/edit form modal
   handleView,
   handleEdit,
-  openDeleteModal,
+  openDeleteModal, // function to open delete modal
 }) => {
+  // Get mobile view status from context
   const { isMobile } = useMobileContext();
 
-  // Total entry message below the table with pagination
+  // Format the pagination message
   const paginationEntries = (total, range) => {
     return `Showing ${range[0]}-${range[1]} entries of ${total} ${object}s`;
   };
 
+  // Get pagination handler functions
   const { handleCardPageChange, handlePageChange } = usePageChange(
     paginationDetails,
     setPaginationDetails
@@ -47,18 +54,19 @@ const TableCard = ({
     });
   };
 
-  //Render Table or a Card Depend on Screen Size Breakpoint : 768px
+  // Desktop view - render table
   if (!isMobile) {
     return (
-      // Table for desktop view
       <Table
         columns={columns}
         rowKey={rowKey}
         dataSource={dataSource}
         loading={loading}
         title={() => (
+          // Custom table header with search and add button
           <TableTitle
             object={object}
+            privileges={privileges}
             openFormModal={openFormModal}
             paginationDetails={paginationDetails}
             setPaginationDetails={setPaginationDetails}
@@ -69,18 +77,19 @@ const TableCard = ({
           ...paginationDetails,
           showTotal: paginationEntries,
         }}
-        scroll={{ x: "max-content" }} // enable horizontal scrolling
-        onChange={handlePageChange}
+        scroll={{ x: "max-content" }} // horizontal scrolling
+        onChange={handlePageChange} // handles sorting and pagination changes
       />
     );
   }
 
-  // cards for mobile view
+  // Mobile view - render cards
   return loading ? (
+    // Show skeleton loading state
     <SkeletonCards />
   ) : (
     <>
-      {/* Search and add new options */}
+      {/* Mobile view header with search and add button */}
       <Flex justify="space-between" gap="middle" style={{ marginBottom: 10 }}>
         <Search
           placeholder={`Search ${object}`}
@@ -88,16 +97,17 @@ const TableCard = ({
           defaultValue={paginationDetails?.searchQuery || ""}
           allowClear
           onClear={() => handleSearch("")}
-          onChange={(e) => e.target.value < 1 && handleSearch("")} // input value < 0 ; calls the handle search
+          onChange={(e) => e.target.value < 1 && handleSearch("")} // clear search when input is empty
         />
 
+        {/* Add new item button */}
         <Button type="primary" onClick={() => openFormModal(false)}>
           <PlusOutlined />
           Add new {object}
         </Button>
       </Flex>
 
-      {/* Card mapping */}
+      {/* Render card for each data item */}
       {dataSource?.map((data) => {
         return (
           <GenericCard
@@ -112,7 +122,7 @@ const TableCard = ({
         );
       })}
 
-      {/* pagination for mobile cards - no sorting*/}
+      {/* Simplified pagination for mobile view */}
       <Pagination
         total={paginationDetails.total}
         current={paginationDetails.current}

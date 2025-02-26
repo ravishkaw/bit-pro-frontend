@@ -10,6 +10,7 @@ import {
 import { fetchEmployeesWithoutUserAccounts } from "../services/employee";
 import { fetchAllRoles } from "../services/role";
 import handleApiCall from "./useApiHandler";
+import usePagination from "./usePagination";
 
 // Custom hook to manage user-related operations
 const useUsers = () => {
@@ -19,14 +20,7 @@ const useUsers = () => {
   const [loading, setLoading] = useState(false); // Loading state
 
   // Pagination and sorting details
-  const [paginationDetails, setPaginationDetails] = useState({
-    current: 1,
-    pageSize: 10,
-    sortBy: "id",
-    sortOrder: "descend",
-    total: 0,
-    searchQuery: "",
-  });
+  const { paginationDetails, setPaginationDetails } = usePagination();
 
   // Fetch users based on pagination and sorting
   const loadUsers = async () => {
