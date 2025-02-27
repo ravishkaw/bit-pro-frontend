@@ -1,56 +1,38 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import {
-  addPrivilege,
-  deletePrivilege,
-  fetchAllPrivileges,
-  fetchOnePrivilege,
-  updatePrivilege,
-} from "../services/privileges";
-import { fetchAllRoles } from "../services/role";
-import { fetchModuleWithoutPrivileges } from "../services/module";
-import handleApiCall from "./useApiHandler";
-import usePagination from "./usePagination";
+  privilegeService,
+  roleService,
+  moduleService,
+  fetchModuleWithoutPrivileges,
+} from "../services/systemApiService";
+import useCrudHandler  from "./useCrudHandler";
 
-// Custom hook to handle all privilege-related service calls
+// Custom hook to handle privilege-related operations
 const usePrivileges = () => {
-  const [allPrivileges, setAllPrivileges] = useState([]); // State to store the list of privileges
-  const [roles, setRoles] = useState([]); // Roles available in the system
-  const [allModules, setAllModules] = useState([]); // All modules available in the system
-  const [loading, setLoading] = useState(false); // Loading state for API calls
+  const [roles, setRoles] = useState([]);
+  const [allModules, setAllModules] = useState([]);
 
-  // Pagination details for managing privilege data
-  const { paginationDetails, setPaginationDetails } = usePagination();
-
-  // Load all privileges based on pagination and sorting criteria
-  const loadPrivileges = async () => {
-    try {
-      setLoading(true);
-      const resp = await fetchAllPrivileges(
-        paginationDetails.current - 1, // Adjust for backend's 0-based index from antd 1
-        paginationDetails.pageSize,
-        paginationDetails.sortBy,
-        paginationDetails.sortOrder,
-        paginationDetails.searchQuery
-      );
-      // filter out admin
-      const filteredPrivileges = resp.filter(
-        (allprivileges) => allprivileges.roleId.id !== 1
-      );
-      setAllPrivileges(filteredPrivileges);
-      setPaginationDetails((prev) => ({ ...prev, total: resp.totalElements })); // Update total count
-    } catch (err) {
-      setAllPrivileges([]);
-      toast.error(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Use base hook for privilege operations
+  const {
+    data: allPrivileges,
+    loading,
+    paginationDetails,
+    setPaginationDetails,
+    loadOneItem: loadOnePrivilege,
+    addItem: addNewPrivilege,
+    updateItem: updateAPrivilege,
+    deleteItem: deleteAPrivilege,
+  } = useCrudHandler ({
+    service: privilegeService,
+    entityName: "Privilege",
+    isPaginated: false,
+  });
 
   // Load all roles and map them into a usable format
   const loadRoles = async () => {
     try {
-      const response = await fetchAllRoles();
+      const response = await roleService.getAll();
       //mapping the roles to use in select tag
       const mappedRoles = response
         .map((role) => ({
@@ -58,17 +40,18 @@ const usePrivileges = () => {
           label: role.name,
         }))
         // filter admin
-        .filter((withoutAdmin) => withoutAdmin.value != 1);
+        .filter((withoutAdmin) => withoutAdmin.value !== 1);
       setRoles(mappedRoles);
     } catch (err) {
-      toast.error(err.message);
+      setRoles([]);
+      toast.error(err.message || "Failed to load roles");
     }
   };
 
   // Load all modules and map them into a usable format
   const loadModules = async () => {
     try {
-      const response = await fetchAllRoles();
+      const response = await moduleService.getAll();
       //mapping the modules to use in select tag
       const mappedModules = response.map((module) => ({
         value: module.id,
@@ -76,20 +59,10 @@ const usePrivileges = () => {
       }));
       setAllModules(mappedModules);
     } catch (err) {
-      toast.error(err.message);
+      setAllModules([]);
+      toast.error(err.message || "Failed to load modules");
     }
   };
-
-  // Load privileges when pagination or sorting changes
-  useEffect(() => {
-    loadPrivileges();
-  }, [
-    paginationDetails.current,
-    paginationDetails.pageSize,
-    paginationDetails.sortBy,
-    paginationDetails.sortOrder,
-    paginationDetails.searchQuery,
-  ]);
 
   // Load roles and modules on component mount
   useEffect(() => {
@@ -108,51 +81,9 @@ const usePrivileges = () => {
       }));
       return mappedModules;
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.message || "Failed to load modules without privileges");
+      return [];
     }
-  };
-
-  // Fetch details of a single privilege by ID
-  const loadOnePrivilege = async (userId) => {
-    setLoading(true);
-    try {
-      const privilege = await fetchOnePrivilege(userId);
-      return privilege;
-    } catch (err) {
-      toast.error(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Add a new privilege
-  const addNewPrivilege = async (values) => {
-    handleApiCall(
-      () => addPrivilege(values),
-      "New privilege successfully added.",
-      setLoading,
-      loadPrivileges
-    );
-  };
-
-  // Update an existing privilege
-  const updateAPrivilege = async (privilegeId, values) => {
-    handleApiCall(
-      () => updatePrivilege(privilegeId, values),
-      `Privilege with ${privilegeId} successfully updated.`,
-      setLoading,
-      loadPrivileges
-    );
-  };
-
-  // Delete a privilege (soft delete)
-  const deleteAPrivilege = async (privilegeId) => {
-    handleApiCall(
-      () => deletePrivilege(privilegeId),
-      `Privilege with ${privilegeId} successfully deleted.`,
-      setLoading,
-      loadPrivileges
-    );
   };
 
   // Return all states and functions for external use

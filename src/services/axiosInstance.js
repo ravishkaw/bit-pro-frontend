@@ -10,4 +10,18 @@ const axiosInstance = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
+// Add a response interceptor to handle 403 errors
+axiosInstance.interceptors.response.use(
+  (response) => response, // Return successful responses
+  (error) => {
+    // 403 redirect to login
+    if (error.response && error.response.status === 403) {
+      window.location.href = "/";
+    }
+
+    // Reject the promise with the error for other errors
+    return Promise.reject(error);
+  }
+);
+
 export default axiosInstance;

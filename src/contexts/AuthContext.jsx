@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { message } from "antd";
-import { login, logout, session } from "../services/api";
+import { login, logout, session } from "../services/auth";
 
 // Context to manage auth stuff
 const AuthContext = createContext();

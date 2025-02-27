@@ -1,87 +1,87 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-
 import {
-  fetchAllRooms,
+  roomService,
+  roomTypeService,
   fetchAllRoomsToType,
-  fetchRoom,
-} from "../services/room";
-import { fetchAllRoomTypes } from "../services/roomTypes";
+} from "../services/roomApiServices";
+import useCrudHandler  from "./useCrudHandler";
 
 // Custom hook to manage room-related operations
 const useRooms = () => {
-  const [rooms, setRooms] = useState([]); // List of rooms
   const [roomTypes, setRoomTypes] = useState([
     {
       key: "all",
       label: "All rooms",
     },
-  ]); // List of rooms types
-  const [selectedTab, setSelectedTab] = useState({ key: "all" }); // selected room type tab
-  const [loading, setLoading] = useState(false); // Loading state
+  ]);
+  const [selectedTab, setSelectedTab] = useState({ key: "all" });
+  const [rooms, setRooms] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // Fetch rooms
+  // Use base hook for room operations with custom loading
+  const { loadOneItem: baseLoadOneRoom } = useCrudHandler ({
+    service: roomService,
+    entityName: "Room",
+    isPaginated: false,
+    initialLoad: false,
+  });
+
+  // Fetch rooms based on selected tab
   const loadRooms = async () => {
     try {
       setLoading(true);
       let resp;
-      if (selectedTab.key == "all") {
-        resp = await fetchAllRooms();
+      if (selectedTab.key === "all") {
+        resp = await roomService.getAll();
       } else {
         resp = await fetchAllRoomsToType(selectedTab.key);
       }
       setRooms(resp);
     } catch (err) {
       setRooms([]);
-      toast.error(err.message);
+      toast.error(err.message || "Failed to load rooms");
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch rooms types
+  // Fetch room types
   const loadRoomTypes = async () => {
     try {
       setLoading(true);
-      const resp = await fetchAllRoomTypes();
+      const resp = await roomTypeService.getAll();
 
       const mappedRoomTypes = resp
-        .filter((availableRoomTypes) => !availableRoomTypes.isDeleted) // filter deleted room types
-        .map((roomTypes) => ({
-          key: roomTypes.id,
-          label: roomTypes.name,
+        .filter((availableRoomTypes) => !availableRoomTypes.isDeleted)
+        .map((roomType) => ({
+          key: roomType.id,
+          label: roomType.name,
         }));
       setRoomTypes([...roomTypes, ...mappedRoomTypes]);
     } catch (err) {
-      setRoomTypes([]);
-      toast.error(err.message);
+      setRoomTypes([{ key: "all", label: "All rooms" }]);
+      toast.error(err.message || "Failed to load room types");
     } finally {
       setLoading(false);
     }
   };
 
+  // Load rooms when selected tab changes
   useEffect(() => {
     loadRooms();
   }, [selectedTab]);
 
+  // Load room types on mount
   useEffect(() => {
     loadRoomTypes();
   }, []);
 
-  // Fetch details of a single room
+  // Use the base hook's loadOneItem but expose it with the original name
   const loadOneRoom = async (roomId) => {
-    setLoading(true);
-    try {
-      const room = await fetchRoom(roomId);
-      return room;
-    } catch (err) {
-      toast.error(err.message);
-    } finally {
-      setLoading(false);
-    }
+    return await baseLoadOneRoom(roomId);
   };
 
-  // Return states and functions for external use
   return {
     loading,
     rooms,
