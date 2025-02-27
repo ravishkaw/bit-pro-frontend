@@ -1,7 +1,15 @@
 import { Modal } from "antd";
 
 // A modal to render anything inside
-const GenericModal = ({ title, open, onCancel, width, footer, children }) => {
+const GenericModal = ({
+  title,
+  open,
+  onCancel,
+  centered = false,
+  width,
+  footer,
+  children,
+}) => {
   return (
     <Modal
       title={title}
@@ -10,6 +18,7 @@ const GenericModal = ({ title, open, onCancel, width, footer, children }) => {
       width={width}
       destroyOnClose
       footer={footer}
+      centered={centered}
     >
       {children}
     </Modal>

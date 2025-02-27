@@ -27,20 +27,20 @@ const Dashboard = () => {
   ];
   const data = [
     {
-      title: "Privilege page pagination ( will fix the search too )",
+      title: "paginations of all pages  ( will fix the search too )",
     },
     {
       title:
-        "Finish Room type, amenities, inventory (room and reservation )and other pages",
+        "Sider items has a bug",
     },
     {
-      title: "Finish room and reservation other pages",
+      title: "",
     },
     {
       title: "User profile and page",
     },
     {
-      title: "Filter admin role in user page",
+      title: "Filter admin role",
     },
     {
       title: "Notification popover",

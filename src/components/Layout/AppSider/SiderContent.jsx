@@ -14,33 +14,33 @@ const SiderContent = () => {
   const { findLabel } = useHeaderTitleContext();
   const { privilegedModules } = useAuth();
 
-  // Recursive function to filter menu items based on privileges
-  const filterMenuItems = (items) => {
-    return items.reduce((authorizedMenuItems, item) => {
-      // Always include Dashboard
-      if (item.key === "/dashboard") {
-        return [...authorizedMenuItems, item];
-      }
+  const filterMenuItems = (menuItems) => {
+    return menuItems
+      .map((item) => {
+        // Clone the item to avoid changing original item array
+        const clonedItem = { ...item };
 
-      // Handle group type items
-      if (item.children || item.type === "group") {
-        const filteredChildren = filterMenuItems(item.children || []);
-        if (filteredChildren.length > 0) {
-          return [
-            ...authorizedMenuItems,
-            { ...item, children: filteredChildren },
-          ];
+        // Always include Dashboard
+        if (item.key === "/dashboard") {
+          return clonedItem;
         }
-        return authorizedMenuItems;
-      }
 
-      // Check if user has privilege for this item
-      if (privilegedModules?.includes(item.privilege)) {
-        return [...authorizedMenuItems, item];
-      }
+        // items with children
+        if (item.children && item.children.length > 0) {
+          const filteredChildren = filterMenuItems(item.children);
 
-      return authorizedMenuItems;
-    }, []);
+          // Only return parent if it has privileged children
+          if (filteredChildren.length > 0) {
+            clonedItem.children = filteredChildren;
+            return clonedItem;
+          }
+          return null;
+        }
+
+        // Return item if user has privilege, otherwise null
+        return privilegedModules?.includes(item.privilege) ? clonedItem : null;
+      })
+      .filter(Boolean); // Remove items without privilege (remove null)
   };
 
   const filteredSiderItems = filterMenuItems(siderItems);

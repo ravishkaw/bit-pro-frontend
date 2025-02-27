@@ -9,23 +9,37 @@ export const HeaderTitleProvider = ({ children }) => {
 
   // Function to find the label for the selected key in sider items
   const findLabel = (key, items) => {
-    const searchLabel = (items, key) => {
-      for (const item of items) {
-        // If key matches, return the label
-        if (item.key === key) return item.label;
+    const defaultTitle = "Villa Waterlilly";
 
-        // If item has children, search recursively
-        if (item.children) {
-          const foundLabel = searchLabel(item.children, key);
-          if (foundLabel) return foundLabel;
+    // search for matching key in menu items
+    const searchLabel = (items, targetKey) => {
+      // Handle case when items is undefined or empty
+      if (!items || items.length === 0) {
+        return null;
+      }
+
+      // Find item with matching key
+      const matchingItem = items.find((item) => item.key === targetKey);
+      if (matchingItem) {
+        return matchingItem.label;
+      }
+
+      // search in children of all items
+      for (const item of items) {
+        if (item.children && item.children.length > 0) {
+          const foundLabel = searchLabel(item.children, targetKey);
+          if (foundLabel) {
+            return foundLabel;
+          }
         }
       }
-      return "Villa Waterlilly"; // Default if no match
+
+      return null; // No match
     };
 
-    // Update header title with the found label
-    const label = searchLabel(items, key);
-    setHeaderTitle(label);
+    // Search for label and update header title
+    const foundLabel = searchLabel(items, key);
+    setHeaderTitle(foundLabel || defaultTitle);
   };
 
   // Pass header title and findLabel function to the app

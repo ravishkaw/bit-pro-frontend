@@ -7,7 +7,7 @@ const FormInputTooltip = ({ label, title }) => {
   return (
     <span>
       {label}&nbsp;&nbsp;
-      <Tooltip title={title} color={"#4f72ff"}>
+      <Tooltip title={title}>
         <QuestionCircleOutlined style={{ color: "red" }} />
       </Tooltip>
     </span>

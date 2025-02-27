@@ -59,11 +59,18 @@ const RoomCard = ({
             src="https://i.pinimg.com/originals/e6/4d/f7/e64df7b4341fd3ac448d70cb31457c1c.jpg"
           />
         }
-        style={{ boxShadow: "2px 2px 5px 2px #d8d8d8" }}
+        style={{ boxShadow: "2px 2px 5px 2px #d8d8d8", height: "100%" }}
         actions={actions}
       >
         <Meta
-          title={`Room No : ${room.roomNumber}`}
+          title={
+            <Flex justify="space-between" wrap>
+              <Text strong>Room : {room.roomNumber}</Text>
+              <Tag color={room.status.name === "Available" ? "green" : "red"}>
+                {room.status.name}
+              </Tag>
+            </Flex>
+          }
           description={
             <>
               <Flex justify="space-between">
@@ -72,15 +79,12 @@ const RoomCard = ({
                   <TeamOutlined /> {room.capacity} people
                 </Text>
               </Flex>
-              <Text type="secondary">{room.description}</Text>
-              <br />
+              {/* <Text type="secondary">{room.description}</Text> */}
+              {/* <br /> */}
               <Text>Floor: {room.floorNumber}</Text>
               <br />
               <Text strong>Price: ${room.roomType.basePrice}/night</Text>
               <br />
-              <Tag color={room.status.name === "Available" ? "green" : "red"}>
-                {room.status.name}
-              </Tag>
             </>
           }
         />

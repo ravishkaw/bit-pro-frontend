@@ -2,7 +2,7 @@
 import Dashboard from "../pages/Dashboard";
 import UserProfile from "../pages/UserProfile";
 import ManageEmployee from "../pages/ManageEmployees";
-import ManageGuests from "../pages/ManageGuests";
+import { ManageGuests, RoomReservation } from "../pages/Reservation";
 import ManageUsers from "../pages/ManageUsers";
 import ManagePrivileges from "../pages/ManagePrivileges";
 import {
@@ -10,9 +10,8 @@ import {
   RoomAmenities,
   RoomInventory,
   RoomPricingRules,
-  RoomReservation,
   RoomTypes,
-} from "../pages/RoomAndReservation";
+} from "../pages/Rooms";
 
 //Route Configuration
 //module: null - No access check required

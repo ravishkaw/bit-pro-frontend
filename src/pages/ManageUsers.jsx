@@ -79,6 +79,7 @@ const ManageUsers = () => {
             onCancel={closeFormModal}
             width={600}
             footer={null}
+            centered={true}
           >
             <UserForm
               closeFormModal={closeFormModal}

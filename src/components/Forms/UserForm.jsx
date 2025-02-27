@@ -1,16 +1,17 @@
 import {
-  Button,
   Checkbox,
-  Flex,
   Form,
   Input,
   Select,
-  Space,
   Switch,
+  Row,
+  Col,
+  Typography,
 } from "antd";
 import { useEffect, useState } from "react";
 import FormInputTooltip from "./FormInputTooltip";
 import { formValidations } from "./validations";
+import FormOnFinishButtons from "./FormOnFinishButtons";
 import useUsers from "../../hooks/useUsers";
 import { triggerFormFieldsValidation } from "../../utils/form";
 
@@ -194,11 +195,26 @@ const UserForm = ({
 
       <Form.Item
         name="role"
-        label="Roles"
+        label={<FormInputTooltip label="Roles" title="Select user roles" />}
         hasFeedback
-        // rules={[{ required: true }]}
       >
-        <Checkbox.Group options={roles} />
+        <Checkbox.Group>
+          <div
+            style={{
+              border: "1px solid #cbb8a0",
+              padding: 16,
+              borderRadius: 8,
+            }}
+          >
+            <Row gutter={[8, 8]}>
+              {roles.map((role) => (
+                <Col span={12} key={role.value}>
+                  <Checkbox value={role.value}>{role.label}</Checkbox>
+                </Col>
+              ))}
+            </Row>
+          </div>
+        </Checkbox.Group>
       </Form.Item>
 
       <Form.Item
@@ -228,19 +244,11 @@ const UserForm = ({
         <Input.TextArea placeholder="Addtional Notes (Optional)" />
       </Form.Item>
 
-      <Flex justify="end">
-        <Space>
-          <Button onClick={closeFormModal}>Cancel</Button>
-          <Button
-            color={isEditing ? "primary" : "green"}
-            variant="solid"
-            htmlType="submit"
-            loading={confirmLoading}
-          >
-            {isEditing ? "Update" : "Submit"}
-          </Button>
-        </Space>
-      </Flex>
+      <FormOnFinishButtons
+        closeFormModal={closeFormModal}
+        isEditing={isEditing}
+        confirmLoading={confirmLoading}
+      />
     </Form>
   );
 };

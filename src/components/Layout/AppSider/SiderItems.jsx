@@ -11,6 +11,7 @@ import {
   SafetyOutlined,
   AppstoreOutlined,
   GiftOutlined,
+  ScheduleOutlined,
 } from "@ant-design/icons";
 
 export const siderItems = [
@@ -26,22 +27,29 @@ export const siderItems = [
     privilege: "Employee",
   },
   {
-    key: "/guests",
-    label: "Manage Guests",
-    icon: <UserAddOutlined />,
-    privilege: "Guest",
-  },
-  {
-    key: "rooms",
-    label: "Room and Reservations",
-    icon: <HomeOutlined />,
+    key: "reservation",
+    label: "Reservations",
+    icon: <ScheduleOutlined />,
     children: [
+      {
+        key: "/guests",
+        label: "Manage Guests",
+        icon: <UserAddOutlined />,
+        privilege: "Guest",
+      },
       {
         key: "/room-reservations",
         label: "Room Reservations",
         icon: <CalendarOutlined />,
         privilege: "Room Reservation",
       },
+    ],
+  },
+  {
+    key: "rooms",
+    label: "Rooms",
+    icon: <HomeOutlined />,
+    children: [
       {
         key: "/rooms",
         label: "Manage Rooms",

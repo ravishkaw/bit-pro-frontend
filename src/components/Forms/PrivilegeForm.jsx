@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Button, Row, Col, Flex, Form, Select, Space, Switch } from "antd";
+import { Row, Col, Form, Select, Switch } from "antd";
 import usePrivileges from "../../hooks/usePrivileges";
+import FormOnFinishButtons from "./FormOnFinishButtons";
 
-// Privilege Form 
+// Privilege Form
 const PrivilegeForm = ({
   roles,
   closeFormModal,
@@ -12,7 +13,7 @@ const PrivilegeForm = ({
   updateAPrivilege,
 }) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [selectedRole, setSelectedRole] = useState(); 
+  const [selectedRole, setSelectedRole] = useState();
   const [modules, setModules] = useState([]);
   const [form] = Form.useForm();
 
@@ -176,14 +177,11 @@ const PrivilegeForm = ({
         </Row>
       </Form.Item>
 
-      <Flex justify="end">
-        <Space>
-          <Button onClick={closeFormModal}>Cancel</Button>
-          <Button type="primary" htmlType="submit" loading={confirmLoading}>
-            {isEditing ? "Update" : "Add"}
-          </Button>
-        </Space>
-      </Flex>
+      <FormOnFinishButtons
+        closeFormModal={closeFormModal}
+        isEditing={isEditing}
+        confirmLoading={confirmLoading}
+      />
     </Form>
   );
 };

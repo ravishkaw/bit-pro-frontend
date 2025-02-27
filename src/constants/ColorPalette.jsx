@@ -3,7 +3,7 @@
 export const colorPalette = {
   token: {
     colorPrimary: "#b88a5c",
-    colorBgLayout: "#f9f7f3", 
+    colorBgLayout: "#f9f7f3",
     colorText: "#2c2c2c",
     colorBorder: "#cbb8a0",
     fontFamily: "Inter, sans-serif",
@@ -20,7 +20,7 @@ export const colorPalette = {
       algorithm: true,
     },
     Table: {
-      headerBg: "#f0e6df", 
+      headerBg: "#f0e6df",
       rowBg: "#ffffff",
       rowBgHover: "#f4ece3",
       borderColor: "#cbb8a0",
@@ -40,6 +40,12 @@ export const colorPalette = {
       colorSubMenuBg: "#f9f7f3",
       borderRadius: "8px",
       borderColor: "#cbb8a0",
+    },
+    Tooltip: { colorBgSpotlight: "#b88a5c" },
+    Switch: {
+      colorPrimary: "#52c41a",
+      colorPrimaryHover: "#95de64",
+      colorBgContainer: "#ff0000",
     },
   },
 };

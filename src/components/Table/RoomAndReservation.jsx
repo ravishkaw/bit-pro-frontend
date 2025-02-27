@@ -1,3 +1,4 @@
+import { Tag } from "antd";
 import TableActions from "./TableActions";
 
 // Room Type columns
@@ -26,6 +27,16 @@ export const RoomTypeColumns = (
   {
     title: "Description",
     dataIndex: "description",
+  },
+  {
+    title: "Status",
+    dataIndex: "isDeleted",
+    render: (_, record) =>
+      record?.isDeleted == 0 ? (
+        <Tag color="green">Active</Tag>
+      ) : (
+        <Tag color="red">Deleted</Tag>
+      ),
   },
   {
     title: "Actions",

@@ -44,10 +44,13 @@ const useRooms = () => {
     try {
       setLoading(true);
       const resp = await fetchAllRoomTypes();
-      const mappedRoomTypes = resp.map((roomTypes) => ({
-        key: roomTypes.id,
-        label: roomTypes.name,
-      }));
+
+      const mappedRoomTypes = resp
+        .filter((availableRoomTypes) => !availableRoomTypes.isDeleted) // filter deleted room types
+        .map((roomTypes) => ({
+          key: roomTypes.id,
+          label: roomTypes.name,
+        }));
       setRoomTypes([...roomTypes, ...mappedRoomTypes]);
     } catch (err) {
       setRoomTypes([]);
