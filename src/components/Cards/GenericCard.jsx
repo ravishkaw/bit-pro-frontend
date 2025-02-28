@@ -106,6 +106,17 @@ const GenericCard = ({
               <Tag color="green">Granted</Tag>
             );
         }
+        if (column.dataIndex === "roomType") {
+          value = data[column.dataIndex].name; // roomType :{id:1, name:"single", basePrice:200}
+        }
+
+        if (column.dataIndex === "isDeleted")
+          value =
+            data[column.dataIndex] == 0 ? (
+              <Tag color="green">Active</Tag>
+            ) : (
+              <Tag color="red">Deleted</Tag>
+            );
 
         return (
           <div key={index}>

@@ -48,6 +48,7 @@ const RoomTypeForm = ({
       labelAlign="left"
       labelWrap
       onFinish={onFinish}
+      initialValues={{ basePrice: 0 }}
     >
       <Form.Item
         name="name"
@@ -68,7 +69,6 @@ const RoomTypeForm = ({
           addonAfter="$"
           placeholder="E.g., 200"
           style={{ width: "100%" }}
-          defaultValue="1.00"
           min="0"
           max="100000"
           step="0.01"

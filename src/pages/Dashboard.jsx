@@ -30,8 +30,7 @@ const Dashboard = () => {
       title: "paginations of all pages  ( will fix the search too )",
     },
     {
-      title:
-        "Sider items has a bug",
+      title: "Card edit view, delete",
     },
     {
       title: "",

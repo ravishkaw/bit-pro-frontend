@@ -6,7 +6,8 @@ import {
   employeeDesginationService,
   employeeStatusService,
 } from "../services/systemApiService";
-import useCrudHandler  from "./useCrudHandler";
+import useCrudHandler from "./useCrudHandler";
+import { mapToSelectOptions } from "../utils/utils";
 
 // Custom hook to manage employee-related operations
 const useEmployees = () => {
@@ -20,6 +21,7 @@ const useEmployees = () => {
     employeeStatus: employee.employeeStatus.name,
   });
 
+  // Use base hook for employee operations
   const {
     data: employees,
     loading,
@@ -30,7 +32,7 @@ const useEmployees = () => {
     updateItem: updateAnEmployee,
     deleteItem: deleteAnEmployee,
     restoreItem: restoreAnEmployee,
-  } = useCrudHandler ({
+  } = useCrudHandler({
     service: employeeService,
     entityName: "Employee",
     isPaginated: true,
@@ -42,10 +44,7 @@ const useEmployees = () => {
     try {
       const designationResp = await employeeDesginationService.getAll();
       //mapping the designations to use in select tag
-      const mappedDesignations = designationResp.map((designation) => ({
-        value: designation.id,
-        label: designation.name,
-      }));
+      const mappedDesignations = mapToSelectOptions(designationResp);
       setDesignations(mappedDesignations);
 
       const statusResp = await employeeStatusService.getAll();

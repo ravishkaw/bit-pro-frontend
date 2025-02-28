@@ -5,7 +5,7 @@ import {
   roomTypeService,
   fetchAllRoomsToType,
 } from "../services/roomApiServices";
-import useCrudHandler  from "./useCrudHandler";
+import useCrudHandler from "./useCrudHandler";
 
 // Custom hook to manage room-related operations
 const useRooms = () => {
@@ -19,8 +19,8 @@ const useRooms = () => {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Use base hook for room operations with custom loading
-  const { loadOneItem: baseLoadOneRoom } = useCrudHandler ({
+  // Use base hook for room operations
+  const { data: allRooms, loadOneItem: baseLoadOneRoom } = useCrudHandler({
     service: roomService,
     entityName: "Room",
     isPaginated: false,

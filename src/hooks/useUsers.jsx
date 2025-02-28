@@ -5,7 +5,8 @@ import {
   roleService,
   fetchEmployeesWithoutUserAccounts,
 } from "../services/systemApiService";
-import useCrudHandler  from "./useCrudHandler";
+import useCrudHandler from "./useCrudHandler";
+import { mapToSelectOptions } from "../utils/utils";
 
 // Custom hook to manage user-related operations
 const useUsers = () => {
@@ -22,7 +23,7 @@ const useUsers = () => {
     addItem: addAnUser,
     updateItem: updateAnUser,
     deleteItem: deleteAnUser,
-  } = useCrudHandler ({
+  } = useCrudHandler({
     service: userService,
     entityName: "User",
     isPaginated: true,
@@ -43,10 +44,7 @@ const useUsers = () => {
   const loadRoles = async () => {
     try {
       const resp = await roleService.getAll();
-      const mappedRoles = resp.map((role) => ({
-        value: role.id,
-        label: role.name,
-      }));
+      const mappedRoles = mapToSelectOptions(resp);
       setRoles(mappedRoles);
     } catch (err) {
       setRoles([]);

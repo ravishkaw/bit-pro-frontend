@@ -24,7 +24,7 @@ const ManagePrivileges = () => {
   // Destructure functions and states from custom hooks
   const {
     loading,
-    allPrivileges,
+    filteredPrivileges,
     roles,
     paginationDetails,
     setPaginationDetails,
@@ -53,6 +53,9 @@ const ManagePrivileges = () => {
     handleEdit,
     loadOnePrivilege
   );
+
+  // get the filtered privileges ( no Admin )
+  const allPrivileges = filteredPrivileges();
 
   return (
     <>

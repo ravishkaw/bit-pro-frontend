@@ -12,7 +12,7 @@ const useCrudHandler = ({
   formatData = (data) => data, // any specific format function for data or just return as it is
   dependencies = [], // useEffect dependency
 }) => {
-  const [data, setData] = useState([]); // store the response dat
+  const [data, setData] = useState([]); // store the response data
   const [loading, setLoading] = useState(false);
   const { paginationDetails, setPaginationDetails } = usePagination();
 
@@ -52,11 +52,12 @@ const useCrudHandler = ({
     }
   };
 
+  // fetch a single item
   const loadOneItem = async (id) => {
     setLoading(true);
     try {
       const item = await getById(id);
-      return formatData(item);
+      return formatData(item); // format if there is formatter provided
     } catch (err) {
       toast.error(err.message || `Failed to load ${entityName} details`);
       return null;
@@ -65,6 +66,7 @@ const useCrudHandler = ({
     }
   };
 
+  // Add new item
   const addItem = async (values) => {
     handleApiCall(
       () => create(values),
@@ -74,6 +76,7 @@ const useCrudHandler = ({
     );
   };
 
+  // update an item
   const updateItem = async (id, values) => {
     handleApiCall(
       () => update(id, values),
@@ -83,6 +86,7 @@ const useCrudHandler = ({
     );
   };
 
+  // delete a item
   const deleteItem = async (id) => {
     handleApiCall(
       () => remove(id),
@@ -92,6 +96,7 @@ const useCrudHandler = ({
     );
   };
 
+  // restore item ( if restore can be done)
   const restoreItem = async (id) => {
     if (!restore) return;
     handleApiCall(
