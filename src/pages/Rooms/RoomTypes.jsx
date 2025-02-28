@@ -69,6 +69,7 @@ const ManageRoomTypes = () => {
             handleEdit={handleEdit}
             openFormModal={openFormModal}
             openDeleteModal={openDeleteModal}
+            apiFunction={loadOneRoomType}
           />
 
           {/* Generic Modal: Used for adding or editing a room type */}

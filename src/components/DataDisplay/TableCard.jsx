@@ -28,6 +28,7 @@ const TableCard = ({
   handleView,
   handleEdit,
   openDeleteModal, // function to open delete modal
+  apiFunction, // Load single object funtion (loadOneEmployee)
 }) => {
   // Get mobile view status from context
   const { isMobile } = useMobileContext();
@@ -118,6 +119,7 @@ const TableCard = ({
             handleView={handleView}
             handleEdit={handleEdit}
             openDeleteModal={openDeleteModal}
+            apiFunction={apiFunction}
           />
         );
       })}

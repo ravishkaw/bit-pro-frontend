@@ -74,6 +74,7 @@ const ManagePrivileges = () => {
             handleEdit={handleEdit}
             openFormModal={openFormModal}
             openDeleteModal={openDeleteModal}
+            apiFunction={loadOnePrivilege}
           />
 
           {/* Generic Modal: Used for adding or editing a privilege */}

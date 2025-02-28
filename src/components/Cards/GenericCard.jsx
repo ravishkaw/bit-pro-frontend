@@ -9,6 +9,7 @@ const GenericCard = ({
   handleEdit,
   openDeleteModal,
   object,
+  apiFunction,
   showViewAction = false,
   showEditAction = true,
   showDeleteAction = true,
@@ -36,7 +37,7 @@ const GenericCard = ({
       <EyeOutlined
         style={{ color: "blue" }}
         onClick={() => {
-          handleView(data.id);
+          handleView(apiFunction, data.id);
         }}
       />
     );
@@ -46,7 +47,7 @@ const GenericCard = ({
       <EditOutlined
         style={{ color: "#fadb14" }}
         onClick={() => {
-          handleEdit(data.id);
+          handleEdit(apiFunction, data.id);
         }}
       />
     );

@@ -70,6 +70,7 @@ const ManageUsers = () => {
             handleEdit={handleEdit}
             openFormModal={openFormModal}
             openDeleteModal={openDeleteModal}
+            apiFunction={loadOneUser}
           />
 
           {/* Generic Modal: Used for adding or editing a user */}

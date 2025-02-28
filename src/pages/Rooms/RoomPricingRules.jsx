@@ -70,6 +70,7 @@ const ManageRoomPricingRules = () => {
             handleEdit={handleEdit}
             openFormModal={openFormModal}
             openDeleteModal={openDeleteModal}
+            apiFunction={loadOnePricingRule}
           />
 
           {/* Generic Modal: Used for adding or editing a privilege */}

@@ -82,6 +82,7 @@ const ManageEmployee = () => {
             handleView={handleView}
             handleEdit={handleEdit}
             openDeleteModal={openDeleteModal}
+            apiFunction={loadOneEmployee}
           />
 
           {/* Add / Edit Form Modal: Used for adding or editing an employee */}
