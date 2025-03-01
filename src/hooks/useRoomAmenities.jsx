@@ -1,8 +1,8 @@
-import { roomTypeService } from "../services/roomApiServices";
+import { roomAmenitiesService } from "../services/roomApiServices";
 import useCrudHandler from "./useCrudHandler";
 
-// Custom hook to manage room type operations
-const useRoomTypes = () => {
+// Custom hook to manage amenity operations
+const useAmenities = () => {
   const {
     data,
     loading,
@@ -13,9 +13,8 @@ const useRoomTypes = () => {
     updateItem,
     deleteItem,
   } = useCrudHandler({
-    service: roomTypeService,
-    entityName: "Room Type",
-    isPaginated: true,
+    service: roomAmenitiesService,
+    entityName: "Amenity",
   });
 
   // Return states and functions for external use
@@ -31,4 +30,4 @@ const useRoomTypes = () => {
   };
 };
 
-export default useRoomTypes;
+export default useAmenities;

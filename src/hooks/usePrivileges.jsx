@@ -16,18 +16,18 @@ const usePrivileges = () => {
 
   // Use base hook for privilege operations
   const {
-    data: allPrivileges,
+    data,
     loading,
     paginationDetails,
     setPaginationDetails,
-    loadOneItem: loadOnePrivilege,
-    addItem: addNewPrivilege,
-    updateItem: updateAPrivilege,
-    deleteItem: deleteAPrivilege,
+    loadOneItem,
+    addItem,
+    updateItem,
+    deleteItem,
   } = useCrudHandler({
     service: privilegeService,
     entityName: "Privilege",
-    isPaginated: false,
+    // isPaginated: false,
   });
 
   // Load roles and modules simultaneously
@@ -73,17 +73,17 @@ const usePrivileges = () => {
 
   // Return all states and functions for external use
   return {
+    data,
     loading,
-    filteredPrivileges,
+    paginationDetails,
+    setPaginationDetails,
+    loadOneItem,
+    addItem,
+    updateItem,
+    deleteItem,
     roles,
     allModules,
     getModulesWithoutPrivileges,
-    paginationDetails,
-    setPaginationDetails,
-    loadOnePrivilege,
-    addNewPrivilege,
-    updateAPrivilege,
-    deleteAPrivilege,
   };
 };
 

@@ -15,14 +15,14 @@ const useUsers = () => {
 
   // Use the base hook for common CRUD operations
   const {
-    data: users,
+    data,
     loading,
     paginationDetails,
     setPaginationDetails,
-    loadOneItem: loadOneUser,
-    addItem: addAnUser,
-    updateItem: updateAnUser,
-    deleteItem: deleteAnUser,
+    loadOneItem,
+    addItem,
+    updateItem,
+    deleteItem,
   } = useCrudHandler({
     service: userService,
     entityName: "User",
@@ -61,15 +61,15 @@ const useUsers = () => {
   // Return states and functions for external use
   return {
     loading,
-    users,
+    data,
     paginationDetails,
     setPaginationDetails,
     employeesNoUser,
     roles,
-    loadOneUser,
-    addAnUser,
-    updateAnUser,
-    deleteAnUser,
+    loadOneItem,
+    addItem,
+    updateItem,
+    deleteItem,
   };
 };
 

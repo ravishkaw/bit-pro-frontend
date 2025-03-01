@@ -12,11 +12,11 @@ const statusColors = {
 
 // Column items for the Employee table
 export const employeeColumnItems = (
-  employeeModulePrivilege,
-  handleView,
+  modulePrivileges,
+  openDeleteModal,
   handleEdit,
-  loadOneEmployee,
-  openDeleteModal
+  loadOneItem,
+  handleView
 ) => [
   {
     title: "Employee No",
@@ -65,8 +65,8 @@ export const employeeColumnItems = (
     fixed: "right",
     render: (_, record) => (
       <TableActions
-        modulePrivilege={employeeModulePrivilege}
-        apiFunction={loadOneEmployee}
+        modulePrivilege={modulePrivileges}
+        apiFunction={loadOneItem}
         record={record}
         handleEdit={handleEdit}
         handleView={handleView}

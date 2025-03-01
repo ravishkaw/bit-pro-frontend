@@ -70,9 +70,9 @@ export const protectedRoutes = [
     module: "Room Type",
   },
   {
-    path: "/amenities",
+    path: "/room-amenities",
     element: RoomAmenities,
-    module: "Amenity",
+    module: "Room Amenity",
   },
   {
     path: "/room-inventory",

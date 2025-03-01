@@ -1,5 +1,6 @@
 import { Col, Form, Input, Row } from "antd";
 import { formValidations } from "./validations";
+import FormInputTooltip from "./FormInputTooltip";
 
 // Second Step of Profile info form - Get contact information
 const ContactInformation = () => {
@@ -14,36 +15,53 @@ const ContactInformation = () => {
     <>
       <Form.Item
         name="address"
-        label="Address"
+        label={
+          <FormInputTooltip
+            label="Address"
+            title="Enter the residence address"
+          />
+        }
         rules={addressValidation}
         hasFeedback
       >
-        <Input.TextArea placeholder="E.g., 123 Main Street, Colombo" />
+        <Input.TextArea placeholder="Enter your address" />
       </Form.Item>
 
-      <Form.Item name="email" label="Email" rules={emailValidation} hasFeedback>
-        <Input placeholder="E.g., john.doe@example.com" type="email" />
+      <Form.Item
+        name="email"
+        label={<FormInputTooltip label="Email" title="Enter the email" />}
+        rules={emailValidation}
+        hasFeedback
+      >
+        <Input placeholder="Ex: john@gmail.com" type="email" />
       </Form.Item>
 
       <Row gutter={16}>
         <Col xs={24} sm={12}>
           <Form.Item
             name="mobileNo"
-            label="Contact Number"
+            label={
+              <FormInputTooltip label="Contact Number" title="Phone number" />
+            }
             rules={phoneValidation}
             hasFeedback
           >
-            <Input placeholder="E.g., +94 712345678" />
+            <Input placeholder="Ex: 0712345678" />
           </Form.Item>
         </Col>
         <Col xs={24} sm={12}>
           <Form.Item
             name="emergencyNo"
-            label="Emergency Contact Number"
+            label={
+              <FormInputTooltip
+                label="Emergency Contact"
+                title="Emergency phone number"
+              />
+            }
             rules={emergencyContactValidation}
             hasFeedback
           >
-            <Input placeholder="E.g., +94 712345678 (Optional)" />
+            <Input placeholder="Emergency contact number (Optional)" />
           </Form.Item>
         </Col>
       </Row>

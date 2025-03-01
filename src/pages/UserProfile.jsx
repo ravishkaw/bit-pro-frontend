@@ -8,7 +8,7 @@ const UserProfile = () => {
   return (
     <Card>
       <Title level={3}> User Profile</Title>
-      <Text> {user}</Text>
+      <Text> {user.username}</Text>
     </Card>
   );
 };

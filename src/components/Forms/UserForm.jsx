@@ -1,39 +1,43 @@
-import {
-  Checkbox,
-  Form,
-  Input,
-  Select,
-  Switch,
-  Row,
-  Col,
-  Typography,
-} from "antd";
 import { useEffect, useState } from "react";
+import { Checkbox, Form, Input, Select, Switch, Row, Col, Modal } from "antd";
+
+import useUsers from "../../hooks/useUsers";
+import { useAuth } from "../../contexts/AuthContext";
+
 import FormInputTooltip from "./FormInputTooltip";
 import { formValidations } from "./validations";
 import FormOnFinishButtons from "./FormOnFinishButtons";
-import useUsers from "../../hooks/useUsers";
-import { triggerFormFieldsValidation } from "../../utils/form";
+import {
+  getChangedFieldValues,
+  triggerFormFieldsValidation,
+} from "../../utils/form";
+import { mapToSelectOptions } from "../../utils/utils";
 
 // Form of user add or edit
 const UserForm = ({
+  open,
+  module,
   closeFormModal,
   isEditing,
   selectedObject,
-  addAnUser,
-  updateAnUser,
+  addItem,
+  showUpdateModal,
 }) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
+  const [initialFormData, setInitialFormData] = useState({}); // formatted selected user object holder
 
   const [form] = Form.useForm();
   const { employeesNoUser, roles } = useUsers();
+
+  // Check if the user has "Admin" role
+  const { user } = useAuth();
+  const hasAdminRole = user?.role?.some((roles) => roles.name === "Admin");
 
   const {
     usernameValidation,
     passwordValidation,
     passwordConfirmValidation,
+    passwordConfirmValidationInUpdateMode,
     emailValidation,
     noteValidation,
   } = formValidations;
@@ -41,43 +45,21 @@ const UserForm = ({
   // Mapping the employee into select options
   //In edit only the selected employee
   const mappedEmployees = !isEditing
-    ? employeesNoUser?.map((employee) => ({
-        value: employee.fullName,
-        label: employee.fullName,
-      }))
-    : [
-        {
-          value: selectedObject?.employeeId?.fullName,
-          label: selectedObject?.employeeId?.fullName,
-        },
-      ];
-
-  //set employee email
-  useEffect(() => {
-    if (selectedEmployee) {
-      // Get the employee object and set the email
-      const employee = employeesNoUser.find(
-        (employee) => employee.fullName === selectedEmployee
-      );
-      if (employee) {
-        form.setFieldsValue({
-          email: employee.email,
-        });
-        setSelectedEmployeeId(employee.id); //Set the selected employee id to pass
-      }
-    }
-  }, [selectedEmployee, employeesNoUser, form]);
+    ? mapToSelectOptions(employeesNoUser)
+    : mapToSelectOptions([selectedObject?.employeeId]);
 
   // Handle edit populate the wanted fields
   useEffect(() => {
     if (open && isEditing && selectedObject) {
-      form.setFieldsValue({
+      // format the user into form structure
+      const updatedUser = {
         ...selectedObject,
         employeeId: selectedObject?.employeeId?.fullName,
         accountStatus: selectedObject?.accountStatus,
         role: selectedObject.role?.map((role) => role.id),
-      });
-      setSelectedEmployeeId(selectedObject?.employeeId?.id);
+      };
+      form.setFieldsValue(updatedUser);
+      setInitialFormData(updatedUser);
       triggerFormFieldsValidation(form);
     } else if (open) {
       form.resetFields();
@@ -85,171 +67,234 @@ const UserForm = ({
   }, [open, isEditing, selectedObject, form]);
 
   const onFinish = async () => {
-    const data = form.getFieldsValue();
+    const formData = form.getFieldsValue();
 
     // Map the selected roles into object - can be empty
-    const roleObjs = data?.role?.map((id) => ({ id: id })) || [];
+    const roleObjs = formData?.role?.map((id) => ({ id: id })) || [];
 
-    // Format and update data
+    // Map the employee id
+    let employeeId;
+    if (isEditing && selectedObject?.employeeId) {
+      employeeId = { id: selectedObject.employeeId.id }; // when updating
+    } else {
+      employeeId = { id: formData.employeeId }; // when adding
+    }
+
+    // Format and update formdata
     const updatedData = {
-      ...data,
-      employeeId: { id: selectedEmployeeId },
+      ...formData,
+      employeeId: employeeId,
       role: roleObjs,
     };
 
-    setConfirmLoading(true);
-    try {
-      if (isEditing) {
-        await updateAnUser(selectedObject.id, updatedData);
-      } else {
-        await addAnUser(updatedData);
-        form.resetFields();
-      }
-    } finally {
+    if (isEditing) {
+      // get changed values
+      const updatedValues = getChangedFieldValues(initialFormData, formData, {
+        roles,
+      });
+      showUpdateModal(updatedValues, selectedObject.id, updatedData);
+    } else {
+      setConfirmLoading(true);
+      await addItem(updatedData);
+      form.resetFields();
       setConfirmLoading(false);
       closeFormModal();
     }
   };
 
   return (
-    <Form
-      form={form}
-      labelCol={{ span: 10 }}
-      wrapperCol={{ span: 14 }}
-      labelAlign="left"
-      labelWrap
-      onFinish={onFinish}
+    <Modal
+      title={`${!isEditing ? "Add New" : "Update"} ${module}`}
+      open={open}
+      width={600}
+      onCancel={closeFormModal}
+      footer={null}
+      centered
+      destroyOnClose
+      afterClose={() => form.resetFields()}
     >
-      <Form.Item
-        name="employeeId"
-        label={<FormInputTooltip label="Employee" title="Select an employee" />}
-        hasFeedback
-        rules={[{ required: true, message: "Please select your employee" }]}
+      <Form
+        form={form}
+        labelCol={{ span: 10 }}
+        wrapperCol={{ span: 14 }}
+        labelAlign="left"
+        labelWrap
+        onFinish={onFinish}
       >
-        <Select
-          showSearch
-          placeholder="Select Employee"
-          options={mappedEmployees}
-          onChange={(value) => setSelectedEmployee(value)}
-          disabled={isEditing}
-        />
-      </Form.Item>
-
-      <Form.Item
-        name="username"
-        label={<FormInputTooltip label="Username" title="Enter an username" />}
-        hasFeedback
-        rules={usernameValidation}
-      >
-        <Input placeholder="E.g., john" />
-      </Form.Item>
-
-      <Form.Item
-        name="password"
-        label={<FormInputTooltip label="Password" title="Enter a password" />}
-        hasFeedback
-        rules={
-          isEditing
-            ? passwordValidation
-            : [
-                ...passwordValidation,
-                { required: true, message: "Please input your password!" },
-              ]
-        }
-      >
-        <Input.Password placeholder="**********" />
-      </Form.Item>
-
-      <Form.Item
-        name="retypePassword"
-        label={
-          <FormInputTooltip
-            label="Confirm Password"
-            title="Re-Type the Password"
-          />
-        }
-        dependencies={["password"]}
-        hasFeedback
-        rules={
-          isEditing
-            ? passwordConfirmValidation
-            : [
-                ...passwordConfirmValidation,
-                { required: true, message: "Please confirm your password!" },
-              ]
-        }
-      >
-        <Input.Password placeholder="**********" />
-      </Form.Item>
-
-      <Form.Item
-        name="email"
-        label={
-          <FormInputTooltip label="Email" title="Change email if necessary" />
-        }
-        hasFeedback
-        rules={emailValidation}
-      >
-        <Input placeholder="E.g., john.doe@example.com" type="email" />
-      </Form.Item>
-
-      <Form.Item
-        name="role"
-        label={<FormInputTooltip label="Roles" title="Select user roles" />}
-        hasFeedback
-      >
-        <Checkbox.Group>
-          <div
-            style={{
-              border: "1px solid #cbb8a0",
-              padding: 16,
-              borderRadius: 8,
+        <Form.Item
+          name="employeeId"
+          label={
+            <FormInputTooltip
+              label="Employee"
+              title="Select the employee to associate"
+            />
+          }
+          hasFeedback
+          rules={[{ required: true, message: "Please select your employee" }]}
+        >
+          <Select
+            showSearch
+            placeholder="Search and select an employee"
+            options={mappedEmployees}
+            //
+            onChange={(value) => {
+              const selectedEmp = employeesNoUser.find(
+                (employee) => employee.id === value
+              );
+              if (selectedEmp) {
+                form.setFieldsValue({
+                  email: selectedEmp.email,
+                });
+              }
             }}
-          >
-            <Row gutter={[8, 8]}>
-              {roles.map((role) => (
-                <Col span={12} key={role.value}>
-                  <Checkbox value={role.value}>{role.label}</Checkbox>
-                </Col>
-              ))}
-            </Row>
-          </div>
-        </Checkbox.Group>
-      </Form.Item>
-
-      <Form.Item
-        name="accountStatus"
-        label={
-          <FormInputTooltip
-            label="Account Status"
-            title="Set account status as active or inactive"
+            disabled={isEditing}
           />
-        }
-        hasFeedback
-        required
-      >
-        <Switch
-          checkedChildren="Active"
-          unCheckedChildren="Inactive"
-          defaultChecked={false}
+        </Form.Item>
+
+        <Form.Item
+          name="username"
+          label={
+            <FormInputTooltip
+              label="Username"
+              title="Enter a unique username"
+            />
+          }
+          hasFeedback
+          rules={usernameValidation}
+        >
+          <Input placeholder="Enter username (e.g., john.smith)" />
+        </Form.Item>
+
+        <Form.Item
+          name="password"
+          label={
+            <FormInputTooltip
+              label="Password"
+              title="Create a password with at least 8 characters"
+            />
+          }
+          hasFeedback
+          rules={
+            isEditing
+              ? passwordValidation
+              : [
+                  ...passwordValidation,
+                  { required: true, message: "Please input your password" },
+                ]
+          }
+        >
+          <Input.Password placeholder="Enter secure password" />
+        </Form.Item>
+
+        <Form.Item
+          name="retypePassword"
+          label={
+            <FormInputTooltip
+              label="Confirm Password"
+              title="Re-enter password to confirm it matches"
+            />
+          }
+          dependencies={["password"]}
+          hasFeedback
+          rules={
+            isEditing
+              ? passwordConfirmValidationInUpdateMode
+              : passwordConfirmValidation
+          }
+        >
+          <Input.Password placeholder="Confirm your password" />
+        </Form.Item>
+
+        <Form.Item
+          name="email"
+          label={
+            <FormInputTooltip
+              label="Email"
+              title="Enter user's email address"
+            />
+          }
+          hasFeedback
+          rules={emailValidation}
+        >
+          <Input
+            placeholder="Enter email address (e.g., name@gmail.com)"
+            type="email"
+          />
+        </Form.Item>
+
+        <Form.Item
+          name="role"
+          label={<FormInputTooltip label="Roles" title="Select system roles" />}
+          hasFeedback
+        >
+          <Checkbox.Group>
+            <div
+              style={{
+                border: "1px solid #cbb8a0",
+                padding: 16,
+                borderRadius: 8,
+              }}
+            >
+              <Row gutter={[8, 8]}>
+                {roles.map((role) => (
+                  <Col span={12} key={role.value}>
+                    <Checkbox
+                      disabled={
+                        (role.label === "Admin" && !hasAdminRole) || // Non-admin can't select Admin role
+                        (role.label === "Admin" &&
+                          isEditing &&
+                          selectedObject?.username === user.username) // Admin can't remove own Admin role
+                      }
+                      value={role.value}
+                    >
+                      {role.label}
+                    </Checkbox>
+                  </Col>
+                ))}
+              </Row>
+            </div>
+          </Checkbox.Group>
+        </Form.Item>
+
+        <Form.Item
+          name="accountStatus"
+          label={
+            <FormInputTooltip
+              label="Account Status"
+              title="Control whether this user can access the system"
+            />
+          }
+          hasFeedback
+          required
+        >
+          <Switch
+            checkedChildren="Active"
+            unCheckedChildren="Inactive"
+            defaultChecked={false}
+          />
+        </Form.Item>
+
+        <Form.Item
+          name="note"
+          label={
+            <FormInputTooltip
+              label="Note"
+              title="Add any additional information"
+            />
+          }
+          rules={noteValidation}
+          hasFeedback
+        >
+          <Input.TextArea placeholder="Add any relevant notes or special instructions" />
+        </Form.Item>
+
+        <FormOnFinishButtons
+          closeFormModal={closeFormModal}
+          isEditing={isEditing}
+          confirmLoading={confirmLoading}
         />
-      </Form.Item>
-
-      <Form.Item
-        name="note"
-        label={<FormInputTooltip label="Note" title="Any special Notes" />}
-        rules={noteValidation}
-        hasFeedback
-      >
-        <Input.TextArea placeholder="Addtional Notes (Optional)" />
-      </Form.Item>
-
-      <FormOnFinishButtons
-        closeFormModal={closeFormModal}
-        isEditing={isEditing}
-        confirmLoading={confirmLoading}
-      />
-    </Form>
+      </Form>
+    </Modal>
   );
 };
 

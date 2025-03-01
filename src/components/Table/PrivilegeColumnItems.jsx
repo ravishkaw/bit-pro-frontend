@@ -9,10 +9,10 @@ const tagColor = (op) => (
 
 // Column items for the privilege table
 const PrivilegeColumnItems = (
-  privilegeModulePrivileges,
+  modulePrivileges,
   openDeleteModal,
   handleEdit,
-  loadOnePrivilege
+  loadOneItem
 ) => [
   // {
   //   title: "ID",
@@ -63,8 +63,8 @@ const PrivilegeColumnItems = (
     align: "center",
     render: (_, record) => (
       <TableActions
-        modulePrivilege={privilegeModulePrivileges}
-        apiFunction={loadOnePrivilege}
+        modulePrivilege={modulePrivileges}
+        apiFunction={loadOneItem}
         record={record}
         handleEdit={handleEdit}
         openDeleteModal={openDeleteModal}

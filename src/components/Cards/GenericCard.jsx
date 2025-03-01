@@ -8,7 +8,7 @@ const GenericCard = ({
   handleView,
   handleEdit,
   openDeleteModal,
-  object,
+  module,
   apiFunction,
   showViewAction = false,
   showEditAction = true,
@@ -17,7 +17,7 @@ const GenericCard = ({
   // Filter out the columns
   const newColumns = columns.filter((column) => {
     if (column.title === "Actions") return false; // always filter action column
-    if (object !== "employee") {
+    if (module !== "Employee") {
       // Remove employee-specific columns
       if (
         column.dataIndex === "designation" ||
@@ -32,7 +32,7 @@ const GenericCard = ({
 
   // Define the actions based on the props
   const actions = [];
-  if (showViewAction || object == "employee") {
+  if (showViewAction || module == "Employee") {
     actions.push(
       <EyeOutlined
         style={{ color: "blue" }}

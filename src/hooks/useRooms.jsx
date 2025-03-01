@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import {
   roomService,
-  roomTypeService,
+  fetchAllRoomTypes,
   fetchAllRoomsToType,
 } from "../services/roomApiServices";
 import useCrudHandler from "./useCrudHandler";
@@ -12,7 +12,7 @@ const useRooms = () => {
   const [roomTypes, setRoomTypes] = useState([
     {
       key: "all",
-      label: "All rooms",
+      label: "All Rooms",
     },
   ]);
   const [selectedTab, setSelectedTab] = useState({ key: "all" });
@@ -20,7 +20,7 @@ const useRooms = () => {
   const [loading, setLoading] = useState(false);
 
   // Use base hook for room operations
-  const { data: allRooms, loadOneItem: baseLoadOneRoom } = useCrudHandler({
+  const { loadOneItem } = useCrudHandler({
     service: roomService,
     entityName: "Room",
     isPaginated: false,
@@ -50,7 +50,7 @@ const useRooms = () => {
   const loadRoomTypes = async () => {
     try {
       setLoading(true);
-      const resp = await roomTypeService.getAll();
+      const resp = await fetchAllRoomTypes();
 
       const mappedRoomTypes = resp
         .filter((availableRoomTypes) => !availableRoomTypes.isDeleted)
@@ -77,17 +77,12 @@ const useRooms = () => {
     loadRoomTypes();
   }, []);
 
-  // Use the base hook's loadOneItem but expose it with the original name
-  const loadOneRoom = async (roomId) => {
-    return await baseLoadOneRoom(roomId);
-  };
-
   return {
     loading,
     rooms,
     roomTypes,
     setSelectedTab,
-    loadOneRoom,
+    loadOneItem,
   };
 };
 

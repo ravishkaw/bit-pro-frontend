@@ -1,61 +1,83 @@
 import { capitalize, formatText } from "./textUtils";
 import dayjs from "dayjs";
 
-// in form modal edit mode, get the changed values of the form and return it to confirmation modal
+// Get label from data array that formatted to select tag options
+const getLabel = (dataArray, value) =>
+  dataArray.find((data) => data.value === value)?.label || value;
+
+// Format the date
+const dateFormat = (value) => dayjs(value).format("YYYY-MM-DD");
+
+// Get changed form values for confirmation modal
 export const getChangedFieldValues = (
   initialData,
   updatedData,
-  object,
-  designations
+  additionalData = {}
 ) => {
-  const changes = [];
-
-  Object.keys(updatedData).forEach((key) => {
-    const initialValue = initialData[key];
-    const updatedValue = updatedData[key];
-
-    if (initialValue !== updatedValue) {
+  return Object.keys(updatedData)
+    .filter(
+      (key) =>
+        JSON.stringify(initialData[key]) !== JSON.stringify(updatedData[key])
+    )
+    .map((key) => {
       let formattedKey = formatText(key);
+      let initialValue = initialData[key];
+      let updatedValue = updatedData[key];
 
-      let initialDisplayValue = initialValue;
-      let updatedDisplayValue = updatedValue;
-
+      // Format dob
       if (key === "dob") {
         formattedKey = "Date of Birth";
-        initialDisplayValue = dayjs(initialValue).format("YYYY-MM-DD");
-        updatedDisplayValue = dayjs(updatedValue).format("YYYY-MM-DD");
+        initialValue = dateFormat(initialValue);
+        updatedValue = dateFormat(updatedValue);
+      }
+      // format gender , civil status
+      else if (key === "gender" || key === "civilStatus") {
+        initialValue = capitalize(formatText(initialValue));
+        updatedValue = capitalize(formatText(updatedValue));
+      }
+      // format status (false to inactive, true to active)
+      else if (key === "accountStatus" || key === "status") {
+        initialValue = initialValue ? "Active" : "Inactive";
+        updatedValue = updatedValue ? "Active" : "Inactive";
+      }
+      // format designation
+      else if (key === "designation") {
+        const designations = additionalData?.designations || [];
+        initialValue = getLabel(designations, initialValue);
+        updatedValue = getLabel(designations, updatedValue);
+      }
+      // remove passwords
+      else if (key === "password" || key === "retypePassword") {
+        initialValue = "*********";
+        updatedValue = "*********";
+      }
+      // format roles
+      else if (key === "role") {
+        const roles = additionalData?.roles || [];
+        const initialRoleIds = [...initialValue].sort();
+        const updatedRoleIds = [...updatedValue].sort();
+
+        // Map IDs to role labels
+        initialValue = initialRoleIds
+          .map((id) => getLabel(roles, id))
+          .join(", ");
+        updatedValue = updatedRoleIds
+          .map((id) => getLabel(roles, id))
+          .join(", ");
+      }
+      // format date range
+      else if (key === "dateRange") {
+        initialValue = initialValue.map((value) => dateFormat(value));
+        updatedValue = updatedValue.map((value) => dateFormat(value));
       }
 
-      if (key === "gender" || key === "civilStatus") {
-        initialDisplayValue = capitalize(formatText(initialValue));
-        updatedDisplayValue = capitalize(formatText(updatedValue));
-      }
-
-      if (object === "employee" && key === "designation") {
-        designations.forEach((designation) => {
-          if (updatedValue === designation.value) {
-            updatedDisplayValue = designation.label;
-          }
-          if (initialValue === designation.value) {
-            initialDisplayValue = designation.label;
-          }
-        });
-      }
-
-      const changeMessage = `${capitalize(
+      return `${capitalize(
         formattedKey
-      )} changed from "${initialDisplayValue}" to "${updatedDisplayValue}"`;
-
-      changes.push(changeMessage);
-    }
-  });
-
-  return changes;
+      )} changed from "${initialValue}" to "${updatedValue}"`;
+    });
 };
 
-// Trigger form validation 
+// Trigger form validation
 export const triggerFormFieldsValidation = (form) => {
-  setTimeout(() => {
-    form.validateFields();
-  }, 0);
+  setTimeout(() => form.validateFields(), 0);
 };

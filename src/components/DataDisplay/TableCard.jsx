@@ -16,7 +16,7 @@ const { Search } = Input;
 
 // Main component that renders either a table or cards based on screen size
 const TableCard = ({
-  object, // type of data being displayed (e.g., 'user', 'employee')
+  module, // type of data being displayed (e.g., 'user', 'employee')
   columns, // column configuration for the table
   rowKey, // unique key for each row
   dataSource, // displayed data (e.g., user array)
@@ -35,7 +35,7 @@ const TableCard = ({
 
   // Format the pagination message
   const paginationEntries = (total, range) => {
-    return `Showing ${range[0]}-${range[1]} entries of ${total} ${object}s`;
+    return `Showing ${range[0]}-${range[1]} entries of ${total} ${module}s`;
   };
 
   // Get pagination handler functions
@@ -66,7 +66,7 @@ const TableCard = ({
         title={() => (
           // Custom table header with search and add button
           <TableTitle
-            object={object}
+            module={module}
             privileges={privileges}
             openFormModal={openFormModal}
             paginationDetails={paginationDetails}
@@ -93,7 +93,7 @@ const TableCard = ({
       {/* Mobile view header with search and add button */}
       <Flex justify="space-between" gap="middle" style={{ marginBottom: 10 }}>
         <Search
-          placeholder={`Search ${object}`}
+          placeholder={`Search ${module}`}
           onSearch={handleSearch}
           defaultValue={paginationDetails?.searchQuery || ""}
           allowClear
@@ -104,7 +104,7 @@ const TableCard = ({
         {/* Add new item button */}
         <Button type="primary" onClick={() => openFormModal(false)}>
           <PlusOutlined />
-          Add new {object}
+          Add New {module}
         </Button>
       </Flex>
 
@@ -113,7 +113,7 @@ const TableCard = ({
         return (
           <GenericCard
             key={data.id}
-            object={object}
+            module={module}
             columns={columns}
             data={data}
             handleView={handleView}

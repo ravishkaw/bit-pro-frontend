@@ -1,4 +1,5 @@
 import { Row, Col, Card, Tabs, Flex, Empty, Button } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 
 import { useAuth } from "../../contexts/AuthContext";
 import useRooms from "../../hooks/useRooms";
@@ -6,21 +7,20 @@ import useModalStates from "../../hooks/useModalStates";
 
 import RoomCard from "../../components/Cards/RoomCard";
 import DeleteConfirmModal from "../../components/Modals/DeleteConfirmModal";
-import GenericModal from "../../components/Modals/GenericModal";
 import RoomForm from "../../components/Forms/RoomForm";
 import ViewRoom from "../../components/Descriptions/ViewRoom";
 
 const ManageRooms = () => {
-  let object = "room"; // Define the object type for rooms
+  let module = "Room"; // Define the module for rooms
 
   // Find the module related to "Room" in the privileges
   const { privileges } = useAuth();
 
   const roomModulePrivileges = privileges?.find(
-    (privilegedModule) => privilegedModule.module_name === "Room"
+    (privilegedModule) => privilegedModule.module_name === module
   );
   // Destructure functions and states from custom hooks
-  const { rooms, loading, setSelectedTab, roomTypes, loadOneRoom } = useRooms();
+  const { rooms, setSelectedTab, roomTypes, loadOneItem } = useRooms();
 
   const {
     formModalState,
@@ -50,6 +50,7 @@ const ManageRooms = () => {
             {roomModulePrivileges?.insert_privilege && (
               <Flex justify="end">
                 <Button type="primary" onClick={() => openFormModal(false)}>
+                  <PlusOutlined />
                   Add New Room
                 </Button>
               </Flex>
@@ -78,7 +79,7 @@ const ManageRooms = () => {
                     handleView={handleView}
                     handleEdit={handleEdit}
                     openDeleteModal={openDeleteModal}
-                    loadOneRoom={loadOneRoom}
+                    loadOneRoom={loadOneItem}
                   />
                 ))) || (
                 <Col span={24}>
@@ -91,39 +92,29 @@ const ManageRooms = () => {
       </Card>
 
       {/* Add/ edit form modal */}
-      <GenericModal
-        title={isEditing ? "Edit room" : "Add new room"}
+      <RoomForm
+        isEditing={isEditing}
         open={open}
-        width={800}
-        onCancel={closeFormModal}
-        footer={null}
-      >
-        <RoomForm selectedObject={selectedObject} />
-      </GenericModal>
+        module={module}
+        closeFormModal={closeFormModal}
+        selectedObject={selectedObject}
+      />
 
       {rooms && rooms.length > 0 && (
         <>
           {/* View Modal: Displays detailed information about a room */}
-          <GenericModal
-            title={null}
-            open={viewModal.open}
-            width={800}
-            onCancel={closeViewModal}
-            footer={null}
-          >
-            <ViewRoom
-              object={object}
-              selectedRoom={viewModal.selectedObject}
-              privileges={roomModulePrivileges}
-              closeViewModal={closeViewModal}
-              handleEdit={handleEdit}
-              loadOneRoom={loadOneRoom}
-            />
-          </GenericModal>
+          <ViewRoom
+            module={module}
+            viewModal={viewModal}
+            privileges={roomModulePrivileges}
+            closeViewModal={closeViewModal}
+            handleEdit={handleEdit}
+            loadOneRoom={loadOneItem}
+          />
 
           {/* Delete Confirmation Modal: Appears when deleting a room */}
           <DeleteConfirmModal
-            object={object}
+            module={module}
             deleteModal={deleteModal}
             setDeleteModal={setDeleteModal}
             deleteFunction={() => console.log("deleted")}

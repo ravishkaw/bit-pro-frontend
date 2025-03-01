@@ -4,10 +4,10 @@ import TableActions from "./TableActions";
 
 // Column items for the user table
 export const userColumnItems = (
-  userModulePrivileges,
+  modulePrivileges,
   openDeleteModal,
   handleEdit,
-  loadOneUser
+  loadOneItem
 ) => [
   {
     title: "Employee Name",
@@ -57,8 +57,8 @@ export const userColumnItems = (
     align: "center",
     render: (_, record) => (
       <TableActions
-        modulePrivilege={userModulePrivileges}
-        apiFunction={loadOneUser}
+        modulePrivilege={modulePrivileges}
+        apiFunction={loadOneItem}
         record={record}
         handleEdit={handleEdit}
         openDeleteModal={openDeleteModal}

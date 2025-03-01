@@ -1,4 +1,4 @@
-import { Button, Divider, Flex, Space, Typography } from "antd";
+import { Button, Divider, Flex, Space, Typography, Modal } from "antd";
 import usePrintContent from "../../hooks/usePrintContent";
 import dayjs from "dayjs";
 
@@ -9,15 +9,16 @@ const { Title } = Typography;
 
 // Modal of view person
 const ViewPerson = ({
-  object,
-  selectedPerson,
-  privileges,
-  loadOneEmployee,
+  module,
+  viewModal,
+  modulePrivileges,
   closeViewModal,
   handleEdit,
+  loadOneItem,
 }) => {
   // React print  configuration
   const { contentRef, printFn } = usePrintContent();
+  const { open, selectedObject: selectedPerson } = viewModal;
 
   // All value mappings
   const personalInfo = [
@@ -79,9 +80,15 @@ const ViewPerson = ({
   ];
 
   return (
-    <>
+    <Modal
+      title={null}
+      open={open}
+      width={800}
+      onCancel={closeViewModal}
+      footer={null}
+    >
       <div ref={contentRef}>
-        <Title level={3}>{`${capitalize(object)} Details - ${
+        <Title level={3}>{`${capitalize(module)} Details - ${
           selectedPerson?.fullName
         }`}</Title>
         <Divider />
@@ -93,7 +100,7 @@ const ViewPerson = ({
 
         <DescriptionsSection title={"Contact Information"} data={contactInfo} />
         {/* Show only in employees */}
-        {object === "employee" && (
+        {module === "Employee" && (
           <>
             <Divider />
             <DescriptionsSection
@@ -106,11 +113,11 @@ const ViewPerson = ({
 
       <Divider />
       <Flex justify="space-between">
-        {privileges.update_privilege ? (
+        {modulePrivileges.update_privilege ? (
           <Button
             onClick={() => {
               closeViewModal();
-              handleEdit(loadOneEmployee, selectedPerson?.id);
+              handleEdit(loadOneItem, selectedPerson?.id);
             }}
             variant="outlined"
             color="primary"
@@ -127,7 +134,7 @@ const ViewPerson = ({
           </Button>
         </Space>
       </Flex>
-    </>
+    </Modal>
   );
 };
 

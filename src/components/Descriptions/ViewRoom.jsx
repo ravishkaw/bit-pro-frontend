@@ -1,17 +1,16 @@
-import { Button, Divider, Flex, Space, Typography } from "antd";
-import usePrintContent from "../../hooks/usePrintContent";
+import { Button, Divider, Flex, Space, Typography, Modal } from "antd";
 import dayjs from "dayjs";
 
-import { capitalize, formatText } from "../../utils/textUtils";
+import usePrintContent from "../../hooks/usePrintContent";
+
 import DescriptionsSection from "./DescriptionsSection";
-import { useEffect } from "react";
 
 const { Title } = Typography;
 
 // Modal of view room
 const ViewRoom = ({
-  object,
-  selectedRoom,
+  module,
+  viewModal,
   privileges,
   closeViewModal,
   handleEdit,
@@ -19,6 +18,8 @@ const ViewRoom = ({
 }) => {
   // React print configuration
   const { contentRef, printFn } = usePrintContent();
+
+  const { open, selectedObject: selectedRoom } = viewModal;
 
   // All value mappings for room details
   const roomInfo = [
@@ -75,11 +76,17 @@ const ViewRoom = ({
   }));
 
   return (
-    <>
+    <Modal
+      title={null}
+      open={open}
+      width={800}
+      onCancel={closeViewModal}
+      footer={null}
+    >
       <div ref={contentRef}>
-        <Title level={3}>{`${capitalize(object)} Details - Room ${
-          selectedRoom?.roomNumber
-        }`}</Title>
+        <Title
+          level={3}
+        >{`${module} Details - Room ${selectedRoom?.roomNumber}`}</Title>
         <Divider />
         <DescriptionsSection title={"Room Information"} data={roomInfo} />
         {pricingRules && pricingRules.length > 0 && (
@@ -125,7 +132,7 @@ const ViewRoom = ({
           </Button>
         </Space>
       </Flex>
-    </>
+    </Modal>
   );
 };
 

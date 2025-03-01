@@ -10,7 +10,7 @@ const FormOnFinishButtons = ({ closeFormModal, isEditing, confirmLoading }) => {
           color={isEditing ? "yellow" : "green"}
           variant="solid"
           htmlType="submit"
-          loading={confirmLoading}
+          loading={!isEditing && confirmLoading}
         >
           {isEditing ? "Update" : "Add"}
         </Button>

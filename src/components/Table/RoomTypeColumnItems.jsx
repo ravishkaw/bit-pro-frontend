@@ -1,8 +1,8 @@
 import { Tag } from "antd";
 import TableActions from "./TableActions";
 
-// Room PricingRules columns
-export const PricingRulesColumnItems = (
+// Room Type columns
+export const RoomTypeColumns = (
   modulePrivileges,
   openDeleteModal,
   handleEdit,
@@ -14,29 +14,19 @@ export const PricingRulesColumnItems = (
   //   sorter: true,
   // },
   {
-    title: "Room Type",
-    dataIndex: "roomType",
-    render: (_, record) => record?.roomType?.name,
+    title: "Name",
+    dataIndex: "name",
     sorter: true,
+    fixed: "left",
   },
   {
-    title: "Start Date",
-    dataIndex: "startDate",
-    sorter: true,
-  },
-  {
-    title: "End Date",
-    dataIndex: "endDate",
+    title: "Base Price",
+    dataIndex: "basePrice",
     sorter: true,
   },
   {
     title: "Description",
     dataIndex: "description",
-  },
-  {
-    title: "Pricing Multiplier",
-    dataIndex: "pricingMultiplier",
-    align: "center",
   },
   {
     title: "Status",
@@ -47,6 +37,7 @@ export const PricingRulesColumnItems = (
       ) : (
         <Tag color="red">Deleted</Tag>
       ),
+    sorter: true,
   },
   {
     title: "Actions",

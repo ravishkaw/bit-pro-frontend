@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
+import dayjs from "dayjs";
+import { toast } from "react-toastify";
+
 import {
   pricingRuleService,
-  roomTypeService,
+  fetchAllRoomTypes,
 } from "../services/roomApiServices";
 import useCrudHandler from "./useCrudHandler";
-import dayjs from "dayjs";
+
 import { mapToSelectOptions } from "../utils/utils";
 
 // Custom hook to manage room type operations
@@ -18,26 +21,29 @@ const usePricingRules = () => {
   });
 
   const {
-    data: pricingRules,
+    data,
     loading,
     paginationDetails,
     setPaginationDetails,
-    loadOneItem: loadOnePricingRule,
-    addItem: addPricingRule,
-    updateItem: updatePricingRule,
-    deleteItem: deletePricingRule,
+    loadOneItem,
+    addItem,
+    updateItem,
+    deleteItem,
   } = useCrudHandler({
     service: pricingRuleService,
     entityName: "Room Pricing Rule",
     formatData: formatPricingRule,
-    isPaginated: false,
   });
 
   // fetch room types and map to select
   const getRoomTypes = async () => {
     try {
-      const resp = await roomTypeService.getAll();    
-      const mappedRoomTypes = mapToSelectOptions(resp);
+      const resp = await fetchAllRoomTypes();
+      // filter deleted room types
+      const filterDeleted = resp.filter(
+        (roomType) => roomType.isDeleted != true
+      );
+      const mappedRoomTypes = mapToSelectOptions(filterDeleted);
       setRoomTypes(mappedRoomTypes);
     } catch (error) {
       setRoomTypes([]);
@@ -51,15 +57,15 @@ const usePricingRules = () => {
 
   // Return states and functions for external use
   return {
-    pricingRules,
+    data,
+    roomTypes,
     loading,
-    loadOnePricingRule,
     paginationDetails,
     setPaginationDetails,
-    addPricingRule,
-    updatePricingRule,
-    deletePricingRule,
-    roomTypes,
+    loadOneItem,
+    addItem,
+    updateItem,
+    deleteItem,
   };
 };
 

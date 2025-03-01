@@ -7,6 +7,7 @@ import en from "i18n-nationality/langs/en.json";
 
 import { formValidations } from "./validations";
 import { dobGenderCal } from "../../utils/dobGenderCal";
+import FormInputTooltip from "./FormInputTooltip";
 
 // First Step of Profile info form - Get personal information
 const PersonalInfo = ({ form, formData, modelOpen }) => {
@@ -137,7 +138,9 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
         <Col xs={24} sm={16}>
           <Form.Item
             name="fullName"
-            label="Full Name"
+            label={
+              <FormInputTooltip label="Full Name" title="Enter the full name" />
+            }
             rules={fullNameValidation}
             hasFeedback
           >
@@ -153,7 +156,12 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
         <Col xs={24} sm={8}>
           <Form.Item
             name="callingName"
-            label="Calling Name"
+            label={
+              <FormInputTooltip
+                label="Calling Name"
+                title="Calling Name (E.g., John)"
+              />
+            }
             rules={callingNameValidation}
             hasFeedback
           >
@@ -172,13 +180,18 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
         <Col xs={24} sm={8}>
           <Form.Item
             name="nationality"
-            label="Nationality"
+            label={
+              <FormInputTooltip
+                label="Nationality"
+                title="Select your nationality"
+              />
+            }
             rules={nationalityValidation}
             hasFeedback
           >
             <Select
               showSearch
-              placeholder="Eg., Sri Lankan"
+              placeholder="Select nationality"
               options={selectNationaltiesItems}
               onChange={handleNationality}
             />
@@ -187,7 +200,12 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
 
         <Col xs={24} sm={8}>
           <Form.Item
-            label="Identification Type"
+            label={
+              <FormInputTooltip
+                label="Identification Type"
+                title="Choose ID type"
+              />
+            }
             name="idType"
             rules={idTypeValidation}
           >
@@ -207,7 +225,12 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
 
         <Col xs={24} sm={8}>
           <Form.Item
-            label={idType === "passport" ? "Passport Number" : "NIC"}
+            label={
+              <FormInputTooltip
+                label={idType === "passport" ? "Passport Number" : "NIC"}
+                title="Enter your ID number"
+              />
+            }
             name="idNumber"
             rules={getIdNumberValidation()}
             hasFeedback
@@ -215,10 +238,10 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
             <Input
               placeholder={
                 idType === "passport"
-                  ? "Enter Passport Number"
+                  ? "Enter passport number"
                   : nationality === "Sri Lankan"
-                  ? "E.g., 95xxxxxxxV or 2000123456789"
-                  : "Enter NIC"
+                  ? "Ex: 95xxxxxxxV or 200012345678"
+                  : "Enter ID number"
               }
               onChange={handleIdNumberChange}
             />
@@ -229,7 +252,12 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
       <Row gutter={16}>
         <Col xs={24} sm={8}>
           <Form.Item
-            label="Date of Birth"
+            label={
+              <FormInputTooltip
+                label="Date of Birth"
+                title="Select the birthday"
+              />
+            }
             name="dob"
             rules={dobValidation}
             required
@@ -238,7 +266,7 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
             <DatePicker
               format="YYYY-MM-DD"
               style={{ width: "100%" }}
-              placeholder="Choose your birthdate"
+              placeholder="Select date of birth"
               maxDate={dayjs(maxEighteenYears)}
               showNow={false}
             />
@@ -247,7 +275,9 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
 
         <Col xs={24} sm={8}>
           <Form.Item
-            label="Gender"
+            label={
+              <FormInputTooltip label="Gender" title="Select the gender" />
+            }
             name="gender"
             rules={genderValidation}
             hasFeedback
@@ -266,7 +296,12 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
 
         <Col xs={24} sm={8}>
           <Form.Item
-            label="Civil Status"
+            label={
+              <FormInputTooltip
+                label="Civil Status"
+                title="Select civil status"
+              />
+            }
             name="civilStatus"
             rules={civilStatusValidation}
             hasFeedback
@@ -277,15 +312,20 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
                 { label: "Unmarried", value: "unmarried" },
                 { label: "Prefer not to say", value: "preferNotToSay" },
               ]}
-              placeholder="Choose civil status"
+              placeholder="Select civil status"
               allowClear
             />
           </Form.Item>
         </Col>
       </Row>
 
-      <Form.Item label="Note" name="note" rules={noteValidation} hasFeedback>
-        <Input.TextArea placeholder="Addtional Notes (Optional)" />
+      <Form.Item
+        label={<FormInputTooltip label="Note" title="Any aditional notes" />}
+        name="note"
+        rules={noteValidation}
+        hasFeedback
+      >
+        <Input.TextArea placeholder="Additional notes (Optional)" />
       </Form.Item>
     </>
   );

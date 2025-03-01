@@ -1,28 +1,16 @@
 import { useEffect, useState } from "react";
-import {
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  Switch,
-  Modal,
-} from "antd";
+import { Form, Input, InputNumber, Modal, Switch } from "antd";
 
 import FormInputTooltip from "./FormInputTooltip";
 import FormOnFinishButtons from "./FormOnFinishButtons";
 import { formValidations } from "./validations";
-import { mapToSelectOptions } from "../../utils/utils";
 import {
   getChangedFieldValues,
   triggerFormFieldsValidation,
 } from "../../utils/form";
-import usePricingRules from "../../hooks/usePricingRules";
 
-const { RangePicker } = DatePicker;
-
-// Form of room pricing rule add/ edit
-const RoomPricingRuleForm = ({
+// Form for room amenity add/edit
+const RoomAmenityForm = ({
   open,
   module,
   closeFormModal,
@@ -35,20 +23,17 @@ const RoomPricingRuleForm = ({
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [form] = Form.useForm();
 
-  const { roomTypes } = usePricingRules();
   const { noteValidation } = formValidations;
 
   // Handle edit populate the wanted fields
   useEffect(() => {
     if (open && isEditing && selectedObject) {
-      const updatedFormData = {
+      const formattedRoomAmenity = {
         ...selectedObject,
-        roomType: mapToSelectOptions([selectedObject?.roomType]), // map to the select tag
-        dateRange: [selectedObject?.startDate, selectedObject?.endDate], // format to range picker
-        status: !selectedObject?.isDeleted, // "!" because isDeleted = 0 for true. Active to 1
+        status: !selectedObject?.isDeleted,
       };
-      form.setFieldsValue(updatedFormData);
-      setInitialFormData(updatedFormData);
+      form.setFieldsValue(formattedRoomAmenity);
+      setInitialFormData(formattedRoomAmenity);
       triggerFormFieldsValidation(form);
     } else if (open) {
       form.resetFields();
@@ -61,15 +46,8 @@ const RoomPricingRuleForm = ({
     // Format and update formdata
     const updatedData = {
       ...formdata,
-      startDate: formdata.dateRange[0],
-      endDate: formdata.dateRange[1],
-      roomType: {
-        id: isEditing ? formdata.roomType[0].value : formdata.roomType, // format roomtype to relevant format
-      },
       isDeleted: !formdata.status,
     };
-
-    delete updatedData.dateRange; // delete date range from updatedData object
 
     if (isEditing) {
       // get changed values
@@ -103,36 +81,12 @@ const RoomPricingRuleForm = ({
         onFinish={onFinish}
       >
         <Form.Item
-          name="roomType"
-          label={
-            <FormInputTooltip label="Room Type" title="Select the room type" />
-          }
-          rules={[{ required: true, message: "Select a room type" }]}
+          name="name"
+          label={<FormInputTooltip label="Name" title="Enter amenity name" />}
+          rules={[{ required: true, message: "Please enter an amenity name" }]}
           hasFeedback
         >
-          <Select
-            showSearch
-            placeholder="Select room type"
-            options={roomTypes}
-            disabled={isEditing}
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="dateRange"
-          label={
-            <FormInputTooltip
-              label="Date Range"
-              title="Set the period when this pricing rule will be in effect"
-            />
-          }
-          hasFeedback
-          rules={[{ required: true, message: "Select date range" }]}
-        >
-          <RangePicker
-            style={{ width: "100%" }}
-            placeholder={["Start Date", "End Date"]}
-          />
+          <Input placeholder="e.g., Wi-Fi, Mini Bar, Room Service" />
         </Form.Item>
 
         <Form.Item
@@ -140,36 +94,31 @@ const RoomPricingRuleForm = ({
           label={
             <FormInputTooltip
               label="Description"
-              title="Brief explanation of this pricing rule"
+              title="Brief description of amenity offers"
             />
           }
           rules={[
             ...noteValidation,
             { required: true, message: "Please enter a description" },
-            { min: 3, message: "Please enter at least 3 characters " },
           ]}
           hasFeedback
         >
-          <Input.TextArea placeholder="E.g., Weekend rate, Summer season, Holiday pricing" />
+          <Input.TextArea placeholder="e.g., High-speed wifi" />
         </Form.Item>
 
         <Form.Item
-          name="pricingMultiplier"
+          name="price"
           label={
-            <FormInputTooltip
-              label="Pricing Multiplier"
-              title="Factor to multiply the base room price"
-            />
+            <FormInputTooltip label="Price" title="Cost per booking/stay" />
           }
-          rules={[{ required: true, message: "Enter pricing multiplier" }]}
+          rules={[{ required: true, message: "Please enter price" }]}
           hasFeedback
         >
           <InputNumber
-            addonAfter="x"
-            placeholder="1.5"
-            step="0.1"
-            min="0.1"
-            precision={1}
+            addonBefore="$"
+            placeholder="0.00"
+            min={0}
+            precision={2}
             style={{ width: "100%" }}
           />
         </Form.Item>
@@ -179,9 +128,10 @@ const RoomPricingRuleForm = ({
           label={
             <FormInputTooltip
               label="Status"
-              title="Toggle to activate or deactivate pricing rule"
+              title="Toggle to enable or disable amenity"
             />
           }
+          valuePropName="checked"
           hasFeedback
           required
         >
@@ -202,4 +152,4 @@ const RoomPricingRuleForm = ({
   );
 };
 
-export default RoomPricingRuleForm;
+export default RoomAmenityForm;

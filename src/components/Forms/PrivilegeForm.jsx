@@ -1,23 +1,24 @@
 import { useEffect, useState } from "react";
-import { Row, Col, Form, Select, Switch } from "antd";
+import { Row, Col, Form, Select, Switch, Modal } from "antd";
 import usePrivileges from "../../hooks/usePrivileges";
 import FormOnFinishButtons from "./FormOnFinishButtons";
 
 // Privilege Form
 const PrivilegeForm = ({
-  roles,
+  open,
+  module,
   closeFormModal,
   isEditing,
   selectedObject,
-  addNewPrivilege,
-  updateAPrivilege,
+  addItem,
+  updateItem,
 }) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState();
   const [modules, setModules] = useState([]);
   const [form] = Form.useForm();
 
-  const { getModulesWithoutPrivileges } = usePrivileges();
+  const { getModulesWithoutPrivileges, roles } = usePrivileges();
 
   // Fetch modules without privileges for the selected role
   const fetchModules = async (roleId) => {
@@ -27,14 +28,14 @@ const PrivilegeForm = ({
 
   // Fetch modules when the selected role changes
   useEffect(() => {
-    if (selectedRole) {
+    if (selectedRole && open) {
       fetchModules(selectedRole);
-      form.resetFields(["module"]); // Reset module field when role changes
-    } else {
+      form.resetFields(["module", "privileges"]); // Reset module field when role changes
+    } else if (open) {
       setModules([]);
       form.resetFields(["module"]);
     }
-  }, [selectedRole, form]);
+  }, [selectedRole, roles, open, form]);
 
   // Set initial values if editing
   useEffect(() => {
@@ -58,8 +59,10 @@ const PrivilegeForm = ({
       };
       // set form data
       form.setFieldsValue(editValues);
+    } else if (open) {
+      form.resetFields();
     }
-  }, [isEditing, selectedObject, form]);
+  }, [open, isEditing, selectedObject, form]);
 
   // Handle form submission
   const onFinish = async (formData) => {
@@ -76,113 +79,135 @@ const PrivilegeForm = ({
     setConfirmLoading(true);
     try {
       if (isEditing) {
-        await updateAPrivilege(selectedObject.id, updatedData);
+        await updateItem(selectedObject.id, updatedData);
       } else {
-        await addNewPrivilege(updatedData);
+        await addItem(updatedData);
         form.resetFields();
       }
     } finally {
       setConfirmLoading(false);
+      setModules([]);
       closeFormModal();
     }
   };
 
   return (
-    <Form
-      form={form}
-      labelCol={{ span: 6 }}
-      wrapperCol={{ span: 18 }}
-      labelAlign="left"
-      labelWrap
-      onFinish={onFinish}
-      initialValues={{
-        privileges: {
-          select: false,
-          insert: false,
-          update: false,
-          delete: false,
-        },
-      }}
+    <Modal
+      title={`${!isEditing ? "Add New" : "Update"} ${module}`}
+      open={open}
+      width={600}
+      onCancel={closeFormModal}
+      footer={null}
+      destroyOnClose
     >
-      <Form.Item
-        name="role"
-        label="Select Role"
-        rules={[{ required: true, message: "Please select a role" }]}
-        hasFeedback
+      <Form
+        form={form}
+        labelCol={{ span: 6 }}
+        wrapperCol={{ span: 18 }}
+        labelAlign="left"
+        labelWrap
+        onFinish={onFinish}
+        initialValues={{
+          privileges: {
+            select: false,
+            insert: false,
+            update: false,
+            delete: false,
+          },
+        }}
       >
-        <Select
-          placeholder="Choose from here"
-          allowClear
-          showSearch
-          options={roles}
-          onChange={(value) => setSelectedRole(value)}
-          disabled={isEditing}
+        <Form.Item
+          name="role"
+          label="Select Role"
+          rules={[{ required: true, message: "Please select a role" }]}
+          hasFeedback
+        >
+          <Select
+            placeholder="Choose from here"
+            allowClear
+            showSearch
+            options={roles}
+            onChange={(value) => setSelectedRole(value)}
+            disabled={isEditing}
+          />
+        </Form.Item>
+
+        <Form.Item
+          name="module"
+          label="Select Module"
+          rules={[{ required: true, message: "Please select a module" }]}
+          hasFeedback
+        >
+          <Select
+            placeholder="Choose from here"
+            notFoundContent="Select Role First"
+            allowClear
+            showSearch
+            options={modules}
+            disabled={isEditing}
+          />
+        </Form.Item>
+
+        <Form.Item name="privileges" label="Privileges">
+          <Row gutter={[6, 6]}>
+            <Col span={6}>
+              Select
+              <Form.Item
+                name={["privileges", "select"]}
+                valuePropName="checked"
+              >
+                <Switch
+                  checkedChildren="Granted"
+                  unCheckedChildren="Not Granted"
+                />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              Insert
+              <Form.Item
+                name={["privileges", "insert"]}
+                valuePropName="checked"
+              >
+                <Switch
+                  checkedChildren="Granted"
+                  unCheckedChildren="Not Granted"
+                />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              Update
+              <Form.Item
+                name={["privileges", "update"]}
+                valuePropName="checked"
+              >
+                <Switch
+                  checkedChildren="Granted"
+                  unCheckedChildren="Not Granted"
+                />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              Delete
+              <Form.Item
+                name={["privileges", "delete"]}
+                valuePropName="checked"
+              >
+                <Switch
+                  checkedChildren="Granted"
+                  unCheckedChildren="Not Granted"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form.Item>
+
+        <FormOnFinishButtons
+          closeFormModal={closeFormModal}
+          isEditing={isEditing}
+          confirmLoading={confirmLoading}
         />
-      </Form.Item>
-
-      <Form.Item
-        name="module"
-        label="Select Module"
-        rules={[{ required: true, message: "Please select a module" }]}
-        hasFeedback
-      >
-        <Select
-          placeholder="Choose from here"
-          notFoundContent="Select Role First"
-          allowClear
-          showSearch
-          options={modules}
-          disabled={isEditing}
-        />
-      </Form.Item>
-
-      <Form.Item name="privileges" label="Privileges">
-        <Row gutter={[6, 6]}>
-          <Col span={6}>
-            Select
-            <Form.Item name={["privileges", "select"]} valuePropName="checked">
-              <Switch
-                checkedChildren="Granted"
-                unCheckedChildren="Not Granted"
-              />
-            </Form.Item>
-          </Col>
-          <Col span={6}>
-            Insert
-            <Form.Item name={["privileges", "insert"]} valuePropName="checked">
-              <Switch
-                checkedChildren="Granted"
-                unCheckedChildren="Not Granted"
-              />
-            </Form.Item>
-          </Col>
-          <Col span={6}>
-            Update
-            <Form.Item name={["privileges", "update"]} valuePropName="checked">
-              <Switch
-                checkedChildren="Granted"
-                unCheckedChildren="Not Granted"
-              />
-            </Form.Item>
-          </Col>
-          <Col span={6}>
-            Delete
-            <Form.Item name={["privileges", "delete"]} valuePropName="checked">
-              <Switch
-                checkedChildren="Granted"
-                unCheckedChildren="Not Granted"
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form.Item>
-
-      <FormOnFinishButtons
-        closeFormModal={closeFormModal}
-        isEditing={isEditing}
-        confirmLoading={confirmLoading}
-      />
-    </Form>
+      </Form>
+    </Modal>
   );
 };
 

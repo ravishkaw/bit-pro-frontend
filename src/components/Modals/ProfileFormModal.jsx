@@ -14,16 +14,17 @@ import {
   getChangedFieldValues,
   triggerFormFieldsValidation,
 } from "../../utils/form";
+import useEmployees from "../../hooks/useEmployees";
 
 // Profile modal for view add and update profile form
 const ProfileFormModal = ({
-  object,
-  addPerson,
-  designations,
-  employeeStatus,
-  formModalState,
-  showUpdateModal,
+  open,
+  module,
   closeFormModal,
+  isEditing,
+  selectedObject,
+  addItem,
+  showUpdateModal,
 }) => {
   const [current, setCurrent] = useState(0);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -32,9 +33,9 @@ const ProfileFormModal = ({
 
   const [form] = Form.useForm();
 
-  const { open, isEditing, selectedObject } = formModalState;
+  const { designations, employeeStatus } = useEmployees();
 
-  // sets data based on form modal state
+  // sets formdata based on form modal state
   useEffect(() => {
     if (open && isEditing && selectedObject) {
       const updatedPerson = {
@@ -76,33 +77,31 @@ const ProfileFormModal = ({
     triggerFormFieldsValidation(form); // trigger validation
   };
 
-  const onFinish = async (values) => {
-    // get data from all the input fields
-    const data = { ...formData, ...values };
+  const onFinish = async () => {
+    // get formdata from all the input fields
+    const formdata = form.getFieldsValue();
 
-    // Format the data to match the format of backend
+    // Format the formdata to match the format of backend
     const updatedData = {
-      ...data,
+      ...formdata,
       designation: {
-        id: data.designation,
+        id: formdata.designation,
       },
       employeeStatus: {
-        name: data.employeeStatus,
+        name: formdata.employeeStatus,
       },
     };
 
     if (isEditing) {
       // Get the changed values and pass it into confirmation modal
-      const updatedValues = getChangedFieldValues(
-        initialFormData,
-        data,
-        object,
-        designations
-      );
+      const updatedValues = getChangedFieldValues(initialFormData, formdata, {
+        module,
+        designations,
+      });
       showUpdateModal(updatedValues, selectedObject.id, updatedData);
     } else {
       setConfirmLoading(true);
-      await addPerson(updatedData);
+      await addItem(updatedData);
       form.resetFields();
       setFormData({});
       setConfirmLoading(false);
@@ -146,9 +145,7 @@ const ProfileFormModal = ({
 
   // Map steps into the Antd step component based on person type
   const items = steps
-    .filter(
-      (item) => object == "employee" || item.title != "Job Information"
-    )
+    .filter((item) => module == "Employee" || item.title != "Job Information")
     .map((item) => ({
       key: item.title,
       title: item.title,
@@ -157,7 +154,7 @@ const ProfileFormModal = ({
 
   return (
     <Modal
-      title={isEditing ? `Edit ${object}` : `Add New ${object}`}
+      title={`${!isEditing ? "Add New" : "Update"} ${module}`}
       open={open}
       width={850}
       footer={null}

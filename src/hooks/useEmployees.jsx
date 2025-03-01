@@ -23,15 +23,15 @@ const useEmployees = () => {
 
   // Use base hook for employee operations
   const {
-    data: employees,
+    data,
     loading,
     paginationDetails,
     setPaginationDetails,
-    loadOneItem: loadOneEmployee,
-    addItem: addAnEmployee,
-    updateItem: updateAnEmployee,
-    deleteItem: deleteAnEmployee,
-    restoreItem: restoreAnEmployee,
+    loadOneItem,
+    addItem,
+    updateItem,
+    deleteItem,
+    restoreItem,
   } = useCrudHandler({
     service: employeeService,
     entityName: "Employee",
@@ -68,17 +68,17 @@ const useEmployees = () => {
 
   // Return states and functions for external use
   return {
-    employees,
-    loadOneEmployee,
-    addAnEmployee,
-    updateAnEmployee,
-    deleteAnEmployee,
-    restoreAnEmployee,
+    data,
     loading,
     designations,
     employeeStatus,
     paginationDetails,
     setPaginationDetails,
+    loadOneItem,
+    addItem,
+    updateItem,
+    deleteItem,
+    restoreItem,
   };
 };
 

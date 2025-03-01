@@ -4,7 +4,7 @@ const { Search } = Input;
 
 // Title component for the table
 const TableTitle = ({
-  object, // The type of object ("user", "employee")
+  module, // The type of module ("user", "employee")
   openFormModal,
   paginationDetails,
   setPaginationDetails,
@@ -41,7 +41,7 @@ const TableTitle = ({
 
         {/* Search Bar */}
         <Search
-          placeholder={`Search ${object}`}
+          placeholder={`Search ${module}`}
           onSearch={handleSearch}
           defaultValue={paginationDetails?.searchQuery || ""}
           allowClear
@@ -58,7 +58,7 @@ const TableTitle = ({
           onClick={() => openFormModal(false)}
           icon={<PlusOutlined />}
         >
-          Add new {object}
+          Add new {module}
         </Button>
       )}
     </Flex>
