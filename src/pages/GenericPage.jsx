@@ -10,8 +10,8 @@ import UpdateConfirmationModal from "../components/Modals/UpdateConfirmationModa
 // Admin Manage Users Page
 const GenericPage = ({
   module,
-  useCustomHook,
   rowKey,
+  hookData,
   columnItems,
   CustomForm,
   showView = false,
@@ -24,7 +24,6 @@ const GenericPage = ({
     (privilegedModule) => privilegedModule.module_name === module
   );
 
-  // Destructure functions and states from custom hooks
   const {
     data,
     loading,
@@ -35,7 +34,7 @@ const GenericPage = ({
     updateItem,
     deleteItem,
     restoreItem,
-  } = useCustomHook();
+  } = hookData;
 
   const {
     formModalState,

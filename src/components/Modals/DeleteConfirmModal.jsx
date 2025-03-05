@@ -25,7 +25,7 @@ const DeleteConfirmModal = ({
 
   return (
     <Modal
-      centered
+      // centered
       open={open}
       onOk={handleOk}
       confirmLoading={confirmLoading}

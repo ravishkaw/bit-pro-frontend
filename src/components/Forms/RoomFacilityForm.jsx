@@ -9,8 +9,8 @@ import {
   triggerFormFieldsValidation,
 } from "../../utils/form";
 
-// Form for room amenity add/edit
-const RoomAmenityForm = ({
+// Form for room facility add/edit
+const RoomFacilityForm = ({
   open,
   module,
   closeFormModal,
@@ -28,12 +28,12 @@ const RoomAmenityForm = ({
   // Handle edit populate the wanted fields
   useEffect(() => {
     if (open && isEditing && selectedObject) {
-      const formattedRoomAmenity = {
+      const formattedRoomFacility = {
         ...selectedObject,
-        status: !selectedObject?.isDeleted,
+        statusName: selectedObject.statusName == "Active" ? true : false,
       };
-      form.setFieldsValue(formattedRoomAmenity);
-      setInitialFormData(formattedRoomAmenity);
+      form.setFieldsValue(formattedRoomFacility);
+      setInitialFormData(formattedRoomFacility);
       triggerFormFieldsValidation(form);
     } else if (open) {
       form.resetFields();
@@ -46,16 +46,18 @@ const RoomAmenityForm = ({
     // Format and update formdata
     const updatedData = {
       ...formdata,
-      isDeleted: !formdata.status,
+      statusName: formdata.statusName ? "Active" : "Deleted",
     };
 
     if (isEditing) {
       // get changed values
-      const updatedValues = getChangedFieldValues(initialFormData, formdata);
+      const updatedValues = getChangedFieldValues(initialFormData, formdata, {
+        module,
+      });
       showUpdateModal(updatedValues, selectedObject.id, updatedData);
     } else {
       setConfirmLoading(true);
-      await addItem(formdata);
+      await addItem(updatedData);
       form.resetFields();
       setConfirmLoading(false);
       closeFormModal();
@@ -124,7 +126,7 @@ const RoomAmenityForm = ({
         </Form.Item>
 
         <Form.Item
-          name="status"
+          name="statusName"
           label={
             <FormInputTooltip
               label="Status"
@@ -152,4 +154,4 @@ const RoomAmenityForm = ({
   );
 };
 
-export default RoomAmenityForm;
+export default RoomFacilityForm;

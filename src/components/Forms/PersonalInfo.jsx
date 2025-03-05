@@ -1,22 +1,22 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { DatePicker, Form, Input, Radio, Row, Col, Select } from "antd";
 import dayjs from "dayjs";
-
-import nationalities from "i18n-nationality";
-import en from "i18n-nationality/langs/en.json";
 
 import { formValidations } from "./validations";
 import { dobGenderCal } from "../../utils/dobGenderCal";
 import FormInputTooltip from "./FormInputTooltip";
 
 // First Step of Profile info form - Get personal information
-const PersonalInfo = ({ form, formData, modelOpen }) => {
-  const [fullName, setFullName] = useState(formData?.fullName || "");
-  const [callingNameOptions, setCallingNameOptions] = useState([]);
-  const [nationality, setNationality] = useState("");
-  const [idType, setIdType] = useState("");
-  const [nic, setNic] = useState("");
-
+const PersonalInfo = ({
+  form,
+  formData,
+  modelOpen,
+  nationalities,
+  idTypes,
+  genders,
+  civilStatus,
+}) => {
+  // Destructure validations
   const {
     fullNameValidation,
     callingNameValidation,
@@ -31,6 +31,23 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
     noteValidation,
   } = formValidations;
 
+  const [fullName, setFullName] = useState(formData?.fullName || "");
+  const [callingNameOptions, setCallingNameOptions] = useState([]);
+  const [nationality, setNationality] = useState(formData?.nationalityName || "");
+  const [idType, setIdType] = useState(formData?.idTypeId || "");
+
+  // Memoize ID type values
+  const passportTypeValue = useMemo(
+    () =>
+      idTypes.find((type) => type.label.toLowerCase() === "passport")?.value,
+    [idTypes]
+  );
+
+  const nicTypeValue = useMemo(
+    () => idTypes.find((type) => type.label.toLowerCase() === "nic")?.value,
+    [idTypes]
+  );
+
   // Reset state when the modal is closed
   useEffect(() => {
     if (!modelOpen) {
@@ -38,99 +55,116 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
       setCallingNameOptions([]);
       setNationality("");
       setIdType("");
-      setNic("");
     }
   }, [modelOpen, formData]);
 
   // Update relevant fields when formData changes
   useEffect(() => {
-    const { fullName, idType, nationality } = formData || {};
+    if (!formData) return;
 
-    setFullName(fullName || "");
-    setIdType(idType || "");
-    setNationality(nationality || "");
-    form.setFieldsValue({ idType });
+    setFullName(formData.fullName || "");
+    setIdType(formData.idTypeId || "");
+    setNationality(formData.nationalityName || "");
+
+    // Update form values
+    form.setFieldsValue({
+      idTypeId: formData.idTypeId,
+      nationalityName: formData.nationalityName,
+      genderId: formData.genderId,
+      civilStatusId: formData.civilStatusId,
+    });
 
     // Reset callingName field if fullName is empty
-    if (!fullName) {
+    if (!formData.fullName) {
       form.resetFields(["callingName"]);
     }
-  }, [formData?.fullName, formData?.idType, formData?.nationality, form]);
+  }, [formData, form]);
+
+  // Memoized function to generate calling name options
+  const updateCallingNameOptions = useCallback((name) => {
+    const nameParts = name.split(" ").filter(Boolean);
+    return nameParts.map((part) => ({ value: part, label: part }));
+  }, []);
 
   // Updates the calling name options based on full name input
   useEffect(() => {
-    const nameParts = fullName.split(" ").filter(Boolean); //splits the full name into non-empty parts
-    setCallingNameOptions(
-      nameParts.map((name) => ({ value: name, label: name }))
-    );
+    const options = updateCallingNameOptions(fullName);
+    setCallingNameOptions(options);
 
-    if (!nameParts.length) {
+    if (!options.length) {
       form.resetFields(["callingName"]);
     }
-  }, [fullName]);
-
-  // Nationality dropdown options
-  // Register English locale for browser support
-  nationalities.registerLocale(en);
-  const nationalitiesList = Object.values(nationalities.getNames("en"));
-
-  //Memoize nationaltieslist dropdown options to avoid unnecessary re-renders
-  const selectNationaltiesItems = useMemo(() => {
-    return nationalitiesList.map((nationality) => ({
-      value: nationality,
-      label: nationality,
-    }));
-  }, [nationalitiesList]);
+  }, [fullName, form, updateCallingNameOptions]);
 
   // Restrict employee age to 18 or higher
-  const today = new Date();
-  const maxEighteenYears = today.setFullYear(today.getFullYear() - 18);
+  const maxDate = useMemo(() => dayjs().subtract(18, "years"), []);
 
-  // update Nationality and update id type based on nationality
-  const handleNationality = (value) => {
-    setNationality(value);
-    const newIdType = value !== "Sri Lankan" ? "passport" : "nic"; //Use passport as default for non Sri Lankans
-    setIdType(newIdType);
-    form.setFieldsValue({ idType: newIdType });
-    form.resetFields(["idNumber"]); // clear ID number when nationality changes
-  };
+  // Handle nationality change and update ID type
+  const handleNationality = useCallback(
+    (value) => {
+      setNationality(value);
+      const newIdType =
+        value !== "Sri Lankan" ? passportTypeValue : nicTypeValue; // Use passport as default for non Sri Lankans
+      setIdType(newIdType);
+      form.setFieldsValue({ idTypeId: newIdType });
+      form.resetFields(["idNumber"]); // clear ID number when nationality changes
+    },
+    [form, passportTypeValue, nicTypeValue]
+  );
 
-  // Update ID type
-  const handleIdTypes = (e) => {
-    setIdType(e.target.value);
-    form.resetFields(["idNumber"]); //Clear ID number if id type changes
-  };
+  // Handle ID type change
+  const handleIdTypes = useCallback(
+    (e) => {
+      setIdType(e.target.value);
+      form.resetFields(["idNumber"]); // Clear ID number if ID type changes
+    },
+    [form]
+  );
+
+  // Get ID number validation based on ID type
+  const getIdNumberValidation = useCallback(() => {
+    if (idType === passportTypeValue) return passportValidation;
+    return nationality === "Sri Lankan" ? slNicValidation : otherNicValidation;
+  }, [
+    idType,
+    nationality,
+    passportTypeValue,
+    passportValidation,
+    slNicValidation,
+    otherNicValidation,
+  ]);
 
   // Handle NIC change and update DOB and Gender based on the NIC for Sri Lankan nationality
-  const handleIdNumberChange = (e) => {
-    if (idType !== "nic") return;
+  const handleIdNumberChange = useCallback(
+    (e) => {
+      try {
+        const nicValue = e.target.value.trim();
+        if (
+          idType !== nicTypeValue ||
+          nationality !== "Sri Lankan" ||
+          !nicValue
+        ) {
+          return;
+        }
 
-    const nicValue = e.target.value.trim();
-    setNic(nicValue);
-
-    // For Sri Lankan nationality, calculate and set DOB and Gender if NIC is valid
-    if (nationality === "Sri Lankan") {
-      if (nicValue) {
         const { dob, gender } = dobGenderCal(nicValue);
 
         if (dob) {
+          const selectedGender = genders.find(
+            (g) => g.label.toLowerCase() === gender
+          );
+
           form.setFieldsValue({
-            dob: dayjs(dob), // Convert DOB to a dayjs object
-            gender,
+            dob: dayjs(dob),
+            genderId: selectedGender?.value,
           });
         }
-      } else {
-        // Reset DOB and Gender fields if NIC is empty
-        form.resetFields(["dob", "gender"]);
+      } catch (error) {
+        console.error("Error processing NIC:", error);
       }
-    }
-  };
-
-  // Get Id number validation based on Id type
-  const getIdNumberValidation = () => {
-    if (idType === "passport") return passportValidation;
-    return nationality === "Sri Lankan" ? slNicValidation : otherNicValidation;
-  };
+    },
+    [idType, nationality, genders, form, nicTypeValue]
+  );
 
   return (
     <>
@@ -159,7 +193,7 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
             label={
               <FormInputTooltip
                 label="Calling Name"
-                title="Calling Name (E.g., John)"
+                title="Choose a calling name"
               />
             }
             rules={callingNameValidation}
@@ -179,7 +213,7 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
       <Row gutter={16}>
         <Col xs={24} sm={8}>
           <Form.Item
-            name="nationality"
+            name="nationalityName"
             label={
               <FormInputTooltip
                 label="Nationality"
@@ -192,7 +226,7 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
             <Select
               showSearch
               placeholder="Select nationality"
-              options={selectNationaltiesItems}
+              options={nationalities}
               onChange={handleNationality}
             />
           </Form.Item>
@@ -206,19 +240,15 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
                 title="Choose ID type"
               />
             }
-            name="idType"
+            name="idTypeId"
             rules={idTypeValidation}
           >
             <Radio.Group
               optionType="button"
               buttonStyle="solid"
               block
-              value={idType}
               onChange={handleIdTypes}
-              options={[
-                { value: "nic", label: "NIC" },
-                { value: "passport", label: "Passport" },
-              ]}
+              options={idTypes}
             />
           </Form.Item>
         </Col>
@@ -227,7 +257,7 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
           <Form.Item
             label={
               <FormInputTooltip
-                label={idType === "passport" ? "Passport Number" : "NIC"}
+                label={idType === passportTypeValue ? "Passport Number" : "NIC"}
                 title="Enter your ID number"
               />
             }
@@ -237,7 +267,7 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
           >
             <Input
               placeholder={
-                idType === "passport"
+                idType === passportTypeValue
                   ? "Enter passport number"
                   : nationality === "Sri Lankan"
                   ? "Ex: 95xxxxxxxV or 200012345678"
@@ -267,7 +297,7 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
               format="YYYY-MM-DD"
               style={{ width: "100%" }}
               placeholder="Select date of birth"
-              maxDate={dayjs(maxEighteenYears)}
+              maxDate={maxDate}
               showNow={false}
             />
           </Form.Item>
@@ -278,18 +308,14 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
             label={
               <FormInputTooltip label="Gender" title="Select the gender" />
             }
-            name="gender"
+            name="genderId"
             rules={genderValidation}
             hasFeedback
           >
             <Radio.Group
               block
-              options={[
-                { label: "Male", value: "male" },
-                { label: "Female", value: "female" },
-                { label: "Other", value: "other" },
-              ]}
-              disabled={idType == "nic" && nationality === "Sri Lankan"}
+              options={genders}
+              disabled={idType === nicTypeValue && nationality === "Sri Lankan"}
             />
           </Form.Item>
         </Col>
@@ -302,16 +328,12 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
                 title="Select civil status"
               />
             }
-            name="civilStatus"
+            name="civilStatusId"
             rules={civilStatusValidation}
             hasFeedback
           >
             <Select
-              options={[
-                { label: "Married", value: "married" },
-                { label: "Unmarried", value: "unmarried" },
-                { label: "Prefer not to say", value: "preferNotToSay" },
-              ]}
+              options={civilStatus}
               placeholder="Select civil status"
               allowClear
             />
@@ -320,7 +342,7 @@ const PersonalInfo = ({ form, formData, modelOpen }) => {
       </Row>
 
       <Form.Item
-        label={<FormInputTooltip label="Note" title="Any aditional notes" />}
+        label={<FormInputTooltip label="Note" title="Any additional notes" />}
         name="note"
         rules={noteValidation}
         hasFeedback

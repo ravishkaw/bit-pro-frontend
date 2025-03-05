@@ -1,18 +1,11 @@
-import { roomTypeService } from "../services/roomApiServices";
+import { roomFacilitiesService } from "../services/roomApiServices";
 import useCrudHandler from "./useCrudHandler";
 
-// Custom hook to manage room type operations
-const useRoomTypes = () => {
-  // Format room type data to match form requirements
-  const formatRoomTypeData = (roomType) => ({
-    ...roomType,
-    statusName: roomType.statusName == "Active" ? true : false,
-  });
-
+// Custom hook to manage room facility operations
+const RoomFacilities = () => {
   const config = {
-    service: roomTypeService,
-    entityName: "Room Type",
-    formatData: formatRoomTypeData,
+    service: roomFacilitiesService,
+    entityName: "Room Facility",
   };
 
   // Use base hook for room type operations
@@ -40,4 +33,4 @@ const useRoomTypes = () => {
   };
 };
 
-export default useRoomTypes;
+export default RoomFacilities;

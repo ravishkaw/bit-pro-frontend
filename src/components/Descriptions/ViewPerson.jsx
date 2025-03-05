@@ -1,8 +1,10 @@
 import { Button, Divider, Flex, Space, Typography, Modal } from "antd";
-import usePrintContent from "../../hooks/usePrintContent";
 import dayjs from "dayjs";
 
-import { capitalize, formatText } from "../../utils/textUtils";
+import useEmployees from "../../hooks/useEmployees";
+import usePrintContent from "../../hooks/usePrintContent";
+
+import { capitalize } from "../../utils/textUtils";
 import DescriptionsSection from "./DescriptionsSection";
 
 const { Title } = Typography;
@@ -20,63 +22,79 @@ const ViewPerson = ({
   const { contentRef, printFn } = usePrintContent();
   const { open, selectedObject: selectedPerson } = viewModal;
 
+  const { idTypes, genders, civilStatus, designations, employeeStatus } =
+    useEmployees();
+
+  // find the label of the selected person values
+  const findLabelByValue = (array, value) =>
+    array.find((item) => item.value === value)?.label;
+
+  // id type name
+  const idType = findLabelByValue(idTypes, selectedPerson?.idTypeId);
+  // gender
+  const gender = findLabelByValue(genders, selectedPerson?.genderId);
+  // civil status
+  const getCivilStatus = findLabelByValue(
+    civilStatus,
+    selectedPerson?.civilStatusId
+  );
+  //get desingation
+  const getDesignation = findLabelByValue(
+    designations,
+    selectedPerson?.designationId
+  );
+  //get employee status
+  const getEmployeeStatus = findLabelByValue(
+    employeeStatus,
+    selectedPerson?.employeeStatusId
+  );
+
+  const {
+    fullName,
+    callingName,
+    dob,
+    nationalityName,
+    idNumber,
+    note,
+    address,
+    mobileNo,
+    email,
+    emergencyNo,
+    empNo,
+  } = selectedPerson || {};
+
   // All value mappings
   const personalInfo = [
-    { key: "1", label: "Full Name", value: selectedPerson?.fullName },
-    { key: "2", label: "Calling Name", value: selectedPerson?.callingName },
+    { key: "1", label: "Full Name", value: fullName },
+    { key: "2", label: "Calling Name", value: callingName },
     {
       key: "3",
       label: "Date of Birth",
-      value: selectedPerson?.dob
-        ? dayjs(selectedPerson.dob).format("YYYY-MM-DD")
-        : null,
+      value: dob ? dayjs(dob).format("YYYY-MM-DD") : null,
     },
-    { key: "4", label: "Nationality", value: selectedPerson?.nationality },
-    { key: "5", label: "ID Type", value: selectedPerson?.idType.toUpperCase() },
+    { key: "4", label: "Nationality", value: nationalityName },
+    { key: "5", label: "ID Type", value: idType },
     {
       key: "6",
-      label: `${
-        (selectedPerson && capitalize(selectedPerson?.idType)) || "Id"
-      } Number`,
-      value: selectedPerson?.idNumber.toUpperCase(),
+      label: `${idType || "Id"} Number`,
+      value: idNumber?.toUpperCase(),
     },
-    {
-      key: "7",
-      label: "Gender",
-      value: selectedPerson && capitalize(formatText(selectedPerson?.gender)),
-    },
-    {
-      key: "8",
-      label: "Civil Status",
-      value:
-        selectedPerson && capitalize(formatText(selectedPerson?.civilStatus)),
-    },
-    {
-      key: "9",
-      label: "Note",
-      value: selectedPerson?.note,
-    },
+    { key: "7", label: "Gender", value: gender },
+    { key: "8", label: "Civil Status", value: getCivilStatus },
+    { key: "9", label: "Note", value: note },
   ];
 
   const contactInfo = [
-    { key: "1", label: "Address", value: selectedPerson?.address },
-    { key: "2", label: "Mobile No", value: selectedPerson?.mobileNo },
-    { key: "3", label: "Email", value: selectedPerson?.email },
-    { key: "4", label: "Emergency No", value: selectedPerson?.emergencyNo },
+    { key: "1", label: "Address", value: address },
+    { key: "2", label: "Mobile No", value: mobileNo },
+    { key: "3", label: "Email", value: email },
+    { key: "4", label: "Emergency No", value: emergencyNo },
   ];
 
   const employmentInfo = [
-    { key: "1", label: "Employee No", value: selectedPerson?.empNo },
-    {
-      key: "2",
-      label: "Designation",
-      value: selectedPerson?.designation?.name,
-    },
-    {
-      key: "3",
-      label: "Employee Status",
-      value: selectedPerson?.employeeStatus,
-    },
+    { key: "1", label: "Employee No", value: empNo },
+    { key: "2", label: "Designation", value: getDesignation },
+    { key: "3", label: "Employee Status", value: getEmployeeStatus },
   ];
 
   return (
@@ -129,7 +147,7 @@ const ViewPerson = ({
         )}
         <Space>
           <Button onClick={() => closeViewModal()}>Close</Button>
-          <Button color="primary" variant="solid" onClick={() => printFn()}>
+          <Button type="primary" onClick={() => printFn()}>
             Print
           </Button>
         </Space>

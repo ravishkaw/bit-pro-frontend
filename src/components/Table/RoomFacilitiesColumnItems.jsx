@@ -1,42 +1,38 @@
 import { Tag } from "antd";
 import TableActions from "./TableActions";
 
-// Room Type columns
-export const RoomTypeColumns = (
-  roomTypeModulePrivileges,
+// Create table columns with permission-based edit/delete actions
+export const RoomFacilitiesColumnItems = (
+  modulePrivileges,
   openDeleteModal,
   handleEdit,
-  loadOneRoomType
+  loadOneItem
 ) => [
-  {
-    title: "ID",
-    dataIndex: "id",
-    sorter: true,
-  },
   {
     title: "Name",
     dataIndex: "name",
-    sorter: true,
-    fixed: "left",
-  },
-  {
-    title: "Base Price",
-    dataIndex: "basePrice",
     sorter: true,
   },
   {
     title: "Description",
     dataIndex: "description",
+    ellipsis: true,
+  },
+  {
+    title: "Price",
+    dataIndex: "price",
+    sorter: true,
   },
   {
     title: "Status",
-    dataIndex: "isDeleted",
+    dataIndex: "status",
     render: (_, record) =>
-      record?.isDeleted == 0 ? (
-        <Tag color="green">Active</Tag>
+      record?.status.name == "Active" ? (
+        <Tag color="green">Available</Tag>
       ) : (
-        <Tag color="red">Deleted</Tag>
+        <Tag color="red">Unavailable</Tag>
       ),
+    sorter: true,
   },
   {
     title: "Actions",
@@ -45,8 +41,8 @@ export const RoomTypeColumns = (
     align: "center",
     render: (_, record) => (
       <TableActions
-        modulePrivilege={roomTypeModulePrivileges}
-        apiFunction={loadOneRoomType}
+        modulePrivilege={modulePrivileges}
+        apiFunction={loadOneItem}
         record={record}
         handleEdit={handleEdit}
         openDeleteModal={openDeleteModal}

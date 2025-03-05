@@ -9,10 +9,13 @@ const ManageUsers = () => {
   const module = "User"; // Define the module type for users
   const rowKey = "username"; // define row key for table
 
+  // Destructure functions and states
+  const hookData = useUsers();
+
   return (
     <GenericPage
       module={module}
-      useCustomHook={useUsers}
+      hookData={hookData}
       rowKey={rowKey}
       columnItems={userColumnItems}
       CustomForm={UserForm}

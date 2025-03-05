@@ -1,12 +1,13 @@
 import { Form, Radio, Select } from "antd";
 import FormInputTooltip from "./FormInputTooltip";
+import useEmployees from "../../hooks/useEmployees";
 
 // Third Step of Profile info form - Get employee information. only available to employee form
 const EmploymentInformation = ({ designations, employeeStatus }) => {
   return (
     <>
       <Form.Item
-        name="designation"
+        name="designationId"
         label={
           <FormInputTooltip label="Designation" title="Select the job title" />
         }
@@ -21,7 +22,7 @@ const EmploymentInformation = ({ designations, employeeStatus }) => {
       </Form.Item>
 
       <Form.Item
-        name="employeeStatus"
+        name="employeeStatusId"
         label={
           <FormInputTooltip
             label="Employee Status"

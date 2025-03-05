@@ -40,9 +40,9 @@ export const PricingRulesColumnItems = (
   },
   {
     title: "Status",
-    dataIndex: "isDeleted",
+    dataIndex: "statusName",
     render: (_, record) =>
-      record?.isDeleted == 0 ? (
+      record?.statusName == "Active" ? (
         <Tag color="green">Active</Tag>
       ) : (
         <Tag color="red">Deleted</Tag>

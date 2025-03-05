@@ -10,11 +10,14 @@ const ManageEmployee = () => {
   const module = "Employee"; // Define the module for employees
   const rowKey = "empNo"; // define row key for table
 
+  // Destructure functions and states
+  const hookData = useEmployees();
+
   return (
     <GenericPage
       module={module}
-      useCustomHook={useEmployees}
       rowKey={rowKey}
+      hookData={hookData}
       columnItems={employeeColumnItems}
       CustomForm={ProfileFormModal}
       showView={true}

@@ -9,10 +9,13 @@ const ManagePrivileges = () => {
   const module = "Privilege"; // Define the module for privileges
   const rowKey = "id"; // define row key for table
 
+  // Destructure functions and states
+  const hookData = usePrivileges();
+
   return (
     <GenericPage
       module={module}
-      useCustomHook={usePrivileges}
+      hookData={hookData}
       rowKey={rowKey}
       columnItems={PrivilegeColumnItems}
       CustomForm={PrivilegeForm}

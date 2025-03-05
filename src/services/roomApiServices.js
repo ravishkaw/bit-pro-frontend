@@ -4,7 +4,7 @@ import { createApiService } from "./apiService";
 const ROOM_BASE_URL = "/rooms";
 const ROOM_TYPE_BASE_URL = "/room-types";
 const ROOM_PRICING_RULE_BASE_URL = "/pricing-rules";
-const ROOM_AMENITIES = "/room-amenities";
+const ROOM_FACILITIES = "/room-facilities";
 
 // Generic API service for room types
 export const roomService = createApiService(ROOM_BASE_URL);
@@ -15,8 +15,8 @@ export const roomTypeService = createApiService(ROOM_TYPE_BASE_URL);
 // Generic API service for room pricing rules
 export const pricingRuleService = createApiService(ROOM_PRICING_RULE_BASE_URL);
 
-// Generic API service for room amenities
-export const roomAmenitiesService = createApiService(ROOM_AMENITIES);
+// Generic API service for room facilities
+export const roomFacilitiesService = createApiService(ROOM_FACILITIES);
 
 // Fetch all rooms types without pagination
 export const fetchAllRoomTypes = async () => {

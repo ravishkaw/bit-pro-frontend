@@ -30,21 +30,61 @@ export const getChangedFieldValues = (
         initialValue = dateFormat(initialValue);
         updatedValue = dateFormat(updatedValue);
       }
-      // format gender , civil status
-      else if (key === "gender" || key === "civilStatus") {
-        initialValue = capitalize(formatText(initialValue));
-        updatedValue = capitalize(formatText(updatedValue));
+      // format status name of room type
+      else if (
+        key === "statusName" &&
+        (additionalData?.module == "Room Type" ||
+          additionalData?.module == "Room Facility")
+      ) {
+        formattedKey = "Status";
+        initialValue = initialValue ? "Available" : "Unavailable";
+        updatedValue = updatedValue ? "Available" : "Unavailable";
       }
       // format status (false to inactive, true to active)
-      else if (key === "accountStatus" || key === "status") {
+      else if (
+        key === "accountStatus" ||
+        key === "status" ||
+        key === "statusName"
+      ) {
+        formattedKey = "Status";
         initialValue = initialValue ? "Active" : "Inactive";
         updatedValue = updatedValue ? "Active" : "Inactive";
       }
+      // format gender
+      else if (key === "genderId") {
+        const gender = additionalData?.genders || [];
+        initialValue = getLabel(gender, initialValue);
+        updatedValue = getLabel(gender, updatedValue);
+      }
+      // format idType
+      else if (key === "idTypeId") {
+        const idType = additionalData?.idTypes || [];
+        initialValue = getLabel(idType, initialValue);
+        updatedValue = getLabel(idType, updatedValue);
+      }
+      // format nationalities
+      else if (key === "nationalitiesName") {
+        const nationalities = additionalData?.nationalities || [];
+        initialValue = getLabel(nationalities, initialValue);
+        updatedValue = getLabel(nationalities, updatedValue);
+      }
+      // format civilStatus
+      else if (key === "civilStatusId") {
+        const civilStatus = additionalData?.civilStatus || [];
+        initialValue = getLabel(civilStatus, initialValue);
+        updatedValue = getLabel(civilStatus, updatedValue);
+      }
       // format designation
-      else if (key === "designation") {
+      else if (key === "designationId") {
         const designations = additionalData?.designations || [];
         initialValue = getLabel(designations, initialValue);
         updatedValue = getLabel(designations, updatedValue);
+      }
+      // format employeeStatus
+      else if (key === "employeeStatusId") {
+        const employeeStatus = additionalData?.employeeStatus || [];
+        initialValue = getLabel(employeeStatus, initialValue);
+        updatedValue = getLabel(employeeStatus, updatedValue);
       }
       // remove passwords
       else if (key === "password" || key === "retypePassword") {
@@ -52,7 +92,8 @@ export const getChangedFieldValues = (
         updatedValue = "*********";
       }
       // format roles
-      else if (key === "role") {
+      else if (key === "roleId") {
+        formattedKey = "Roles";
         const roles = additionalData?.roles || [];
         const initialRoleIds = [...initialValue].sort();
         const updatedRoleIds = [...updatedValue].sort();

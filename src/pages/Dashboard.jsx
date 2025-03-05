@@ -7,9 +7,8 @@ const Dashboard = () => {
     { title: "Employee module" },
     { title: "User module" },
     { title: "Privilege module" },
-    { title: "Room Type module" },
-    { title: "Room Anemity module" },
-    { title: "Room Pricing module" },
+    { title: "Room facilitity" },
+    { title: "Room pricing rule" },
   ];
 
   const onGoing = [
@@ -21,11 +20,6 @@ const Dashboard = () => {
   ];
 
   const todo = [
-    {
-      title: "Pagination of all pages (will fix the search too)- Fixed",
-      done: true,
-      hasIssue: "Numbers not sorting correctly",
-    },
     { title: "Card edit view, delete", done: false },
     { title: "User profile and page", done: false },
     { title: "Notification popover", done: false },
@@ -34,7 +28,7 @@ const Dashboard = () => {
 
   return (
     <Row gutter={[16, 16]}>
-      <Col span={8}>
+      <Col md={8} xs={24}>
         <Card>
           <Title level={3}>Finished</Title>
           <List
@@ -48,7 +42,7 @@ const Dashboard = () => {
         </Card>
       </Col>
 
-      <Col span={8}>
+      <Col md={8} xs={24}>
         <Card>
           <Title level={3}>On Going</Title>
           <List
@@ -64,7 +58,7 @@ const Dashboard = () => {
         </Card>
       </Col>
 
-      <Col span={8}>
+      <Col md={8} xs={24}>
         <Card>
           <Title level={3}>To do</Title>
           <List

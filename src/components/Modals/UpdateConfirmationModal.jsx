@@ -41,7 +41,7 @@ const UpdateConfirmationModal = ({
   };
 
   return (
-    <Modal centered open={open} closable={false} footer={null} destroyOnClose>
+    <Modal open={open} closable={false} footer={null} destroyOnClose>
       {/* check and show changes were made or not */}
       {updatedValues != null && updatedValues.length > 0 ? (
         <>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Form, Input, InputNumber, Modal } from "antd";
+import { Form, Input, InputNumber, Modal, Switch } from "antd";
 
 import FormOnFinishButtons from "./FormOnFinishButtons";
 import FormInputTooltip from "./FormInputTooltip";
@@ -26,9 +26,9 @@ const RoomTypeForm = ({
   // Set initial values when editing
   useEffect(() => {
     if (open && isEditing && selectedObject) {
-      triggerFormFieldsValidation(form);
       form.setFieldsValue(selectedObject);
       setInitialFormData(selectedObject);
+      triggerFormFieldsValidation(form);
     } else if (open) {
       form.resetFields();
     }
@@ -37,13 +37,21 @@ const RoomTypeForm = ({
   const onFinish = async () => {
     const formdata = form.getFieldsValue();
 
+    // Format and update formdata
+    const updatedData = {
+      ...formdata,
+      statusName: formdata.statusName ? "Active" : "Deleted",
+    };
+
     if (isEditing) {
       // get changed values
-      const updatedValues = getChangedFieldValues(initialFormData, formdata);
-      showUpdateModal(updatedValues, selectedObject.id, formdata);
+      const updatedValues = getChangedFieldValues(initialFormData, formdata, {
+        module,
+      });
+      showUpdateModal(updatedValues, selectedObject.id, updatedData);
     } else {
       setConfirmLoading(true);
-      await addItem(formdata);
+      await addItem(updatedData);
       form.resetFields();
       setConfirmLoading(false);
       closeFormModal();
@@ -121,6 +129,24 @@ const RoomTypeForm = ({
           hasFeedback
         >
           <Input.TextArea placeholder="E.g., Spacious room with king-sized bed, and private balcony" />
+        </Form.Item>
+
+        <Form.Item
+          name="statusName"
+          label={
+            <FormInputTooltip
+              label="Room Status"
+              title="Set Room Type is available or not"
+            />
+          }
+          hasFeedback
+          required
+        >
+          <Switch
+            checkedChildren="Available"
+            unCheckedChildren="Unavailable"
+            defaultChecked={false}
+          />
         </Form.Item>
 
         <FormOnFinishButtons

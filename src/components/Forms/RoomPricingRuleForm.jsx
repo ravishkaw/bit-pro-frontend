@@ -45,8 +45,8 @@ const RoomPricingRuleForm = ({
         ...selectedObject,
         roomType: mapToSelectOptions([selectedObject?.roomType]), // map to the select tag
         dateRange: [selectedObject?.startDate, selectedObject?.endDate], // format to range picker
-        status: !selectedObject?.isDeleted, // "!" because isDeleted = 0 for true. Active to 1
       };
+
       form.setFieldsValue(updatedFormData);
       setInitialFormData(updatedFormData);
       triggerFormFieldsValidation(form);
@@ -61,12 +61,12 @@ const RoomPricingRuleForm = ({
     // Format and update formdata
     const updatedData = {
       ...formdata,
-      startDate: formdata.dateRange[0],
-      endDate: formdata.dateRange[1],
+      startDate: formdata.dateRange[0].format("YYYY-MM-DD"),
+      endDate: formdata.dateRange[1].format("YYYY-MM-DD"),
       roomType: {
         id: isEditing ? formdata.roomType[0].value : formdata.roomType, // format roomtype to relevant format
       },
-      isDeleted: !formdata.status,
+      statusName: formdata.statusName ? "Active" : "Deleted",
     };
 
     delete updatedData.dateRange; // delete date range from updatedData object
@@ -77,7 +77,7 @@ const RoomPricingRuleForm = ({
       showUpdateModal(updatedValues, selectedObject.id, updatedData);
     } else {
       setConfirmLoading(true);
-      await addItem(formdata);
+      await addItem(updatedData);
       form.resetFields();
       setConfirmLoading(false);
       closeFormModal();
@@ -166,16 +166,16 @@ const RoomPricingRuleForm = ({
         >
           <InputNumber
             addonAfter="x"
-            placeholder="1.5"
-            step="0.1"
-            min="0.1"
-            precision={1}
+            placeholder="1.50"
+            step="0.01"
+            min="0.01"
+            precision={2}
             style={{ width: "100%" }}
           />
         </Form.Item>
 
         <Form.Item
-          name="status"
+          name="statusName"
           label={
             <FormInputTooltip
               label="Status"

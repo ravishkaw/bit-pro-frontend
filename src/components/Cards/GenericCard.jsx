@@ -70,9 +70,9 @@ const GenericCard = ({
         if (column.dataIndex === "employeeId")
           value = data[column.dataIndex].fullName;
 
-        if (column.dataIndex === "accountStatus")
+        if (column.dataIndex === "status")
           value =
-            data[column.dataIndex] == 0 ? (
+            data[column.dataIndex] == "Deleted" ? (
               <Tag color="red">Inactive</Tag>
             ) : (
               <Tag color="green">Active</Tag>

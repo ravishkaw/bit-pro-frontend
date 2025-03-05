@@ -1,16 +1,27 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
+
 import {
   employeeService,
   employeeDesginationService,
   employeeStatusService,
+  nationalitiesService,
+  idTypeService,
+  civilStatusService,
+  genderService,
 } from "../services/systemApiService";
+
 import useCrudHandler from "./useCrudHandler";
-import { mapToSelectOptions } from "../utils/utils";
+
+import { mapNameToSelectOptions, mapToSelectOptions } from "../utils/utils";
 
 // Custom hook to manage employee-related operations
 const useEmployees = () => {
+  const [genders, setGenders] = useState([]);
+  const [idTypes, setIdTypes] = useState([]);
+  const [civilStatus, setCivilStatus] = useState([]);
+  const [nationalities, setNationalities] = useState([]);
   const [designations, setDesignations] = useState([]);
   const [employeeStatus, setEmployeeStatus] = useState([]);
 
@@ -18,42 +29,53 @@ const useEmployees = () => {
   const formatEmployeeData = (employee) => ({
     ...employee,
     dob: dayjs(employee.dob),
-    employeeStatus: employee.employeeStatus.name,
   });
+
+  const config = {
+    service: employeeService,
+    entityName: "Employee",
+    formatData: formatEmployeeData,
+  };
 
   // Use base hook for employee operations
   const {
     data,
-    loading,
-    paginationDetails,
-    setPaginationDetails,
     loadOneItem,
     addItem,
     updateItem,
     deleteItem,
     restoreItem,
-  } = useCrudHandler({
-    service: employeeService,
-    entityName: "Employee",
-    isPaginated: true,
-    formatData: formatEmployeeData,
-  });
+    loading,
+    paginationDetails,
+    setPaginationDetails,
+  } = useCrudHandler(config);
 
-  // Fetch and map employee designations and status
+  // Fetch and map nationalities, employee designations and status
   const getEmployeeOtherData = async () => {
     try {
-      const designationResp = await employeeDesginationService.getAll();
-      //mapping the designations to use in select tag
-      const mappedDesignations = mapToSelectOptions(designationResp);
-      setDesignations(mappedDesignations);
+      const [
+        idTypesResp,
+        civilStatus,
+        gendersResp,
+        nationalitiesResp,
+        designationResp,
+        statusResp,
+      ] = await Promise.all([
+        idTypeService.getAll(),
+        civilStatusService.getAll(),
+        genderService.getAll(),
+        nationalitiesService.getAll(),
+        employeeDesginationService.getAll(),
+        employeeStatusService.getAll(),
+      ]);
 
-      const statusResp = await employeeStatusService.getAll();
-      //mapping the status to use in select tag
-      const mappedStatus = statusResp.map((status) => ({
-        value: status.name,
-        label: status.name,
-      }));
-      setEmployeeStatus(mappedStatus);
+      //mapping resposes to use in select and radio buttons
+      setIdTypes(mapToSelectOptions(idTypesResp));
+      setCivilStatus(mapToSelectOptions(civilStatus));
+      setGenders(mapToSelectOptions(gendersResp));
+      setDesignations(mapToSelectOptions(designationResp));
+      setEmployeeStatus(mapToSelectOptions(statusResp));
+      setNationalities(mapNameToSelectOptions(nationalitiesResp));
     } catch (err) {
       setEmployeeStatus([]);
       setDesignations([]);
@@ -72,6 +94,10 @@ const useEmployees = () => {
     loading,
     designations,
     employeeStatus,
+    idTypes,
+    genders,
+    civilStatus,
+    nationalities,
     paginationDetails,
     setPaginationDetails,
     loadOneItem,

@@ -13,13 +13,22 @@ import { mapToSelectOptions } from "../utils/utils";
 // Custom hook to manage room type operations
 const usePricingRules = () => {
   const [roomTypes, setRoomTypes] = useState([]); // store room types
+
   // Format pricing rule date
   const formatPricingRule = (pricingRule) => ({
     ...pricingRule,
     startDate: dayjs(pricingRule.startDate),
     endDate: dayjs(pricingRule.endDate),
+    statusName: pricingRule.statusName == "Active" ? true : false,
   });
 
+  const config = {
+    service: pricingRuleService,
+    entityName: "Room Pricing Rule",
+    formatData: formatPricingRule,
+  };
+
+  // Use base hook for room type operations
   const {
     data,
     loading,
@@ -29,11 +38,7 @@ const usePricingRules = () => {
     addItem,
     updateItem,
     deleteItem,
-  } = useCrudHandler({
-    service: pricingRuleService,
-    entityName: "Room Pricing Rule",
-    formatData: formatPricingRule,
-  });
+  } = useCrudHandler(config);
 
   // fetch room types and map to select
   const getRoomTypes = async () => {

@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+
 import {
   privilegeService,
   roleService,
   moduleService,
   fetchModuleWithoutPrivileges,
 } from "../services/systemApiService";
+
 import useCrudHandler from "./useCrudHandler";
+
 import { mapToSelectOptions } from "../utils/utils";
 
 // Custom hook to handle privilege-related operations
@@ -14,24 +17,25 @@ const usePrivileges = () => {
   const [roles, setRoles] = useState([]);
   const [allModules, setAllModules] = useState([]);
 
+  const config = {
+    service: privilegeService,
+    entityName: "Privileges",
+  };
+
   // Use base hook for privilege operations
   const {
     data,
-    loading,
-    paginationDetails,
-    setPaginationDetails,
     loadOneItem,
     addItem,
     updateItem,
     deleteItem,
-  } = useCrudHandler({
-    service: privilegeService,
-    entityName: "Privilege",
-    // isPaginated: false,
-  });
+    loading,
+    paginationDetails,
+    setPaginationDetails,
+  } = useCrudHandler(config);
 
   // Load roles and modules simultaneously
-  const loadInitialData = async () => {
+  const loadRefernceData = async () => {
     try {
       const [rolesResponse, modulesResponse] = await Promise.all([
         roleService.getAll(),
@@ -51,6 +55,11 @@ const usePrivileges = () => {
     }
   };
 
+  // Load reference data on mount
+  useEffect(() => {
+    loadRefernceData();
+  }, []);
+
   // Fetch modules that do not have privileges for a specific role
   const getModulesWithoutPrivileges = async (roleId) => {
     try {
@@ -62,18 +71,13 @@ const usePrivileges = () => {
     }
   };
 
-  // Load roles and modules on component mount
-  useEffect(() => {
-    loadInitialData();
-  }, []);
-
   // filter out admin privileges
   const filteredPrivileges = () =>
-    allPrivileges.filter((privileges) => privileges.roleId.name != "Admin");
+    data.filter((privileges) => privileges.roleId.name != "Admin");
 
   // Return all states and functions for external use
   return {
-    data,
+    data: filteredPrivileges(),
     loading,
     paginationDetails,
     setPaginationDetails,

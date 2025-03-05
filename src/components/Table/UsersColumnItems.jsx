@@ -28,12 +28,12 @@ export const userColumnItems = (
   },
   {
     title: "Account Status",
-    dataIndex: "accountStatus",
+    dataIndex: "status",
     render: (_, record) =>
-      record.accountStatus == 0 ? (
-        <Tag color="red">Inactive</Tag>
-      ) : (
+      record.status.name == "Active" ? (
         <Tag color="green">Active</Tag>
+      ) : (
+        <Tag color="red">Inactive</Tag>
       ),
     sorter: true,
     align: "center",

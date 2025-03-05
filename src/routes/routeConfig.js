@@ -7,7 +7,7 @@ import ManageUsers from "../pages/ManageUsers";
 import ManagePrivileges from "../pages/ManagePrivileges";
 import {
   ManageRooms,
-  RoomAmenities,
+  RoomFacilities,
   RoomInventory,
   RoomPricingRules,
   RoomTypes,
@@ -70,9 +70,9 @@ export const protectedRoutes = [
     module: "Room Type",
   },
   {
-    path: "/room-amenities",
-    element: RoomAmenities,
-    module: "Room Amenity",
+    path: "/room-facilities",
+    element: RoomFacilities,
+    module: "Room Facility",
   },
   {
     path: "/room-inventory",

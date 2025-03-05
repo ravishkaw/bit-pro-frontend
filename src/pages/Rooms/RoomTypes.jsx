@@ -9,10 +9,13 @@ const ManageRoomTypes = () => {
   const module = "Room Type"; // Define the module type for room type
   const rowKey = "id"; // define row key for table
 
+  // Destructure functions and states
+  const hookData = useRoomTypes();
+
   return (
     <GenericPage
       module={module}
-      useCustomHook={useRoomTypes}
+      hookData={hookData}
       rowKey={rowKey}
       columnItems={RoomTypeColumns}
       CustomForm={RoomTypeForm}

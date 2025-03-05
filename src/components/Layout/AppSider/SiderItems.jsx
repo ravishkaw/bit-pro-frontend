@@ -57,10 +57,10 @@ export const siderItems = [
         privilege: "Room Type",
       },
       {
-        key: "/room-amenities",
-        label: "Room Amenities",
+        key: "/room-facilities",
+        label: "Room Facilities",
         icon: <GiftOutlined />,
-        privilege: "Room Amenity",
+        privilege: "Room Facility",
       },
       {
         key: "/room-inventory",

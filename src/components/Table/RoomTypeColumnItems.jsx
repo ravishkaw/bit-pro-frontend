@@ -30,12 +30,12 @@ export const RoomTypeColumns = (
   },
   {
     title: "Status",
-    dataIndex: "isDeleted",
+    dataIndex: "status",
     render: (_, record) =>
-      record?.isDeleted == 0 ? (
-        <Tag color="green">Active</Tag>
+      record?.status.name == "Active" ? (
+        <Tag color="green">Available</Tag>
       ) : (
-        <Tag color="red">Deleted</Tag>
+        <Tag color="red">Unavailable</Tag>
       ),
     sorter: true,
   },

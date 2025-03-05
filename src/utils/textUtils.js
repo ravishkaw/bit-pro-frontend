@@ -7,5 +7,7 @@ export const formatText = (text) => {
 };
 
 // Capitalize the first letter
-export const capitalize = (text) =>
-  text.charAt(0).toUpperCase() + text.slice(1);
+export const capitalize = (text) => {
+  if (!text) return "";
+  return text.toString().charAt(0).toUpperCase() + text.toString().slice(1);
+};

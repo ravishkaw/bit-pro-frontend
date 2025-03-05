@@ -6,6 +6,8 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 
+import useEmployees from "../../hooks/useEmployees";
+
 import PersonalInfo from "../Forms/PersonalInfo";
 import ContactInformation from "../Forms/ContactInformation";
 import EmploymentInformation from "../Forms/EmploymentInformation";
@@ -14,7 +16,6 @@ import {
   getChangedFieldValues,
   triggerFormFieldsValidation,
 } from "../../utils/form";
-import useEmployees from "../../hooks/useEmployees";
 
 // Profile modal for view add and update profile form
 const ProfileFormModal = ({
@@ -33,18 +34,21 @@ const ProfileFormModal = ({
 
   const [form] = Form.useForm();
 
-  const { designations, employeeStatus } = useEmployees();
+  const {
+    designations,
+    employeeStatus,
+    nationalities,
+    idTypes,
+    genders,
+    civilStatus,
+  } = useEmployees();
 
   // sets formdata based on form modal state
   useEffect(() => {
     if (open && isEditing && selectedObject) {
-      const updatedPerson = {
-        ...selectedObject,
-        designation: selectedObject.designation.id,
-      };
-      setFormData(updatedPerson);
-      setInitialFormData(updatedPerson);
-      form.setFieldsValue(updatedPerson);
+      setFormData(selectedObject);
+      setInitialFormData(selectedObject);
+      form.setFieldsValue(selectedObject);
       triggerFormFieldsValidation(form);
     } else if (open) {
       form.resetFields();
@@ -77,31 +81,25 @@ const ProfileFormModal = ({
     triggerFormFieldsValidation(form); // trigger validation
   };
 
-  const onFinish = async () => {
+  const onFinish = async (values) => {
     // get formdata from all the input fields
-    const formdata = form.getFieldsValue();
-
-    // Format the formdata to match the format of backend
-    const updatedData = {
-      ...formdata,
-      designation: {
-        id: formdata.designation,
-      },
-      employeeStatus: {
-        name: formdata.employeeStatus,
-      },
-    };
+    const data = { ...formData, ...values };
 
     if (isEditing) {
       // Get the changed values and pass it into confirmation modal
-      const updatedValues = getChangedFieldValues(initialFormData, formdata, {
+      const updatedValues = getChangedFieldValues(initialFormData, data, {
         module,
         designations,
+        employeeStatus,
+        nationalities,
+        idTypes,
+        genders,
+        civilStatus,
       });
-      showUpdateModal(updatedValues, selectedObject.id, updatedData);
+      showUpdateModal(updatedValues, selectedObject.id, data);
     } else {
       setConfirmLoading(true);
-      await addItem(updatedData);
+      await addItem(data);
       form.resetFields();
       setFormData({});
       setConfirmLoading(false);
@@ -122,7 +120,15 @@ const ProfileFormModal = ({
     {
       title: "Personal Information",
       content: (
-        <PersonalInfo form={form} formData={formData} modalOpen={open} />
+        <PersonalInfo
+          form={form}
+          formData={formData}
+          modalOpen={open}
+          nationalities={nationalities}
+          idTypes={idTypes}
+          genders={genders}
+          civilStatus={civilStatus}
+        />
       ),
       icon: <UserOutlined />,
     },

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Checkbox, Form, Input, Select, Switch, Row, Col, Modal } from "antd";
 
 import useUsers from "../../hooks/useUsers";
@@ -31,7 +31,9 @@ const UserForm = ({
 
   // Check if the user has "Admin" role
   const { user } = useAuth();
-  const hasAdminRole = user?.role?.some((roles) => roles.name === "Admin");
+  const hasAdminRole = useMemo(() => {
+    return user?.role?.some((roles) => roles.name === "Admin");
+  }, [user]);
 
   const {
     usernameValidation,
@@ -44,9 +46,11 @@ const UserForm = ({
 
   // Mapping the employee into select options
   //In edit only the selected employee
-  const mappedEmployees = !isEditing
-    ? mapToSelectOptions(employeesNoUser)
-    : mapToSelectOptions([selectedObject?.employeeId]);
+  const mappedEmployees = useMemo(() => {
+    return !isEditing
+      ? mapToSelectOptions(employeesNoUser)
+      : mapToSelectOptions([selectedObject?.employeeId]);
+  }, [employeesNoUser, selectedObject, isEditing]);
 
   // Handle edit populate the wanted fields
   useEffect(() => {
@@ -54,9 +58,7 @@ const UserForm = ({
       // format the user into form structure
       const updatedUser = {
         ...selectedObject,
-        employeeId: selectedObject?.employeeId?.fullName,
-        accountStatus: selectedObject?.accountStatus,
-        role: selectedObject.role?.map((role) => role.id),
+        employeeId: mappedEmployees,
       };
       form.setFieldsValue(updatedUser);
       setInitialFormData(updatedUser);
@@ -68,9 +70,6 @@ const UserForm = ({
 
   const onFinish = async () => {
     const formData = form.getFieldsValue();
-
-    // Map the selected roles into object - can be empty
-    const roleObjs = formData?.role?.map((id) => ({ id: id })) || [];
 
     // Map the employee id
     let employeeId;
@@ -84,7 +83,7 @@ const UserForm = ({
     const updatedData = {
       ...formData,
       employeeId: employeeId,
-      role: roleObjs,
+      statusName: formData.statusName ? "Active" : "Deleted",
     };
 
     if (isEditing) {
@@ -136,7 +135,7 @@ const UserForm = ({
             showSearch
             placeholder="Search and select an employee"
             options={mappedEmployees}
-            //
+            notFoundContent="No employees without user accounts"
             onChange={(value) => {
               const selectedEmp = employeesNoUser.find(
                 (employee) => employee.id === value
@@ -223,7 +222,7 @@ const UserForm = ({
         </Form.Item>
 
         <Form.Item
-          name="role"
+          name="roleId"
           label={<FormInputTooltip label="Roles" title="Select system roles" />}
           hasFeedback
         >
@@ -257,7 +256,7 @@ const UserForm = ({
         </Form.Item>
 
         <Form.Item
-          name="accountStatus"
+          name="statusName"
           label={
             <FormInputTooltip
               label="Account Status"
