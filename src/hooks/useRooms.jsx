@@ -19,13 +19,12 @@ const useRooms = () => {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Use base hook for room operations
-  const { loadOneItem } = useCrudHandler({
+  const config = {
     service: roomService,
     entityName: "Room",
-    isPaginated: false,
-    initialLoad: false,
-  });
+  };
+  // Use base hook for room operations
+  const { loadOneItem } = useCrudHandler(config);
 
   // Fetch rooms based on selected tab
   const loadRooms = async () => {

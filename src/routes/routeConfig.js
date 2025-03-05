@@ -12,6 +12,7 @@ import {
   RoomPricingRules,
   RoomTypes,
 } from "../pages/Rooms";
+import Inventory from "../pages/Inventory/Inventory";
 
 //Route Configuration
 //module: null - No access check required
@@ -83,5 +84,12 @@ export const protectedRoutes = [
     path: "/room-pricing-rules",
     element: RoomPricingRules,
     module: "Room Pricing Rule",
+  },
+
+  // Inventory Routes
+  {
+    path: "/inventory",
+    element: Inventory,
+    module: "Inventory",
   },
 ];

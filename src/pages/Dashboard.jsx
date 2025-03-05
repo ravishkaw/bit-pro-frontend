@@ -12,14 +12,15 @@ const Dashboard = () => {
   ];
 
   const onGoing = [
-    { title: "Room module" },
-    { title: "Room Inventory (Will have to make dummy main inventory)" },
+    { title: "Room Inventory" },
     { title: "Room" },
     { title: "Guest Module > Duplicate of Employee with minor changes" },
     { title: "Room reservation" },
   ];
 
   const todo = [
+    { title: "Room module - ui and forms", done: false },
+    { title: "Finish inventory - only made fetch all->fe & be", done: false },
     { title: "Card edit view, delete", done: false },
     { title: "User profile and page", done: false },
     { title: "Notification popover", done: false },

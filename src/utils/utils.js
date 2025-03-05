@@ -13,3 +13,20 @@ export const mapNameToSelectOptions = (data) =>
     value: item.name,
     label: item.name,
   }));
+
+// Helper function to get the level of keys of sider items
+export const getLevelKeys = (items) => {
+  const key = {};
+  const func = (items, level = 1) => {
+    items.forEach((item) => {
+      if (item.key) {
+        key[item.key] = level;
+      }
+      if (item.children) {
+        func(item.children, level + 1);
+      }
+    });
+  };
+  func(items);
+  return key;
+};

@@ -12,6 +12,7 @@ import {
   AppstoreOutlined,
   GiftOutlined,
   ScheduleOutlined,
+  ShopOutlined,
 } from "@ant-design/icons";
 
 export const siderItems = [
@@ -81,6 +82,19 @@ export const siderItems = [
     label: "Manage Employees",
     icon: <TeamOutlined />,
     privilege: "Employee",
+  },
+  {
+    key: "inventory",
+    label: "Inventory",
+    icon: <ShopOutlined />,
+    children: [
+      {
+        key: "/inventory",
+        label: "Manage Inventory",
+        icon: <ShopOutlined />,
+        privilege: "Inventory",
+      },
+    ],
   },
   {
     key: "system",

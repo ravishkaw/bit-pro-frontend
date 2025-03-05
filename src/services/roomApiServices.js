@@ -5,6 +5,7 @@ const ROOM_BASE_URL = "/rooms";
 const ROOM_TYPE_BASE_URL = "/room-types";
 const ROOM_PRICING_RULE_BASE_URL = "/pricing-rules";
 const ROOM_FACILITIES = "/room-facilities";
+const ROOM_INVENTORY = "/room-inventory";
 
 // Generic API service for room types
 export const roomService = createApiService(ROOM_BASE_URL);
@@ -17,6 +18,9 @@ export const pricingRuleService = createApiService(ROOM_PRICING_RULE_BASE_URL);
 
 // Generic API service for room facilities
 export const roomFacilitiesService = createApiService(ROOM_FACILITIES);
+
+// Generic API service for room inventory
+export const roomInventoryService = createApiService(ROOM_INVENTORY);
 
 // Fetch all rooms types without pagination
 export const fetchAllRoomTypes = async () => {
