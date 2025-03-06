@@ -5,6 +5,7 @@ import {
   EyeOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
+import { useThemeContext } from "../../contexts/ThemeContext";
 
 const { Meta } = Card;
 const { Text } = Typography;
@@ -17,6 +18,7 @@ const RoomCard = ({
   loadOneRoom,
   openDeleteModal,
 }) => {
+  const { isDarkMode } = useThemeContext();
   //define card actions based on privileges
   const actions = [];
   if (privileges.select_privilege) {
@@ -44,9 +46,17 @@ const RoomCard = ({
     );
   }
 
+  const cardStyle = {
+    borderRadius: 8,
+    boxShadow: isDarkMode
+      ? "0 .25rem .875rem 0 rgba(16,17,33,.26)"
+      : "0 .25rem .875rem 0 rgba(38,43,67,.16)",
+  };
+
   return (
-    <Col lg={6} md={8} sm={12} xs={24}>
+    <Col md={8} sm={12} xs={24}>
       <Card
+        bordered={false}
         cover={
           <Image
             style={{
@@ -59,7 +69,10 @@ const RoomCard = ({
             src="https://i.pinimg.com/originals/e6/4d/f7/e64df7b4341fd3ac448d70cb31457c1c.jpg"
           />
         }
-        style={{ boxShadow: "2px 2px 5px 2px #d8d8d8", height: "100%" }}
+        style={{
+          ...cardStyle,
+          height: "100%",
+        }}
         actions={actions}
       >
         <Meta

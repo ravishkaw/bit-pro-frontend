@@ -90,6 +90,7 @@ const SiderContent = () => {
       selectedKeys={[selectedKey]}
       openKeys={stateOpenKeys}
       onOpenChange={onOpenChange}
+      style={{ border: "none" }}
     />
   );
 };

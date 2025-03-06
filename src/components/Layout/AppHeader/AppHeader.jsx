@@ -1,31 +1,67 @@
-import {
-  Layout,
-  Button,
-  Row,
-  Col,
-  Avatar,
-  Typography,
-  Space,
-  Dropdown,
-} from "antd";
+import { useState, useEffect } from "react";
+import { Layout, Button, Row, Col, Typography, Space } from "antd";
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
-  UserOutlined,
+  MoonOutlined,
+  SunOutlined,
 } from "@ant-design/icons";
 
 import { useHeaderTitleContext } from "../../../contexts/HeaderTitleContext";
-import { avatarDropdownItems } from "./HeaderMenuItems";
 import NotificationPopover from "../../Popover/NotificationPopover";
+import { useThemeContext } from "../../../contexts/ThemeContext";
+import AvatarPopover from "../../Popover/AvatarPopover";
 
 // Header component of the app
 const AppHeader = ({ isMobile, collapsed, setCollapsed, setDrawerOpen }) => {
   const { headerTitle } = useHeaderTitleContext();
-
-  const avatarItems = avatarDropdownItems();
+  const { isDarkMode, toggleTheme } = useThemeContext();
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const toggleMenu = () =>
     isMobile ? setDrawerOpen(true) : setCollapsed(!collapsed);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Check if the user has scrolled down
+      if (window.scrollY > 0) {
+        setIsScrolled(true);
+      } else {
+        // Reset when scrolled back to the top
+        setIsScrolled(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  // change colors in dark mode and scrolling
+  const headerStyle = {
+    position: "sticky",
+    // padding: "0 20px 0 0",
+    top: 0,
+    zIndex: 100,
+    borderBottomRightRadius: 8,
+    borderBottomLeftRadius: 8,
+    margin: isScrolled ? "0 20px" : "0",
+    transition: "margin 0.3s ease",
+    backgroundColor: isScrolled && (isDarkMode ? "#212235f9" : "#ffffffe6"),
+    boxShadow:
+      isScrolled &&
+      (isDarkMode
+        ? "0 .25rem .5rem -0.25rem #1011216b"
+        : "0 .25rem .5rem -0.25rem #262b436b"),
+  };
+
+  const buttonStyle = {
+    fontSize: "1.25rem",
+    lineHeight: "1.25rem",
+    verticalAlign: "middle",
+    borderRadius: "50%",
+    color: isDarkMode && "white",
+  };
 
   return (
     <Layout.Header style={headerStyle}>
@@ -41,23 +77,21 @@ const AppHeader = ({ isMobile, collapsed, setCollapsed, setDrawerOpen }) => {
               )
             }
             onClick={toggleMenu}
-            style={buttonStyle}
+            style={{ ...buttonStyle}}
           />
         </Col>
         <Col>
-          <Typography.Title
-            level={isMobile ? 4 : 3}
-            style={{ margin: 0, color: "#804d17" }}
-          >
+          <Typography.Title level={isMobile ? 4 : 3} style={{ margin: 0 }}>
             {headerTitle}
           </Typography.Title>
         </Col>
         <Col>
           <Space size="large" align="center" wrap={false}>
+            <Button type="text" onClick={toggleTheme} style={buttonStyle}>
+              {isDarkMode ? <SunOutlined /> : <MoonOutlined />}
+            </Button>
             <NotificationPopover />
-            <Dropdown menu={{ items: avatarItems }} placement="bottom" arrow>
-              <Avatar style={avatarStyle} icon={<UserOutlined />} />
-            </Dropdown>
+            <AvatarPopover />
           </Space>
         </Col>
       </Row>
@@ -66,27 +100,3 @@ const AppHeader = ({ isMobile, collapsed, setCollapsed, setDrawerOpen }) => {
 };
 
 export default AppHeader;
-
-const headerStyle = {
-  position: "sticky",
-  padding: "0 20px 0 0",
-  margin: "0 20px",
-  top: 0,
-  zIndex: 100,
-  borderRadius: 8,
-  boxShadow: "2px 2px 5px #d5c9bb",
-};
-
-const buttonStyle = {
-  fontSize: "16px",
-  width: 64,
-  height: 64,
-  borderRadius: 8,
-};
-
-const avatarStyle = {
-  width: "40px",
-  height: "40px",
-  margin: 0,
-  cursor: "pointer",
-};

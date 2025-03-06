@@ -4,13 +4,16 @@ import App from "./App.jsx";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
 import { MobileProvider } from "./contexts/MobileContext.jsx";
 import { HeaderTitleProvider } from "./contexts/HeaderTitleContext.jsx";
+import { ThemeProvider } from "./contexts/ThemeContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <AuthProvider>
-    <MobileProvider>
-      <HeaderTitleProvider>
-        <App />
-      </HeaderTitleProvider>
-    </MobileProvider>
+    <ThemeProvider>
+      <MobileProvider>
+        <HeaderTitleProvider>
+          <App />
+        </HeaderTitleProvider>
+      </MobileProvider>
+    </ThemeProvider>
   </AuthProvider>
 );

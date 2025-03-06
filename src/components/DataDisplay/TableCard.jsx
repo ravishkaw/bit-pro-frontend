@@ -10,6 +10,7 @@ import usePageChange from "../../hooks/usePageChange";
 import TableTitle from "../Table/TableTitle";
 import SkeletonCards from "../Cards/SkeletonCards";
 import GenericCard from "../Cards/GenericCard";
+import { useThemeContext } from "../../contexts/ThemeContext";
 
 // Destructure Search from Input component
 const { Search } = Input;
@@ -32,6 +33,7 @@ const TableCard = ({
 }) => {
   // Get mobile view status from context
   const { isMobile } = useMobileContext();
+  const { isDarkMode } = useThemeContext();
 
   // Format the pagination message
   const paginationEntries = (total, range) => {
@@ -53,6 +55,13 @@ const TableCard = ({
       sortOrder: paginationDetails.sortOrder,
       searchQuery: value,
     });
+  };
+
+  const tableStyle = {
+    borderRadius: 8,
+    boxShadow: isDarkMode
+      ? "0 .25rem .875rem 0 rgba(16,17,33,.26)"
+      : "0 .25rem .875rem 0 rgba(38,43,67,.16)",
   };
 
   // Desktop view - render table
@@ -79,7 +88,8 @@ const TableCard = ({
           showTotal: paginationEntries,
         }}
         scroll={{ x: "max-content" }} // horizontal scrolling
-        onChange={handlePageChange} // handles sorting and pagination changes
+        onChange={handlePageChange} // handles sorting and pagination changes'
+        style={tableStyle}
       />
     );
   }

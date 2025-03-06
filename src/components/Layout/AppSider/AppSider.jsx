@@ -1,9 +1,17 @@
-import { Button, Col, Layout, Row, Drawer, ConfigProvider, Flex } from "antd";
+import {
+  Button,
+  Col,
+  Layout,
+  Row,
+  Drawer,
+  ConfigProvider,
+  Flex,
+  Typography,
+} from "antd";
 import { MenuFoldOutlined } from "@ant-design/icons";
 
 import SiderContent from "./SiderContent";
 
-import companyLogo from "../../../assets/logo.png";
 import companyLogoCollapsed from "../../../assets/logoCollapsed.png";
 
 // Main sider component - Uses sider for desktop and drawer for mobile
@@ -11,22 +19,28 @@ const AppSider = ({ isMobile, collapsed, drawerOpen, setDrawerOpen }) => {
   // Main sider content to render in sider and drawer
   const siderContent = (
     <Row align="middle" justify="center" gutter={[0, 24]}>
-      <Col span={24} style={{ textAlign: "center", height: "200px" }}>
-        <Flex justify="center" align="center" style={{ height: "100%" }}>
-          {collapsed ? (
+      <Col
+        span={24}
+        style={{ textAlign: "center", height: "60px", marginTop: 8 }}
+      >
+        {collapsed ? (
+          <img
+            src={companyLogoCollapsed}
+            alt="Company Logo"
+            style={{ height: "auto", width: "3rem" }}
+          />
+        ) : (
+          <Flex justify="center" align="center" gap={8}>
             <img
               src={companyLogoCollapsed}
               alt="Company Logo"
-              style={{ height: "auto", width: "80%" }}
+              style={{ width: "3rem" }}
             />
-          ) : (
-            <img
-              src={companyLogo}
-              alt="Company Logo"
-              style={{ height: "auto", width: "80%" }}
-            />
-          )}
-        </Flex>
+            <Typography.Title level={3} style={{ margin: 0 }}>
+              Villa Waterlilly
+            </Typography.Title>
+          </Flex>
+        )}
       </Col>
       <Col span={24}>
         <SiderContent />
@@ -77,5 +91,4 @@ const siderStyle = {
   bottom: 0,
   overflow: "auto",
   scrollbarWidth: "thin",
-  borderRadius: 8,
 };
