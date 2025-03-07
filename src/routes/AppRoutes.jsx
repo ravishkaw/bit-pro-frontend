@@ -1,17 +1,23 @@
-// Import dependencies
 import { Route, Routes } from "react-router";
 import Login from "../components/Auth/Login";
+
 import Unauthorized from "../pages/Shared/Unauthorized";
 import NotFound from "../pages/Shared/NotFound";
+import ServerError from "../pages/Shared/ServerError";
+
+import { protectedRoutes } from "./routeConfig";
+
 import PrivateRoute from "./PrivateRoute";
 import ModuleAccess from "./ModuleAccess";
 import AppLayout from "../components/Layout/AppLayout";
-import { protectedRoutes } from "./routeConfig";
 
 const AppRoutes = () => {
-  //Renders a protected route with optional module access check
-  //path - Route path | element - Component to render | module - Module name for access check
-  const renderProtectedRoute = ({ path, element: Element, module }) => (
+  //Renders a protected routes with privilege checking
+  const renderProtectedRoute = ({
+    path, //Route path
+    element: Element, //Component to render
+    module, // Module name for access check
+  }) => (
     <Route
       key={path}
       path={path}
@@ -40,8 +46,9 @@ const AppRoutes = () => {
         {protectedRoutes.map(renderProtectedRoute)}
       </Route>
 
-      {/* Unauthorized and NotFound routes */}
+      {/* Unauthorized , NotFound and server error routes */}
       <Route path="/unauthorized" element={<Unauthorized />} />
+      <Route path="/server-error" element={<ServerError />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

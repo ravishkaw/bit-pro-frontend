@@ -1,11 +1,9 @@
 import { Card, List, Row, Col, Typography, Tag } from "antd";
-import { useThemeContext } from "../contexts/ThemeContext";
+import Styles from "../constants/Styles";
 
 const { Text, Title } = Typography;
 
 const Dashboard = () => {
-  const { isDarkMode } = useThemeContext();
-
   const finished = [
     { title: "Employee module" },
     { title: "User module" },
@@ -24,22 +22,18 @@ const Dashboard = () => {
   const todo = [
     { title: "Room module - ui and forms", done: false },
     { title: "Finish inventory - only made fetch all->fe & be", done: false },
-    { title: "Card edit view, delete", done: false },
+    { title: "Card edit view, delete", done: true },
     { title: "User profile and page", done: false },
     { title: "Notification popover", done: false },
     { title: "Pictures endpoint", done: false },
   ];
 
-  const cardStyle = {
-    boxShadow: isDarkMode
-      ? "0 .25rem .875rem 0 rgba(16,17,33,.26)"
-      : "0 .25rem .875rem 0 rgba(38,43,67,.16)",
-  };
+  const { boxShadow } = Styles();
 
   return (
     <Row gutter={[20, 20]}>
       <Col md={8} xs={24}>
-        <Card bordered={false} style={cardStyle}>
+        <Card bordered={false} style={{ ...boxShadow }}>
           <Title level={3}>Finished</Title>
           <List
             dataSource={finished}
@@ -53,7 +47,7 @@ const Dashboard = () => {
       </Col>
 
       <Col md={8} xs={24}>
-        <Card bordered={false} style={cardStyle}>
+        <Card bordered={false} style={{ ...boxShadow }}>
           <Title level={3}>On Going</Title>
           <List
             dataSource={onGoing}
@@ -69,7 +63,7 @@ const Dashboard = () => {
       </Col>
 
       <Col md={8} xs={24}>
-        <Card bordered={false} style={cardStyle}>
+        <Card bordered={false} style={{ ...boxShadow }}>
           <Title level={3}>To do</Title>
           <List
             dataSource={todo}

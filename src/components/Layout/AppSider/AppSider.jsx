@@ -1,13 +1,4 @@
-import {
-  Button,
-  Col,
-  Layout,
-  Row,
-  Drawer,
-  ConfigProvider,
-  Flex,
-  Typography,
-} from "antd";
+import { Button, Col, Layout, Row, Drawer, Flex, Typography } from "antd";
 import { MenuFoldOutlined } from "@ant-design/icons";
 
 import SiderContent from "./SiderContent";
@@ -36,7 +27,7 @@ const AppSider = ({ isMobile, collapsed, drawerOpen, setDrawerOpen }) => {
               alt="Company Logo"
               style={{ width: "3rem" }}
             />
-            <Typography.Title level={3} style={{ margin: 0 }}>
+            <Typography.Title level={4} style={{ margin: 0, marginRight: 20 }}>
               Villa Waterlilly
             </Typography.Title>
           </Flex>
@@ -50,25 +41,24 @@ const AppSider = ({ isMobile, collapsed, drawerOpen, setDrawerOpen }) => {
 
   // desktop - sider , mobile - drawer
   return isMobile ? (
-    // paddingLG removes drawer padding
-    <ConfigProvider theme={{ token: { paddingLG: 0 } }}>
-      <Drawer
-        placement="left"
-        onClose={() => setDrawerOpen(!drawerOpen)}
-        open={drawerOpen}
-        width={250}
-        closable={false}
-        style={{ borderRadius: 8 }}
+    <Drawer
+      placement="left"
+      onClose={() => setDrawerOpen(!drawerOpen)}
+      open={drawerOpen}
+      width={250}
+      closable={false}
+      style={{ borderRadius: 8 }}
+      styles={{ body: { padding: 0 } }}
+    >
+      <Button
+        type="text"
+        onClick={() => setDrawerOpen(!drawerOpen)}
+        style={{ position: "absolute", top: 16, right: 0, zIndex: 1000 }}
       >
-        <Button
-          type="text"
-          icon={<MenuFoldOutlined />}
-          onClick={() => setDrawerOpen(!drawerOpen)}
-          style={{ position: "absolute", top: 16, right: 16, zIndex: 1000 }}
-        />
-        {siderContent}
-      </Drawer>
-    </ConfigProvider>
+        <MenuFoldOutlined />
+      </Button>
+      {siderContent}
+    </Drawer>
   ) : (
     <Layout.Sider
       style={siderStyle}

@@ -2,9 +2,9 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../contexts/AuthContext";
 
-// Protects routes by checking if the user is logged in
+// Check if a user logged in
 const PrivateRoute = ({ children }) => {
-  const { user } = useAuth(); // Get the current user from AuthContext
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   // Redirect to login page if the user is not logged in

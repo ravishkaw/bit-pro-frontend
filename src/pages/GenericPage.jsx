@@ -7,15 +7,15 @@ import TableCard from "../components/DataDisplay/TableCard";
 import DeleteConfirmModal from "../components/Modals/DeleteConfirmModal";
 import UpdateConfirmationModal from "../components/Modals/UpdateConfirmationModal";
 
-// Admin Manage Users Page
+// generic page ( table / card with add, serach)
 const GenericPage = ({
-  module,
-  rowKey,
-  hookData,
-  columnItems,
-  CustomForm,
-  showView = false,
-  ViewObject,
+  module, // nodule name
+  rowKey, // key to use in table
+  hookData, // data and methods of the hook
+  columnItems, // table coloumn items
+  CustomForm, // add / edit form
+  showView = false, // if there is view modal
+  ViewObject, // view modal component
 }) => {
   // Find the module in the privileges
   const { privileges } = useAuth();
@@ -24,6 +24,7 @@ const GenericPage = ({
     (privilegedModule) => privilegedModule.module_name === module
   );
 
+  // destruct hook data
   const {
     data,
     loading,
@@ -36,6 +37,7 @@ const GenericPage = ({
     restoreItem,
   } = hookData;
 
+  // get modal states
   const {
     formModalState,
     openFormModal,
@@ -52,7 +54,8 @@ const GenericPage = ({
     handleView,
   } = useModalStates();
 
-  const { open, isEditing, selectedObject } = formModalState; // Extract form modal state details
+  // Extract form modal state details
+  const { open, isEditing, selectedObject } = formModalState;
 
   // Generate table columns dynamically
   const columns = columnItems(
@@ -78,6 +81,7 @@ const GenericPage = ({
             paginationDetails={paginationDetails}
             setPaginationDetails={setPaginationDetails}
             handleEdit={handleEdit}
+            handleView={handleView}
             openFormModal={openFormModal}
             openDeleteModal={openDeleteModal}
             restoreItem={restoreItem}

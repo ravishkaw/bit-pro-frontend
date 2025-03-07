@@ -38,13 +38,13 @@ export const InventoryColumnItems = (
     sorter: true,
   },
   {
-    title: "Last restock Date",
+    title: "Last Restocked Date",
     dataIndex: "lastRestockedDate",
     sorter: true,
   },
   {
     title: "Status",
-    dataIndex: "status",
+    dataIndex: "statusName",
     render: (_, record) => {
       const statusName = record?.statusName || "N/A";
       return (

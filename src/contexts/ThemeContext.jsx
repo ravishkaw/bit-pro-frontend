@@ -3,12 +3,17 @@ import { createContext, useContext, useState } from "react";
 // create theme context
 const ThemeContext = createContext();
 
-// Provider to handle user auth
+// to handle theme
 export const ThemeProvider = ({ children }) => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(
+    JSON.parse(localStorage.getItem("darkThemeEnabled")) || false
+  );
 
   const toggleTheme = () => {
-    setIsDarkMode((prev) => !prev);
+    setIsDarkMode((prev) => {
+      localStorage.setItem("darkThemeEnabled", JSON.stringify(!prev));
+      return !prev;
+    });
   };
 
   return (
@@ -18,5 +23,4 @@ export const ThemeProvider = ({ children }) => {
   );
 };
 
-// Hook to easily use theme context
 export const useThemeContext = () => useContext(ThemeContext);

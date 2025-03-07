@@ -1,10 +1,10 @@
 import { Card, Skeleton } from "antd";
 
-// SkeletonCards component to display loading placeholders for cards
+// SkeletonCards to display loading placeholders for cards
 const SkeletonCards = () => {
   return (
     <>
-      {/* Create 3 skeleton cards to simulate loading state */}
+      {/* 3 skeleton cards*/}
       {Array.from({ length: 3 }).map((_, index) => (
         <Card key={index} style={{ marginBottom: 10 }}>
           <Skeleton active />

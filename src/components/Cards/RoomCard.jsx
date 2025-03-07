@@ -6,6 +6,7 @@ import {
   TeamOutlined,
 } from "@ant-design/icons";
 import { useThemeContext } from "../../contexts/ThemeContext";
+import Styles from "../../constants/Styles";
 
 const { Meta } = Card;
 const { Text } = Typography;
@@ -18,7 +19,6 @@ const RoomCard = ({
   loadOneRoom,
   openDeleteModal,
 }) => {
-  const { isDarkMode } = useThemeContext();
   //define card actions based on privileges
   const actions = [];
   if (privileges.select_privilege) {
@@ -46,12 +46,7 @@ const RoomCard = ({
     );
   }
 
-  const cardStyle = {
-    borderRadius: 8,
-    boxShadow: isDarkMode
-      ? "0 .25rem .875rem 0 rgba(16,17,33,.26)"
-      : "0 .25rem .875rem 0 rgba(38,43,67,.16)",
-  };
+  const { boxShadow } = Styles();
 
   return (
     <Col md={8} sm={12} xs={24}>
@@ -70,7 +65,7 @@ const RoomCard = ({
           />
         }
         style={{
-          ...cardStyle,
+          ...boxShadow,
           height: "100%",
         }}
         actions={actions}

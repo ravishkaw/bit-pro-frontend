@@ -2,14 +2,14 @@ import { Flex, Select, Space, Input, Button } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 const { Search } = Input;
 
-// Title component for the table
+// Title of the table
 const TableTitle = ({
-  module, // The type of module ("user", "employee")
+  module, // module name (user, employee)
   openFormModal,
   paginationDetails,
   setPaginationDetails,
   privileges, // privilege of the logged user of the module
-  handleSearch, // Function to handle search
+  handleSearch,
 }) => {
   // Handle changes in the page size dropdown
   const handlePageSizeChange = (value) => {
@@ -24,7 +24,6 @@ const TableTitle = ({
 
   return (
     <Flex justify="space-between" align="center" gap="middle">
-      {/* Left Section*/}
       <Space size="large">
         {/* Pagination Dropdown */}
         <Select
@@ -50,7 +49,6 @@ const TableTitle = ({
         />
       </Space>
 
-      {/* Right Section*/}
       {/* Add New Button  */}
       {privileges?.insert_privilege && (
         <Button

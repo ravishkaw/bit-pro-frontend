@@ -15,14 +15,12 @@ import {
 import Inventory from "../pages/Inventory/Inventory";
 
 //Route Configuration
-//module: null - No access check required
-//module: "ModuleName" - Requires specific module access / privileges
 export const protectedRoutes = [
   // Dashboard & Profile Routes
   {
     path: "/dashboard",
     element: Dashboard,
-    module: null,
+    module: null, // No access check required
   },
   {
     path: "/user-profile",

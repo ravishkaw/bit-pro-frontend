@@ -3,7 +3,7 @@ import { useState, createContext, useContext } from "react";
 // Context to manage the app header title
 const HeaderTitleContext = createContext();
 
-// Provider to update the header title based on the selected sider item
+// update the header title based on the selected sider item
 export const HeaderTitleProvider = ({ children }) => {
   const [headerTitle, setHeaderTitle] = useState("Villa Water Lilly"); // Default title
 
@@ -42,7 +42,6 @@ export const HeaderTitleProvider = ({ children }) => {
     setHeaderTitle(foundLabel || defaultTitle);
   };
 
-  // Pass header title and findLabel function to the app
   return (
     <HeaderTitleContext.Provider value={{ headerTitle, findLabel }}>
       {children}
@@ -50,5 +49,4 @@ export const HeaderTitleProvider = ({ children }) => {
   );
 };
 
-// Hook to easily use the header title context
 export const useHeaderTitleContext = () => useContext(HeaderTitleContext);

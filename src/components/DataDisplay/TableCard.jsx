@@ -1,39 +1,33 @@
-// Import components
 import { Pagination, Table, Button, Flex, Input } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
-// Import custom contexts and hooks
 import { useMobileContext } from "../../contexts/MobileContext";
 import usePageChange from "../../hooks/usePageChange";
 
-// Import components
 import TableTitle from "../Table/TableTitle";
 import SkeletonCards from "../Cards/SkeletonCards";
 import GenericCard from "../Cards/GenericCard";
-import { useThemeContext } from "../../contexts/ThemeContext";
+import Styles from "../../constants/Styles";
 
-// Destructure Search from Input component
 const { Search } = Input;
 
-// Main component that renders either a table or cards based on screen size
+// render table or cards based on screen size
 const TableCard = ({
-  module, // type of data being displayed (e.g., 'user', 'employee')
-  columns, // column configuration for the table
-  rowKey, // unique key for each row
-  dataSource, // displayed data (e.g., user array)
+  module, // module name (user, employee)
+  columns, // columns of the table
+  rowKey, // key for table
+  dataSource, // data (user array)
   privileges, // privilege of the logged user for the module
   loading, // loading state
   paginationDetails, // pagination configuration
   setPaginationDetails,
-  openFormModal, // function to open create/edit form modal
   handleView,
   handleEdit,
+  openFormModal, // function to open create/edit form modal
   openDeleteModal, // function to open delete modal
-  apiFunction, // Load single object funtion (loadOneEmployee)
+  loadOneItem, // Load single object funtion (loadOneEmployee)
 }) => {
-  // Get mobile view status from context
   const { isMobile } = useMobileContext();
-  const { isDarkMode } = useThemeContext();
 
   // Format the pagination message
   const paginationEntries = (total, range) => {
@@ -57,12 +51,7 @@ const TableCard = ({
     });
   };
 
-  const tableStyle = {
-    borderRadius: 8,
-    boxShadow: isDarkMode
-      ? "0 .25rem .875rem 0 rgba(16,17,33,.26)"
-      : "0 .25rem .875rem 0 rgba(38,43,67,.16)",
-  };
+  const { boxShadow } = Styles(); // box shadow property
 
   // Desktop view - render table
   if (!isMobile) {
@@ -88,8 +77,8 @@ const TableCard = ({
           showTotal: paginationEntries,
         }}
         scroll={{ x: "max-content" }} // horizontal scrolling
-        onChange={handlePageChange} // handles sorting and pagination changes'
-        style={tableStyle}
+        onChange={handlePageChange}
+        style={{ ...boxShadow, borderRadius: 8 }}
       />
     );
   }
@@ -114,7 +103,7 @@ const TableCard = ({
         {/* Add new item button */}
         <Button type="primary" onClick={() => openFormModal(false)}>
           <PlusOutlined />
-          Add New {module}
+          Add New Entry
         </Button>
       </Flex>
 
@@ -129,12 +118,12 @@ const TableCard = ({
             handleView={handleView}
             handleEdit={handleEdit}
             openDeleteModal={openDeleteModal}
-            apiFunction={apiFunction}
+            loadOneItem={loadOneItem}
           />
         );
       })}
 
-      {/* Simplified pagination for mobile view */}
+      {/* pagination for mobile view */}
       <Pagination
         total={paginationDetails?.total || dataSource?.length}
         current={paginationDetails?.current}

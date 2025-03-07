@@ -2,10 +2,10 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../contexts/AuthContext";
 
-// Checks if the user has access to a specific module
+// Checks if the user has privileges to a specific module
 const ModuleAccess = ({ module, children }) => {
   const navigate = useNavigate();
-  const { privilegedModules } = useAuth(); // Get user's allowed modules
+  const { privilegedModules } = useAuth();
 
   // Redirect to unauthorized page if the user doesn't have access
   useEffect(() => {
@@ -14,7 +14,7 @@ const ModuleAccess = ({ module, children }) => {
     }
   }, [privilegedModules, module, navigate]);
 
-  // Render the children if access is granted
+  // return the children if access is granted
   return children;
 };
 

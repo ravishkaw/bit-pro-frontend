@@ -5,7 +5,7 @@ import { login, logout, session } from "../services/auth";
 // Context to manage auth stuff
 const AuthContext = createContext();
 
-// Provider to handle user auth, session, and permissions
+// to handle user auth, session, and permissions
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null); // Logged-in user
   const [privilegedModules, setPrivilegedModules] = useState([]); // Modules user can access
@@ -14,14 +14,14 @@ export const AuthProvider = ({ children }) => {
   // For showing messages
   const [messageApi, contextHolder] = message.useMessage();
 
-  // Check if user is already logged in via session
+  // Check the use session exists
   const checkSession = async () => {
     try {
       const response = await session();
       setUser({ username: response.username, role: response.roles });
       setPrivilegedModules(response.privilegedModules);
       setPrivileges(response.privileges);
-      messageApi.success("Session verified. Login successful!");
+      // messageApi.success("Session verified. Login successful!");
     } catch (error) {
       messageApi.warning("Please Login!");
       console.error("Session check failed:", error);
@@ -63,7 +63,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Pass auth stuff to the app
   return (
     <AuthContext.Provider
       value={{ user, privileges, privilegedModules, handleLogin, handleLogout }}
@@ -74,5 +73,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Hook to easily use auth context
 export const useAuth = () => useContext(AuthContext);

@@ -19,6 +19,11 @@ axiosInstance.interceptors.response.use(
       window.location.href = "/";
     }
 
+    // 500 redirect to server error
+    if (error.response && error.response.status === 500) {
+      window.location.href = "/server-error";
+    }
+
     // Reject the promise with the error for other errors
     return Promise.reject(error);
   }

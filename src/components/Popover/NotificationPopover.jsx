@@ -3,7 +3,6 @@ import { BellOutlined } from "@ant-design/icons";
 
 // Header notification button
 const NotificationPopover = () => {
-  
   const notifications = [
     {
       id: 1,
@@ -38,8 +37,8 @@ const NotificationPopover = () => {
         />
       }
       trigger="hover"
-      placement="bottomRight"
-      styles={{ width: 300 }}
+      placement="bottom"
+      styles={{ body: { width: 300, marginRight: 20 } }}
     >
       <Badge count={notifications.length} size="small">
         <BellOutlined style={iconStyle} aria-label="Notifications" />
@@ -52,7 +51,7 @@ export default NotificationPopover;
 
 const iconStyle = {
   fontSize: "1.25rem",
-  lineHeight: "1.25rem",
+  lineHeight: 64,
   verticalAlign: "middle",
   cursor: "pointer",
 };

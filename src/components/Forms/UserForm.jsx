@@ -3,6 +3,7 @@ import { Checkbox, Form, Input, Select, Switch, Row, Col, Modal } from "antd";
 
 import useUsers from "../../hooks/useUsers";
 import { useAuth } from "../../contexts/AuthContext";
+import { useThemeContext } from "../../contexts/ThemeContext";
 
 import FormInputTooltip from "./FormInputTooltip";
 import { formValidations } from "./validations";
@@ -28,6 +29,7 @@ const UserForm = ({
 
   const [form] = Form.useForm();
   const { employeesNoUser, roles } = useUsers();
+  const { isDarkMode } = useThemeContext();
 
   // Check if the user has "Admin" role
   const { user } = useAuth();
@@ -229,7 +231,7 @@ const UserForm = ({
           <Checkbox.Group>
             <div
               style={{
-                border: "1px solid #cbb8a0",
+                border: `1px solid ${isDarkMode ? "#464963" : "#e5e6e8"}`,
                 padding: 16,
                 borderRadius: 8,
               }}

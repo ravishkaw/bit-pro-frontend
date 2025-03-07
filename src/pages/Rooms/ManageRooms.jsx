@@ -1,4 +1,17 @@
-import { Row, Col, Card, Tabs, Flex, Empty, Button } from "antd";
+import {
+  Row,
+  Col,
+  Card,
+  Tabs,
+  Flex,
+  Empty,
+  Button,
+  Space,
+  Skeleton,
+  Select,
+  Typography,
+  Input,
+} from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
 import { useAuth } from "../../contexts/AuthContext";
@@ -9,6 +22,7 @@ import RoomCard from "../../components/Cards/RoomCard";
 import DeleteConfirmModal from "../../components/Modals/DeleteConfirmModal";
 import RoomForm from "../../components/Forms/RoomForm";
 import ViewRoom from "../../components/Descriptions/ViewRoom";
+import Styles from "../../constants/Styles";
 
 const ManageRooms = () => {
   let module = "Room"; // Define the module for rooms
@@ -20,7 +34,9 @@ const ManageRooms = () => {
     (privilegedModule) => privilegedModule.module_name === module
   );
   // Destructure functions and states from custom hooks
-  const { rooms, setSelectedTab, roomTypes, loadOneItem } = useRooms();
+  const { rooms, loading, setSelectedTab, roomTypes, loadOneItem } = useRooms();
+
+  const { boxShadow } = Styles();
 
   const {
     formModalState,
@@ -38,61 +54,71 @@ const ManageRooms = () => {
   const { open, isEditing, selectedObject } = formModalState; // Extract modal state details
 
   // Function to handle tab change
-  const handleTabChange = (key) => {
-    setSelectedTab({ key: key });
+  const handleTabChange = (value) => {
+    setSelectedTab(value);
   };
 
   return (
     <>
       <Card
         bordered={false}
-        style={{ marginBottom: 20 }}
-        styles={{ body: { padding: "0 20px" } }}
+        style={{ ...boxShadow, marginBottom: 20 }}
+        styles={{ body: { padding: 20 } }}
       >
         <Row gutter={[20, 20]}>
-          <Col span={24}>
-            <Flex justify="space-between" align="center">
-              <Tabs
-                items={roomTypes}
-                defaultActiveKey="all"
+          <Col md={12} xs={24}>
+            <Flex align="center" gap={8} wrap>
+              <Typography.Title level={5} style={{ margin: 0 }}>
+                Filter Rooms
+              </Typography.Title>
+              <Typography.Text>By room type</Typography.Text>
+              <Select
+                placeholder="select the room type"
+                options={roomTypes}
                 onChange={handleTabChange}
+                defaultValue={"all"}
               />
+              <Select placeholder="by availability" />
+            </Flex>
+          </Col>
+          <Col md={12} xs={24}>
+            <Space size="large" align="center">
+              <Input.Search allowClear placeholder="Search rooms" />
               {roomModulePrivileges?.insert_privilege && (
                 <Button type="primary" onClick={() => openFormModal(false)}>
                   <PlusOutlined />
                   Add New Room
                 </Button>
               )}
-            </Flex>
+            </Space>
           </Col>
         </Row>
       </Card>
       <Row>
         <Col span={24}>
           <Row gutter={[20, 20]}>
-            {/* {loading
-              ? Array.from({ length: 4 }).map((_, index) => (
-                  <Col lg={6} md={8} sm={12} xs={24} key={index}>
+            {loading
+              ? Array.from({ length: 3 }).map((_, index) => (
+                  <Col md={8} sm={12} xs={24} key={index}>
                     <Skeleton active />
                   </Col>
                 ))
-              :  */}
-            {(rooms?.length > 0 &&
-              rooms?.map((room) => (
-                <RoomCard
-                  key={room.id}
-                  room={room}
-                  privileges={roomModulePrivileges}
-                  handleView={handleView}
-                  handleEdit={handleEdit}
-                  openDeleteModal={openDeleteModal}
-                  loadOneRoom={loadOneItem}
-                />
-              ))) || (
-              <Col span={24}>
-                <Empty description="No rooms found" />
-              </Col>
-            )}
+              : (rooms?.length > 0 &&
+                  rooms?.map((room) => (
+                    <RoomCard
+                      key={room.id}
+                      room={room}
+                      privileges={roomModulePrivileges}
+                      handleView={handleView}
+                      handleEdit={handleEdit}
+                      openDeleteModal={openDeleteModal}
+                      loadOneRoom={loadOneItem}
+                    />
+                  ))) || (
+                  <Col span={24}>
+                    <Empty description="No rooms found" />
+                  </Col>
+                )}
           </Row>
         </Col>
       </Row>

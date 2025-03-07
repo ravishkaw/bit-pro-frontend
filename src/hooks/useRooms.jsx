@@ -11,11 +11,11 @@ import useCrudHandler from "./useCrudHandler";
 const useRooms = () => {
   const [roomTypes, setRoomTypes] = useState([
     {
-      key: "all",
+      value: "all",
       label: "All Rooms",
     },
   ]);
-  const [selectedTab, setSelectedTab] = useState({ key: "all" });
+  const [selectedTab, setSelectedTab] = useState("all");
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -31,10 +31,10 @@ const useRooms = () => {
     try {
       setLoading(true);
       let resp;
-      if (selectedTab.key === "all") {
+      if (selectedTab === "all") {
         resp = await roomService.getAll();
       } else {
-        resp = await fetchAllRoomsToType(selectedTab.key);
+        resp = await fetchAllRoomsToType(selectedTab);
       }
       setRooms(resp);
     } catch (err) {
@@ -48,21 +48,17 @@ const useRooms = () => {
   // Fetch room types
   const loadRoomTypes = async () => {
     try {
-      setLoading(true);
       const resp = await fetchAllRoomTypes();
-
       const mappedRoomTypes = resp
         .filter((availableRoomTypes) => !availableRoomTypes.isDeleted)
         .map((roomType) => ({
-          key: roomType.id,
+          value: roomType.id,
           label: roomType.name,
         }));
       setRoomTypes([...roomTypes, ...mappedRoomTypes]);
     } catch (err) {
       setRoomTypes([{ key: "all", label: "All rooms" }]);
       toast.error(err.message || "Failed to load room types");
-    } finally {
-      setLoading(false);
     }
   };
 

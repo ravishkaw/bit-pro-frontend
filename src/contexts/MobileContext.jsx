@@ -1,9 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-// Context to manage mobile-related states 
+// Context to manage mobile-related states
 const MobileContext = createContext();
 
-// Provider to handle mobile view logic
+// to handle mobile view logic
 export const MobileProvider = ({ children }) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768); // Check if screen is mobile
   const [collapsed, setCollapsed] = useState(false); // Sidebar collapsed state
@@ -22,14 +22,10 @@ export const MobileProvider = ({ children }) => {
       }
     };
 
-    // Add resize event listener
     window.addEventListener("resize", handleResize);
-
-    // Cleanup listener
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Pass mobile states and setters to the app
   return (
     <MobileContext.Provider
       value={{
@@ -46,5 +42,4 @@ export const MobileProvider = ({ children }) => {
   );
 };
 
-// Hook to easily use the mobile context
 export const useMobileContext = () => useContext(MobileContext);

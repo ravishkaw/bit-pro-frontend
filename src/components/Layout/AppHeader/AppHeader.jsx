@@ -40,7 +40,6 @@ const AppHeader = ({ isMobile, collapsed, setCollapsed, setDrawerOpen }) => {
   // change colors in dark mode and scrolling
   const headerStyle = {
     position: "sticky",
-    // padding: "0 20px 0 0",
     top: 0,
     zIndex: 100,
     borderBottomRightRadius: 8,
@@ -55,30 +54,27 @@ const AppHeader = ({ isMobile, collapsed, setCollapsed, setDrawerOpen }) => {
         : "0 .25rem .5rem -0.25rem #262b436b"),
   };
 
+  // button style
   const buttonStyle = {
     fontSize: "1.25rem",
     lineHeight: "1.25rem",
     verticalAlign: "middle",
     borderRadius: "50%",
     color: isDarkMode && "white",
+    padding: 5,
   };
 
   return (
     <Layout.Header style={headerStyle}>
       <Row justify="space-between" align="middle" wrap={false}>
         <Col>
-          <Button
-            type="text"
-            icon={
-              collapsed || isMobile ? (
-                <MenuUnfoldOutlined />
-              ) : (
-                <MenuFoldOutlined />
-              )
-            }
-            onClick={toggleMenu}
-            style={{ ...buttonStyle}}
-          />
+          <Button type="text" onClick={toggleMenu} style={buttonStyle}>
+            {collapsed || isMobile ? (
+              <MenuUnfoldOutlined />
+            ) : (
+              <MenuFoldOutlined />
+            )}
+          </Button>
         </Col>
         <Col>
           <Typography.Title level={isMobile ? 4 : 3} style={{ margin: 0 }}>

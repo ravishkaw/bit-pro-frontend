@@ -9,7 +9,7 @@ const GenericCard = ({
   handleEdit,
   openDeleteModal,
   module,
-  apiFunction,
+  loadOneItem,
   showViewAction = false,
   showEditAction = true,
   showDeleteAction = true,
@@ -17,28 +17,19 @@ const GenericCard = ({
   // Filter out the columns
   const newColumns = columns.filter((column) => {
     if (column.title === "Actions") return false; // always filter action column
-    if (module !== "Employee") {
-      // Remove employee-specific columns
-      if (
-        column.dataIndex === "designation" ||
-        column.dataIndex === "employeeStatus" ||
-        column.dataIndex === "empNo"
-      ) {
-        return false;
-      }
-    }
     return true;
   });
 
+  // define modules can view
+  if (module == "Employee" || module == "Guest") showViewAction = true;
+
   // Define the actions based on the props
   const actions = [];
-  if (showViewAction || module == "Employee") {
+  if (showViewAction) {
     actions.push(
       <EyeOutlined
         style={{ color: "blue" }}
-        onClick={() => {
-          handleView(apiFunction, data.id);
-        }}
+        onClick={() => handleView(loadOneItem, data.id)}
       />
     );
   }
@@ -46,9 +37,7 @@ const GenericCard = ({
     actions.push(
       <EditOutlined
         style={{ color: "#fadb14" }}
-        onClick={() => {
-          handleEdit(apiFunction, data.id);
-        }}
+        onClick={() => handleEdit(loadOneItem, data.id)}
       />
     );
   }
@@ -61,6 +50,23 @@ const GenericCard = ({
     );
   }
 
+  // Tag colors
+  const tagColors = {
+    Active: "green",
+    Resigned: "red",
+    "On Leave": "orange",
+    Deleted: "gray",
+    Inactive: "red",
+    Granted: "green",
+    "Not Granted": "red",
+    "In Stock": "green",
+    "Out of Stock": "red",
+    "Low Stock": "orange",
+    Reserved: "yellow",
+    Damaged: "grey",
+    Disposed: "geekblue",
+  };
+
   return (
     <Card actions={actions} style={{ marginBottom: 10 }}>
       {newColumns.map((column, index) => {
@@ -70,13 +76,14 @@ const GenericCard = ({
         if (column.dataIndex === "employeeId")
           value = data[column.dataIndex].fullName;
 
-        if (column.dataIndex === "status")
-          value =
-            data[column.dataIndex] == "Deleted" ? (
-              <Tag color="red">Inactive</Tag>
-            ) : (
-              <Tag color="green">Active</Tag>
-            );
+        if (column.dataIndex === "status") {
+          const statusValue =
+            data[column.dataIndex] == "Deleted" ||
+            (data[column.dataIndex] && data[column.dataIndex].name == "Deleted")
+              ? "Inactive"
+              : "Active";
+          value = <Tag color={tagColors[statusValue]}>{statusValue}</Tag>;
+        }
 
         if (column.dataIndex === "role")
           value = data[column.dataIndex].map((roles, index) => (
@@ -92,6 +99,11 @@ const GenericCard = ({
           column.dataIndex === "roleId"
         ) {
           value = data[column.dataIndex].name; // designation :{id:1, name:"admin"}
+
+          // Apply tag colors to employeeStatus
+          if (column.dataIndex === "employeeStatus" && tagColors[value]) {
+            value = <Tag color={tagColors[value]}>{value}</Tag>;
+          }
         }
 
         if (
@@ -100,24 +112,31 @@ const GenericCard = ({
           column.dataIndex === "updateOp" ||
           column.dataIndex === "deleteOp"
         ) {
-          value =
-            data[column.dataIndex] == 0 ? (
-              <Tag color="red">Not Granted</Tag>
-            ) : (
-              <Tag color="green">Granted</Tag>
-            );
-        }
-        if (column.dataIndex === "roomType") {
-          value = data[column.dataIndex].name; // roomType :{id:1, name:"single", basePrice:200}
+          const opStatus =
+            data[column.dataIndex] == 0 ? "Not Granted" : "Granted";
+          value = <Tag color={tagColors[opStatus]}>{opStatus}</Tag>;
         }
 
-        if (column.dataIndex === "isDeleted")
-          value =
-            data[column.dataIndex] == 0 ? (
-              <Tag color="green">Active</Tag>
-            ) : (
-              <Tag color="red">Deleted</Tag>
-            );
+        if (column.dataIndex === "roomType") {
+          value = data[column.dataIndex].name;
+        }
+
+        if (column.dataIndex === "statusName") {
+          value = data[column.dataIndex];
+
+          // Apply tag colors to various statusNames
+          if (column.dataIndex === "statusName" && tagColors[value]) {
+            value = <Tag color={tagColors[value]}>{value}</Tag>;
+          }
+        }
+
+        if (column.dataIndex === "inventory") {
+          value = data[column.dataIndex].itemName;
+        }
+
+        if (column.dataIndex === "room") {
+          value = data[column.dataIndex].roomNumber;
+        }
 
         return (
           <div key={index}>

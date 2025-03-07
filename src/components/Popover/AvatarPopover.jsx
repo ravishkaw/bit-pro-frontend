@@ -37,8 +37,8 @@ const AvatarPopover = () => {
         <Menu selectedKeys={[]} style={{ borderRight: "none" }} items={items} />
       }
       trigger="hover"
-      placement="bottomRight"
-      style={{ padding: 0 }}
+      placement="bottom"
+      styles={{ body: { padding: 0, marginRight: 20 } }}
     >
       <Avatar style={avatarStyle} icon={<UserOutlined />} />
     </Popover>
@@ -48,8 +48,6 @@ const AvatarPopover = () => {
 export default AvatarPopover;
 
 const avatarStyle = {
-  width: "40px",
-  height: "40px",
   margin: 0,
   cursor: "pointer",
 };
