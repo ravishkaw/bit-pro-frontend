@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 
 import {
@@ -16,23 +16,6 @@ import { mapToSelectOptions } from "../utils/utils";
 const usePrivileges = () => {
   const [roles, setRoles] = useState([]);
   const [allModules, setAllModules] = useState([]);
-
-  const config = {
-    service: privilegeService,
-    entityName: "Privileges",
-  };
-
-  // Use base hook for privilege operations
-  const {
-    data,
-    loadOneItem,
-    addItem,
-    updateItem,
-    deleteItem,
-    loading,
-    paginationDetails,
-    setPaginationDetails,
-  } = useCrudHandler(config);
 
   // Load roles and modules simultaneously
   const loadRefernceData = async () => {
@@ -55,10 +38,23 @@ const usePrivileges = () => {
     }
   };
 
-  // Load reference data on mount
-  useEffect(() => {
-    loadRefernceData();
-  }, []);
+  const config = {
+    service: privilegeService,
+    entityName: "Privileges",
+    additionalFunc: [loadRefernceData],
+  };
+
+  // Use base hook for privilege operations
+  const {
+    data,
+    loadOneItem,
+    addItem,
+    updateItem,
+    deleteItem,
+    loading,
+    paginationDetails,
+    setPaginationDetails,
+  } = useCrudHandler(config);
 
   // Fetch modules that do not have privileges for a specific role
   const getModulesWithoutPrivileges = async (roleId) => {
@@ -73,11 +69,12 @@ const usePrivileges = () => {
 
   // filter out admin privileges
   const filteredPrivileges = () =>
-    data.filter((privileges) => privileges.roleId.name != "Admin");
+    data.filter((privileges) => privileges?.role?.name != "Admin");
 
   // Return all states and functions for external use
   return {
     data: filteredPrivileges(),
+    additionalData: { roles, allModules, getModulesWithoutPrivileges },
     loading,
     paginationDetails,
     setPaginationDetails,
@@ -85,9 +82,6 @@ const usePrivileges = () => {
     addItem,
     updateItem,
     deleteItem,
-    roles,
-    allModules,
-    getModulesWithoutPrivileges,
   };
 };
 

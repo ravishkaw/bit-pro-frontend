@@ -10,14 +10,12 @@ export const RoomInventoryColumnItems = (
 ) => [
   {
     title: "Room No",
-    dataIndex: "room",
-    render: (_, record) => record?.room?.roomNumber,
+    dataIndex: "roomNumber",
     sorter: true,
   },
   {
     title: "Item Name",
-    dataIndex: "inventory",
-    render: (_, record) => record?.inventory?.itemName,
+    dataIndex: "inventoryItemName",
     sorter: true,
   },
   {

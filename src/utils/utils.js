@@ -4,14 +4,11 @@ import { capitalize } from "./textUtils";
 export const mapToSelectOptions = (data) =>
   data.map((item) => ({
     value: item.id,
-    label: capitalize(item.name) || item.fullName, // add fullName for user otherwise use name
-  }));
-
-// Helper function to map data where the value and label are both the name
-export const mapNameToSelectOptions = (data) =>
-  data.map((item) => ({
-    value: item.name,
-    label: item.name,
+    label:
+      capitalize(item.name) ||
+      item.fullName ||
+      item.roomNumber ||
+      item.itemName,
   }));
 
 // Helper function to get the level of keys of sider items

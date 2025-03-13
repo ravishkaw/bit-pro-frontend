@@ -12,7 +12,7 @@ import {
   Typography,
   Input,
 } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 
 import { useAuth } from "../../contexts/AuthContext";
 import useRooms from "../../hooks/useRooms";
@@ -20,21 +20,34 @@ import useModalStates from "../../hooks/useModalStates";
 
 import RoomCard from "../../components/Cards/RoomCard";
 import DeleteConfirmModal from "../../components/Modals/DeleteConfirmModal";
+import UpdateConfirmationModal from "../../components/Modals/UpdateConfirmationModal";
 import RoomForm from "../../components/Forms/RoomForm";
-import ViewRoom from "../../components/Descriptions/ViewRoom";
+import ViewRoom from "../../components/DataDisplay/ViewRoom";
 import Styles from "../../constants/Styles";
+import { useThemeContext } from "../../contexts/ThemeContext";
+import { mapToSelectOptions } from "../../utils/utils";
 
 const ManageRooms = () => {
   let module = "Room"; // Define the module for rooms
 
   // Find the module related to "Room" in the privileges
   const { privileges } = useAuth();
+  const { isDarkMode } = useThemeContext();
 
-  const roomModulePrivileges = privileges?.find(
+  const modulePrivileges = privileges?.find(
     (privilegedModule) => privilegedModule.module_name === module
   );
   // Destructure functions and states from custom hooks
-  const { rooms, loading, setSelectedTab, roomTypes, loadOneItem } = useRooms();
+  const {
+    rooms,
+    loading,
+    setSelectedTab,
+    additionalData,
+    loadOneItem,
+    addItem,
+    updateItem,
+    deleteItem,
+  } = useRooms();
 
   const { boxShadow } = Styles();
 
@@ -49,9 +62,15 @@ const ManageRooms = () => {
     openDeleteModal,
     handleEdit,
     handleView,
+    showUpdateModal,
+    updateConfirmModal,
+    setUpdateConfirmModal,
   } = useModalStates();
 
   const { open, isEditing, selectedObject } = formModalState; // Extract modal state details
+  const { roomTypes } = additionalData;
+
+  const mappedRoomTypes = mapToSelectOptions(roomTypes);
 
   // Function to handle tab change
   const handleTabChange = (value) => {
@@ -61,7 +80,7 @@ const ManageRooms = () => {
   return (
     <>
       <Card
-        bordered={false}
+        variant="borderless"
         style={{ ...boxShadow, marginBottom: 20 }}
         styles={{ body: { padding: 20 } }}
       >
@@ -74,7 +93,13 @@ const ManageRooms = () => {
               <Typography.Text>By room type</Typography.Text>
               <Select
                 placeholder="select the room type"
-                options={roomTypes}
+                options={[
+                  {
+                    value: "all",
+                    label: "All Rooms",
+                  },
+                  ...mappedRoomTypes,
+                ]}
                 onChange={handleTabChange}
                 defaultValue={"all"}
               />
@@ -83,8 +108,16 @@ const ManageRooms = () => {
           </Col>
           <Col md={12} xs={24}>
             <Space size="large" align="center">
-              <Input.Search allowClear placeholder="Search rooms" />
-              {roomModulePrivileges?.insert_privilege && (
+              <Input.Search
+                allowClear
+                placeholder="Search rooms"
+                enterButton={
+                  <Button type={isDarkMode ? "primary" : "default"}>
+                    <SearchOutlined />
+                  </Button>
+                }
+              />
+              {modulePrivileges?.insert_privilege && (
                 <Button type="primary" onClick={() => openFormModal(false)}>
                   <PlusOutlined />
                   Add New Room
@@ -108,7 +141,7 @@ const ManageRooms = () => {
                     <RoomCard
                       key={room.id}
                       room={room}
-                      privileges={roomModulePrivileges}
+                      modulePrivileges={modulePrivileges}
                       handleView={handleView}
                       handleEdit={handleEdit}
                       openDeleteModal={openDeleteModal}
@@ -130,26 +163,39 @@ const ManageRooms = () => {
         module={module}
         closeFormModal={closeFormModal}
         selectedObject={selectedObject}
+        addItem={addItem}
+        showUpdateModal={showUpdateModal}
+        additionalData={additionalData}
+        mappedRoomTypes={mappedRoomTypes}
       />
 
       {rooms && rooms.length > 0 && (
         <>
-          {/* View Modal: Displays detailed information about a room */}
+          {/* Displays detailed information about a room */}
           <ViewRoom
             module={module}
             viewModal={viewModal}
-            privileges={roomModulePrivileges}
+            modulePrivileges={modulePrivileges}
             closeViewModal={closeViewModal}
             handleEdit={handleEdit}
             loadOneRoom={loadOneItem}
+            additionalData={additionalData}
           />
 
-          {/* Delete Confirmation Modal: Appears when deleting a room */}
+          {/* Appears when deleting a room */}
           <DeleteConfirmModal
             module={module}
             deleteModal={deleteModal}
             setDeleteModal={setDeleteModal}
-            deleteFunction={() => console.log("deleted")}
+            deleteFunction={deleteItem}
+          />
+
+          {/* Appears when confirming an update */}
+          <UpdateConfirmationModal
+            updateFunction={updateItem}
+            updateConfirmModal={updateConfirmModal}
+            setUpdateConfirmModal={setUpdateConfirmModal}
+            closeModal={closeFormModal}
           />
         </>
       )}

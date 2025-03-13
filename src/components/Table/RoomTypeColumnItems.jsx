@@ -8,11 +8,6 @@ export const RoomTypeColumns = (
   handleEdit,
   loadOneItem
 ) => [
-  // {
-  //   title: "ID",
-  //   dataIndex: "id",
-  //   sorter: true,
-  // },
   {
     title: "Name",
     dataIndex: "name",
@@ -30,9 +25,9 @@ export const RoomTypeColumns = (
   },
   {
     title: "Status",
-    dataIndex: "status",
+    dataIndex: "statusName",
     render: (_, record) =>
-      record?.status.name == "Active" ? (
+      record?.statusName == "Active" ? (
         <Tag color="green">Available</Tag>
       ) : (
         <Tag color="red">Unavailable</Tag>

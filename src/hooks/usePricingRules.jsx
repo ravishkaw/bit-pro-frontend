@@ -14,32 +14,6 @@ import { mapToSelectOptions } from "../utils/utils";
 const usePricingRules = () => {
   const [roomTypes, setRoomTypes] = useState([]); // store room types
 
-  // Format pricing rule date
-  const formatPricingRule = (pricingRule) => ({
-    ...pricingRule,
-    startDate: dayjs(pricingRule.startDate),
-    endDate: dayjs(pricingRule.endDate),
-    statusName: pricingRule.statusName == "Active" ? true : false,
-  });
-
-  const config = {
-    service: pricingRuleService,
-    entityName: "Room Pricing Rule",
-    formatData: formatPricingRule,
-  };
-
-  // Use base hook for room type operations
-  const {
-    data,
-    loading,
-    paginationDetails,
-    setPaginationDetails,
-    loadOneItem,
-    addItem,
-    updateItem,
-    deleteItem,
-  } = useCrudHandler(config);
-
   // fetch room types and map to select
   const getRoomTypes = async () => {
     try {
@@ -56,13 +30,36 @@ const usePricingRules = () => {
     }
   };
 
-  useEffect(() => {
-    getRoomTypes();
-  }, []);
+  // Format pricing rule date
+  const formatPricingRule = (pricingRule) => ({
+    ...pricingRule,
+    startDate: dayjs(pricingRule.startDate),
+    endDate: dayjs(pricingRule.endDate),
+  });
+
+  const config = {
+    service: pricingRuleService,
+    entityName: "Room Pricing Rule",
+    formatData: formatPricingRule,
+    additionalFunc: [getRoomTypes],
+  };
+
+  // Use base hook for room type operations
+  const {
+    data,
+    loading,
+    paginationDetails,
+    setPaginationDetails,
+    loadOneItem,
+    addItem,
+    updateItem,
+    deleteItem,
+  } = useCrudHandler(config);
 
   // Return states and functions for external use
   return {
     data,
+    additionalData: { roomTypes },
     roomTypes,
     loading,
     paginationDetails,

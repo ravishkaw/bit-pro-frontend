@@ -2,82 +2,62 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import {
   roomService,
+  roomStatusService,
   fetchAllRoomTypes,
   fetchAllRoomsToType,
+  fetchAllRoomFacilities,
 } from "../services/roomApiServices";
 import useCrudHandler from "./useCrudHandler";
+import { mapToSelectOptions } from "../utils/utils";
 
 // Custom hook to manage room-related operations
 const useRooms = () => {
-  const [roomTypes, setRoomTypes] = useState([
-    {
-      value: "all",
-      label: "All Rooms",
-    },
-  ]);
+  const [roomTypes, setRoomTypes] = useState([]);
+  const [roomFacilities, setRoomFacilities] = useState([]);
+  const [roomStatus, setRoomStatus] = useState([]);
+
   const [selectedTab, setSelectedTab] = useState("all");
-  const [rooms, setRooms] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // Fetch reference data
+  const loadReferenceData = async () => {
+    try {
+      const [roomResp, roomFacilityResp, roomStatusResp] = await Promise.all([
+        fetchAllRoomTypes(),
+        fetchAllRoomFacilities(),
+        roomStatusService.getAll(),
+      ]);
+      setRoomTypes(roomResp);
+      setRoomFacilities(roomFacilityResp);
+      setRoomStatus(mapToSelectOptions(roomStatusResp));
+    } catch (err) {
+      setRoomTypes([]);
+      toast.error(err.message || "Failed to load room reference data");
+    }
+  };
 
   const config = {
     service: roomService,
     entityName: "Room",
+    additionalFunc: [loadReferenceData],
   };
   // Use base hook for room operations
-  const { loadOneItem } = useCrudHandler(config);
-
-  // Fetch rooms based on selected tab
-  const loadRooms = async () => {
-    try {
-      setLoading(true);
-      let resp;
-      if (selectedTab === "all") {
-        resp = await roomService.getAll();
-      } else {
-        resp = await fetchAllRoomsToType(selectedTab);
-      }
-      setRooms(resp);
-    } catch (err) {
-      setRooms([]);
-      toast.error(err.message || "Failed to load rooms");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Fetch room types
-  const loadRoomTypes = async () => {
-    try {
-      const resp = await fetchAllRoomTypes();
-      const mappedRoomTypes = resp
-        .filter((availableRoomTypes) => !availableRoomTypes.isDeleted)
-        .map((roomType) => ({
-          value: roomType.id,
-          label: roomType.name,
-        }));
-      setRoomTypes([...roomTypes, ...mappedRoomTypes]);
-    } catch (err) {
-      setRoomTypes([{ key: "all", label: "All rooms" }]);
-      toast.error(err.message || "Failed to load room types");
-    }
-  };
-
-  // Load rooms when selected tab changes
-  useEffect(() => {
-    loadRooms();
-  }, [selectedTab]);
-
-  // Load room types on mount
-  useEffect(() => {
-    loadRoomTypes();
-  }, []);
+  const {
+    data: rooms,
+    loading,
+    loadOneItem,
+    addItem,
+    updateItem,
+    deleteItem,
+  } = useCrudHandler(config);
 
   return {
-    loading,
     rooms,
-    roomTypes,
+    additionalData: { roomTypes, roomFacilities, roomStatus },
+    loading,
     setSelectedTab,
     loadOneItem,
+    addItem,
+    updateItem,
+    deleteItem,
   };
 };
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 
@@ -6,24 +6,40 @@ import {
   employeeService,
   employeeDesginationService,
   employeeStatusService,
-  nationalitiesService,
-  idTypeService,
-  civilStatusService,
-  genderService,
 } from "../services/systemApiService";
 
 import useCrudHandler from "./useCrudHandler";
+import useProfileData from "./useProfileData";
 
-import { mapNameToSelectOptions, mapToSelectOptions } from "../utils/utils";
+import { mapToSelectOptions } from "../utils/utils";
 
 // Custom hook to manage employee-related operations
 const useEmployees = () => {
-  const [genders, setGenders] = useState([]);
-  const [idTypes, setIdTypes] = useState([]);
-  const [civilStatus, setCivilStatus] = useState([]);
-  const [nationalities, setNationalities] = useState([]);
   const [designations, setDesignations] = useState([]);
   const [employeeStatus, setEmployeeStatus] = useState([]);
+
+  // get profile data
+  const { genders, idTypes, civilStatus, nationalities, loadProfileData } =
+    useProfileData();
+
+  // Fetch and map employee designations and status
+  const getEmployeeSpecificData = async () => {
+    try {
+      const [designationResp, statusResp] = await Promise.all([
+        employeeDesginationService.getAll(),
+        employeeStatusService.getAll(),
+      ]);
+
+      setDesignations(mapToSelectOptions(designationResp));
+      setEmployeeStatus(mapToSelectOptions(statusResp));
+    } catch (err) {
+      setEmployeeStatus([]);
+      setDesignations([]);
+      toast.error(
+        err.message || "Failed to load employee designation/status data"
+      );
+    }
+  };
 
   // Format employee data to match form requirements
   const formatEmployeeData = (employee) => ({
@@ -35,6 +51,7 @@ const useEmployees = () => {
     service: employeeService,
     entityName: "Employee",
     formatData: formatEmployeeData,
+    additionalFunc: [getEmployeeSpecificData, loadProfileData],
   };
 
   // Use base hook for employee operations
@@ -50,54 +67,18 @@ const useEmployees = () => {
     setPaginationDetails,
   } = useCrudHandler(config);
 
-  // Fetch and map nationalities, employee designations and status
-  const getEmployeeOtherData = async () => {
-    try {
-      const [
-        idTypesResp,
-        civilStatus,
-        gendersResp,
-        nationalitiesResp,
-        designationResp,
-        statusResp,
-      ] = await Promise.all([
-        idTypeService.getAll(),
-        civilStatusService.getAll(),
-        genderService.getAll(),
-        nationalitiesService.getAll(),
-        employeeDesginationService.getAll(),
-        employeeStatusService.getAll(),
-      ]);
-
-      //mapping resposes to use in select and radio buttons
-      setIdTypes(mapToSelectOptions(idTypesResp));
-      setCivilStatus(mapToSelectOptions(civilStatus));
-      setGenders(mapToSelectOptions(gendersResp));
-      setDesignations(mapToSelectOptions(designationResp));
-      setEmployeeStatus(mapToSelectOptions(statusResp));
-      setNationalities(mapNameToSelectOptions(nationalitiesResp));
-    } catch (err) {
-      setEmployeeStatus([]);
-      setDesignations([]);
-      toast.error(err.message || "Failed to load employee reference data");
-    }
-  };
-
-  // Load designations and statuses on mount
-  useEffect(() => {
-    getEmployeeOtherData();
-  }, []);
-
   // Return states and functions for external use
   return {
     data,
     loading,
-    designations,
-    employeeStatus,
-    idTypes,
-    genders,
-    civilStatus,
-    nationalities,
+    additionalData: {
+      designations,
+      employeeStatus,
+      idTypes,
+      genders,
+      civilStatus,
+      nationalities,
+    },
     paginationDetails,
     setPaginationDetails,
     loadOneItem,

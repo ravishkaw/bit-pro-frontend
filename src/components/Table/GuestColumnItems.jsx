@@ -1,3 +1,4 @@
+import { Tag } from "antd";
 import TableActions from "./TableActions";
 
 // Column items for the Guest table
@@ -30,6 +31,18 @@ export const guestColumnItems = (
   {
     title: "Nationality",
     dataIndex: "nationalityName",
+    sorter: true,
+  },
+  {
+    title: "Status",
+    dataIndex: "statusName",
+    render: (_, record) =>
+      record?.statusName == "Active" ? (
+        <Tag color="green">Active</Tag>
+      ) : (
+        <Tag color="red">Deleted</Tag>
+      ),
+    sorter: true,
   },
   {
     title: "Actions",

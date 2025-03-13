@@ -1,5 +1,6 @@
 import { Card, Col, Row, Tag } from "antd";
 import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
+import CardActions from "./CardActions";
 
 // Card for pages
 const GenericCard = ({
@@ -8,11 +9,8 @@ const GenericCard = ({
   handleView,
   handleEdit,
   openDeleteModal,
-  module,
+  privileges,
   loadOneItem,
-  showViewAction = false,
-  showEditAction = true,
-  showDeleteAction = true,
 }) => {
   // Filter out the columns
   const newColumns = columns.filter((column) => {
@@ -20,35 +18,14 @@ const GenericCard = ({
     return true;
   });
 
-  // define modules can view
-  if (module == "Employee" || module == "Guest") showViewAction = true;
-
-  // Define the actions based on the props
-  const actions = [];
-  if (showViewAction) {
-    actions.push(
-      <EyeOutlined
-        style={{ color: "blue" }}
-        onClick={() => handleView(loadOneItem, data.id)}
-      />
-    );
-  }
-  if (showEditAction) {
-    actions.push(
-      <EditOutlined
-        style={{ color: "#fadb14" }}
-        onClick={() => handleEdit(loadOneItem, data.id)}
-      />
-    );
-  }
-  if (showDeleteAction) {
-    actions.push(
-      <DeleteOutlined
-        style={{ color: "red" }}
-        onClick={() => openDeleteModal(data)}
-      />
-    );
-  }
+  const { actions } = CardActions(
+    handleView,
+    handleEdit,
+    openDeleteModal,
+    privileges,
+    loadOneItem,
+    data
+  );
 
   // Tag colors
   const tagColors = {
@@ -85,18 +62,11 @@ const GenericCard = ({
           value = <Tag color={tagColors[statusValue]}>{statusValue}</Tag>;
         }
 
-        if (column.dataIndex === "role")
-          value = data[column.dataIndex].map((roles, index) => (
-            <Tag color="geekblue" key={index}>
-              {roles.name}
-            </Tag>
-          ));
-
         if (
           column.dataIndex === "designation" ||
           column.dataIndex === "employeeStatus" ||
-          column.dataIndex === "moduleId" ||
-          column.dataIndex === "roleId"
+          column.dataIndex === "module" ||
+          column.dataIndex === "role"
         ) {
           value = data[column.dataIndex].name; // designation :{id:1, name:"admin"}
 

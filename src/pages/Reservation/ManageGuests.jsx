@@ -3,7 +3,7 @@ import useGuests from "../../hooks/useGuests";
 import GenericPage from "../GenericPage";
 import { guestColumnItems } from "../../components/Table/GuestColumnItems";
 import ProfileFormModal from "../../components/Modals/ProfileFormModal";
-import ViewPerson from "../../components/Descriptions/ViewPerson";
+import ViewPerson from "../../components/DataDisplay/ViewPerson";
 
 const ManageGuests = () => {
   const module = "Guest"; // Define the module for guest

@@ -20,12 +20,21 @@ const Dashboard = () => {
   ];
 
   const todo = [
+    {
+      title:
+        "Make again and familiar with security, privilege check and image upload",
+      done: false,
+    },
+    {
+      title:
+        "Make again and familiar with app sider functions and some other functions that made with AI",
+      done: false,
+    },
     { title: "Room module - ui and forms", done: false },
     { title: "Finish inventory - only made fetch all->fe & be", done: false },
-    { title: "Card edit view, delete", done: true },
-    { title: "User profile and page", done: false },
+    { title: "Room Inventory needs more attention and fixes", done: false },
     { title: "Notification popover", done: false },
-    { title: "Pictures endpoint", done: false },
+    { title: "Pictures endpoint", done: true },
   ];
 
   const { boxShadow } = Styles();
@@ -33,7 +42,7 @@ const Dashboard = () => {
   return (
     <Row gutter={[20, 20]}>
       <Col md={8} xs={24}>
-        <Card bordered={false} style={{ ...boxShadow }}>
+        <Card variant="borderless" style={{ ...boxShadow }}>
           <Title level={3}>Finished</Title>
           <List
             dataSource={finished}
@@ -47,7 +56,7 @@ const Dashboard = () => {
       </Col>
 
       <Col md={8} xs={24}>
-        <Card bordered={false} style={{ ...boxShadow }}>
+        <Card variant="borderless" style={{ ...boxShadow }}>
           <Title level={3}>On Going</Title>
           <List
             dataSource={onGoing}
@@ -63,7 +72,7 @@ const Dashboard = () => {
       </Col>
 
       <Col md={8} xs={24}>
-        <Card bordered={false} style={{ ...boxShadow }}>
+        <Card variant="borderless" style={{ ...boxShadow }}>
           <Title level={3}>To do</Title>
           <List
             dataSource={todo}

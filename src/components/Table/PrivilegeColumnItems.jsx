@@ -21,15 +21,15 @@ const PrivilegeColumnItems = (
   // },
   {
     title: "Role",
-    dataIndex: "roleId",
-    render: (_, record) => record?.roleId?.name,
+    dataIndex: "role",
+    render: (_, record) => record?.role?.name,
     sorter: true,
     fixed: "left",
   },
   {
     title: "Module",
-    dataIndex: "moduleId",
-    render: (_, record) => record?.moduleId?.name,
+    dataIndex: "module",
+    render: (_, record) => record?.module?.name,
     sorter: true,
   },
   {

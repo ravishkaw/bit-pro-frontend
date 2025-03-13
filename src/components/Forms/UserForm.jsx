@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Checkbox, Form, Input, Select, Switch, Row, Col, Modal } from "antd";
 
-import useUsers from "../../hooks/useUsers";
 import { useAuth } from "../../contexts/AuthContext";
 import { useThemeContext } from "../../contexts/ThemeContext";
 
@@ -16,6 +15,7 @@ import { mapToSelectOptions } from "../../utils/utils";
 
 // Form of user add or edit
 const UserForm = ({
+  additionalData,
   open,
   module,
   closeFormModal,
@@ -28,7 +28,7 @@ const UserForm = ({
   const [initialFormData, setInitialFormData] = useState({}); // formatted selected user object holder
 
   const [form] = Form.useForm();
-  const { employeesNoUser, roles } = useUsers();
+  const { employeesNoUser, roles } = additionalData;
   const { isDarkMode } = useThemeContext();
 
   // Check if the user has "Admin" role
@@ -51,17 +51,17 @@ const UserForm = ({
   const mappedEmployees = useMemo(() => {
     return !isEditing
       ? mapToSelectOptions(employeesNoUser)
-      : mapToSelectOptions([selectedObject?.employeeId]);
+      : mapToSelectOptions([selectedObject?.employee]);
   }, [employeesNoUser, selectedObject, isEditing]);
 
   // Handle edit populate the wanted fields
   useEffect(() => {
-    if (open && isEditing && selectedObject) {
+    if (open && isEditing && selectedObject) {      
       // format the user into form structure
       const updatedUser = {
         ...selectedObject,
-        employeeId: mappedEmployees,
-      };
+        employee: mappedEmployees,
+      };      
       form.setFieldsValue(updatedUser);
       setInitialFormData(updatedUser);
       triggerFormFieldsValidation(form);
@@ -74,19 +74,19 @@ const UserForm = ({
     const formData = form.getFieldsValue();
 
     // Map the employee id
-    let employeeId;
-    if (isEditing && selectedObject?.employeeId) {
-      employeeId = { id: selectedObject.employeeId.id }; // when updating
+    let employee;
+    if (isEditing && selectedObject?.employee) {
+      employee = { id: selectedObject.employee.id }; // when updating
     } else {
-      employeeId = { id: formData.employeeId }; // when adding
+      employee = { id: formData.employee }; // when adding
     }
 
     // Format and update formdata
     const updatedData = {
       ...formData,
-      employeeId: employeeId,
+      employee: employee,
       statusName: formData.statusName ? "Active" : "Deleted",
-    };
+    };    
 
     if (isEditing) {
       // get changed values
@@ -123,7 +123,7 @@ const UserForm = ({
         onFinish={onFinish}
       >
         <Form.Item
-          name="employeeId"
+          name="employee"
           label={
             <FormInputTooltip
               label="Employee"

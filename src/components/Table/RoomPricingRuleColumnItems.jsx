@@ -8,15 +8,9 @@ export const PricingRulesColumnItems = (
   handleEdit,
   loadOneItem
 ) => [
-  // {
-  //   title: "ID",
-  //   dataIndex: "id",
-  //   sorter: true,
-  // },
   {
     title: "Room Type",
-    dataIndex: "roomType",
-    render: (_, record) => record?.roomType?.name,
+    dataIndex: "roomTypeName",
     sorter: true,
   },
   {

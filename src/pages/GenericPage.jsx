@@ -27,6 +27,7 @@ const GenericPage = ({
   // destruct hook data
   const {
     data,
+    additionalData,
     loading,
     paginationDetails,
     setPaginationDetails,
@@ -98,6 +99,7 @@ const GenericPage = ({
             addItem={addItem}
             updateItem={updateItem}
             showUpdateModal={showUpdateModal}
+            additionalData={additionalData}
           />
 
           {data && data.length > 0 && (
@@ -111,6 +113,7 @@ const GenericPage = ({
                   closeViewModal={closeViewModal}
                   handleEdit={handleEdit}
                   loadOneItem={loadOneItem}
+                  additionalData={additionalData}
                 />
               )}
 

@@ -158,5 +158,8 @@ export const darkTheme = {
       gradientFromColor: "rgba(255, 255, 255, 0.1)",
       gradientToColor: "rgba(255, 255, 255, 0.3)",
     },
+    Descriptions: {
+      labelColor: "rgba(255, 255, 255, 0.618)",
+    },
   },
 };

@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { DatePicker, Form, Input, Radio, Row, Col, Select } from "antd";
 import dayjs from "dayjs";
 
@@ -33,43 +33,49 @@ const PersonalInfo = ({
 
   const [fullName, setFullName] = useState(formData?.fullName || "");
   const [callingNameOptions, setCallingNameOptions] = useState([]);
-  const [nationality, setNationality] = useState(formData?.nationalityName || "");
   const [idType, setIdType] = useState(formData?.idTypeId || "");
+  const [isSriLankan, setIsSriLankan] = useState(false);
 
-  // Memoize ID type values
-  const passportTypeValue = useMemo(
-    () =>
-      idTypes.find((type) => type.label.toLowerCase() === "passport")?.value,
-    [idTypes]
-  );
+  const passportTypeValue = idTypes.find(
+    (type) => type.label.toLowerCase() === "passport"
+  )?.value;
 
-  const nicTypeValue = useMemo(
-    () => idTypes.find((type) => type.label.toLowerCase() === "nic")?.value,
-    [idTypes]
-  );
+  const nicTypeValue = idTypes.find(
+    (type) => type.label.toLowerCase() === "nic"
+  )?.value;
 
   // Reset state when the modal is closed
   useEffect(() => {
     if (!modelOpen) {
       setFullName(formData?.fullName || "");
       setCallingNameOptions([]);
-      setNationality("");
+      setIsSriLankan(false);
       setIdType("");
     }
   }, [modelOpen, formData]);
 
+  // Get nationality name
+  const getNationalityName = useCallback(
+    (value) => {
+      const nationality = nationalities.find((nation) => nation.value == value);
+      return nationality?.label || "";
+    },
+    [nationalities]
+  );
+
   // Update relevant fields when formData changes
   useEffect(() => {
     if (!formData) return;
+    const nationalityName = getNationalityName(formData.nationalityId);
 
     setFullName(formData.fullName || "");
     setIdType(formData.idTypeId || "");
-    setNationality(formData.nationalityName || "");
+    setIsSriLankan(nationalityName === "Sri Lankan");
 
     // Update form values
     form.setFieldsValue({
       idTypeId: formData.idTypeId,
-      nationalityName: formData.nationalityName,
+      nationalityId: formData.nationalityId,
       genderId: formData.genderId,
       civilStatusId: formData.civilStatusId,
     });
@@ -78,93 +84,73 @@ const PersonalInfo = ({
     if (!formData.fullName) {
       form.resetFields(["callingName"]);
     }
-  }, [formData, form]);
+  }, [formData, form, getNationalityName]);
 
-  // Memoized function to generate calling name options
-  const updateCallingNameOptions = useCallback((name) => {
-    const nameParts = name.split(" ").filter(Boolean);
-    return nameParts.map((part) => ({ value: part, label: part }));
-  }, []);
-
-  // Updates the calling name options based on full name input
+  // Generate calling name options
   useEffect(() => {
+    const updateCallingNameOptions = (name) => {
+      const nameParts = name.split(" ").filter(Boolean);
+      return nameParts.map((part) => ({ value: part, label: part }));
+    };
+
     const options = updateCallingNameOptions(fullName);
     setCallingNameOptions(options);
 
     if (!options.length) {
       form.resetFields(["callingName"]);
     }
-  }, [fullName, form, updateCallingNameOptions]);
+  }, [fullName, form]);
 
   // Restrict employee age to 18 or higher
-  const maxDate = useMemo(() => dayjs().subtract(18, "years"), []);
+  const maxDate = dayjs().subtract(18, "years");
 
   // Handle nationality change and update ID type
-  const handleNationality = useCallback(
-    (value) => {
-      setNationality(value);
-      const newIdType =
-        value !== "Sri Lankan" ? passportTypeValue : nicTypeValue; // Use passport as default for non Sri Lankans
-      setIdType(newIdType);
-      form.setFieldsValue({ idTypeId: newIdType });
-      form.resetFields(["idNumber"]); // clear ID number when nationality changes
-    },
-    [form, passportTypeValue, nicTypeValue]
-  );
+  const handleNationality = (value) => {
+    const nationalityName = getNationalityName(value);
+    const isSriLankan = nationalityName === "Sri Lankan";
+    const newIdType = isSriLankan ? nicTypeValue : passportTypeValue; // Use passport as default for non Sri Lankans
+    setIsSriLankan(isSriLankan);
+    setIdType(newIdType);
+    form.setFieldsValue({ idTypeId: newIdType });
+    form.resetFields(["idNumber"]); // clear ID number when nationality changes
+  };
 
   // Handle ID type change
-  const handleIdTypes = useCallback(
-    (e) => {
-      setIdType(e.target.value);
-      form.resetFields(["idNumber"]); // Clear ID number if ID type changes
-    },
-    [form]
-  );
+  const handleIdTypes = (e) => {
+    setIdType(e.target.value);
+    form.resetFields(["idNumber"]); // Clear ID number if ID type changes
+  };
 
   // Get ID number validation based on ID type
-  const getIdNumberValidation = useCallback(() => {
+  const getIdNumberValidation = () => {
     if (idType === passportTypeValue) return passportValidation;
-    return nationality === "Sri Lankan" ? slNicValidation : otherNicValidation;
-  }, [
-    idType,
-    nationality,
-    passportTypeValue,
-    passportValidation,
-    slNicValidation,
-    otherNicValidation,
-  ]);
+    return isSriLankan ? slNicValidation : otherNicValidation;
+  };
 
   // Handle NIC change and update DOB and Gender based on the NIC for Sri Lankan nationality
-  const handleIdNumberChange = useCallback(
-    (e) => {
-      try {
-        const nicValue = e.target.value.trim();
-        if (
-          idType !== nicTypeValue ||
-          nationality !== "Sri Lankan" ||
-          !nicValue
-        ) {
-          return;
-        }
-
-        const { dob, gender } = dobGenderCal(nicValue);
-
-        if (dob) {
-          const selectedGender = genders.find(
-            (g) => g.label.toLowerCase() === gender
-          );
-
-          form.setFieldsValue({
-            dob: dayjs(dob),
-            genderId: selectedGender?.value,
-          });
-        }
-      } catch (error) {
-        console.error("Error processing NIC:", error);
+  const handleIdNumberChange = (e) => {
+    try {
+      const nicValue = e.target.value.trim();
+      if (idType !== nicTypeValue || !isSriLankan || !nicValue) {
+        return;
       }
-    },
-    [idType, nationality, genders, form, nicTypeValue]
-  );
+
+      const { dob, gender } = dobGenderCal(nicValue);
+
+      if (dob) {
+        const selectedGender = genders.find(
+          (g) => g.label.toLowerCase() === gender
+        );
+
+        form.setFieldsValue({
+          dob: dayjs(dob),
+          genderId: selectedGender?.value,
+        });
+      }
+    } catch (error) {
+      console.error("Error processing NIC:", error);
+    }
+  };
 
   return (
     <>
@@ -213,7 +199,7 @@ const PersonalInfo = ({
       <Row gutter={16}>
         <Col xs={24} sm={8}>
           <Form.Item
-            name="nationalityName"
+            name="nationalityId"
             label={
               <FormInputTooltip
                 label="Nationality"
@@ -226,6 +212,7 @@ const PersonalInfo = ({
             <Select
               showSearch
               placeholder="Select nationality"
+              optionFilterProp="label"
               options={nationalities}
               onChange={handleNationality}
             />
@@ -269,7 +256,7 @@ const PersonalInfo = ({
               placeholder={
                 idType === passportTypeValue
                   ? "Enter passport number"
-                  : nationality === "Sri Lankan"
+                  : isSriLankan
                   ? "Ex: 95xxxxxxxV or 200012345678"
                   : "Enter ID number"
               }
@@ -315,7 +302,7 @@ const PersonalInfo = ({
             <Radio.Group
               block
               options={genders}
-              disabled={idType === nicTypeValue && nationality === "Sri Lankan"}
+              disabled={idType === nicTypeValue && isSriLankan}
             />
           </Form.Item>
         </Col>

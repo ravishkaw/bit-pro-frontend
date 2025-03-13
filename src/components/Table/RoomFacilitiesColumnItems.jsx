@@ -25,9 +25,9 @@ export const RoomFacilitiesColumnItems = (
   },
   {
     title: "Status",
-    dataIndex: "status",
+    dataIndex: "statusName",
     render: (_, record) =>
-      record?.status.name == "Active" ? (
+      record?.statusName == "Active" ? (
         <Tag color="green">Available</Tag>
       ) : (
         <Tag color="red">Unavailable</Tag>

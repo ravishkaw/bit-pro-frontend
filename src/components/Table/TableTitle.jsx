@@ -1,5 +1,6 @@
 import { Flex, Select, Space, Input, Button } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { useThemeContext } from "../../contexts/ThemeContext";
 const { Search } = Input;
 
 // Title of the table
@@ -11,6 +12,7 @@ const TableTitle = ({
   privileges, // privilege of the logged user of the module
   handleSearch,
 }) => {
+  const { isDarkMode } = useThemeContext();
   // Handle changes in the page size dropdown
   const handlePageSizeChange = (value) => {
     setPaginationDetails({
@@ -46,6 +48,11 @@ const TableTitle = ({
           allowClear
           onClear={() => handleSearch("")} // Clear search results when the input is cleared
           onChange={(e) => e.target.value.length < 1 && handleSearch("")} // Clear search if the input becomes empty
+          enterButton={
+            <Button type={isDarkMode ? "primary" : "default"}>
+              <SearchOutlined />
+            </Button>
+          }
         />
       </Space>
 

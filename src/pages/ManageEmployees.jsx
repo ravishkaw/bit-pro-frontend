@@ -3,7 +3,7 @@ import useEmployees from "../hooks/useEmployees";
 import GenericPage from "./GenericPage";
 import { employeeColumnItems } from "../components/Table/EmployeeColumnItems";
 import ProfileFormModal from "../components/Modals/ProfileFormModal";
-import ViewPerson from "../components/Descriptions/ViewPerson";
+import ViewPerson from "../components/DataDisplay/ViewPerson";
 
 // Admin Manage Employees Page
 const ManageEmployee = () => {

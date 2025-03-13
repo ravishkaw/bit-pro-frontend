@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 
 import {
@@ -16,30 +16,6 @@ const useUsers = () => {
   const [employeesNoUser, setEmployeesNoUser] = useState([]);
   const [roles, setRoles] = useState([]);
 
-  // Format user data to match form requirements
-  const formatUserData = (user) => ({
-    ...user,
-    statusName: user.statusName == "Active" ? true : false,
-  });
-
-  const config = {
-    service: userService,
-    entityName: "User",
-    formatData: formatUserData,
-  };
-
-  // Use base hook for user operations
-  const {
-    data,
-    loadOneItem,
-    addItem,
-    updateItem,
-    deleteItem,
-    loading,
-    paginationDetails,
-    setPaginationDetails,
-  } = useCrudHandler(config);
-
   // Fetch employees without user accounts
   const loadRefernceData = async () => {
     try {
@@ -56,19 +32,31 @@ const useUsers = () => {
     }
   };
 
-  // Load reference data on mount
-  useEffect(() => {
-    loadRefernceData();
-  }, []);
+  const config = {
+    service: userService,
+    entityName: "User",
+    additionalFunc: [loadRefernceData],
+  };
+
+  // Use base hook for user operations
+  const {
+    data,
+    loadOneItem,
+    addItem,
+    updateItem,
+    deleteItem,
+    loading,
+    paginationDetails,
+    setPaginationDetails,
+  } = useCrudHandler(config);
 
   // Return states and functions for external use
   return {
     loading,
     data,
+    additionalData: { employeesNoUser, roles },
     paginationDetails,
     setPaginationDetails,
-    employeesNoUser,
-    roles,
     loadOneItem,
     addItem,
     updateItem,

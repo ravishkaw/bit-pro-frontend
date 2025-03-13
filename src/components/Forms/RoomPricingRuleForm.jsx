@@ -12,17 +12,17 @@ import {
 import FormInputTooltip from "./FormInputTooltip";
 import FormOnFinishButtons from "./FormOnFinishButtons";
 import { formValidations } from "./validations";
-import { mapToSelectOptions } from "../../utils/utils";
+
 import {
   getChangedFieldValues,
   triggerFormFieldsValidation,
 } from "../../utils/form";
-import usePricingRules from "../../hooks/usePricingRules";
 
 const { RangePicker } = DatePicker;
 
 // Form of room pricing rule add/ edit
 const RoomPricingRuleForm = ({
+  additionalData,
   open,
   module,
   closeFormModal,
@@ -35,15 +35,18 @@ const RoomPricingRuleForm = ({
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [form] = Form.useForm();
 
-  const { roomTypes } = usePricingRules();
+  const { roomTypes } = additionalData;
   const { noteValidation } = formValidations;
 
   // Handle edit populate the wanted fields
   useEffect(() => {
     if (open && isEditing && selectedObject) {
+      const roomType = roomTypes.find(
+        (type) => (type.name = selectedObject.roomTypeId)
+      );
       const updatedFormData = {
         ...selectedObject,
-        roomType: mapToSelectOptions([selectedObject?.roomType]), // map to the select tag
+        roomType: roomType,
         dateRange: [selectedObject?.startDate, selectedObject?.endDate], // format to range picker
       };
 
@@ -63,9 +66,7 @@ const RoomPricingRuleForm = ({
       ...formdata,
       startDate: formdata.dateRange[0].format("YYYY-MM-DD"),
       endDate: formdata.dateRange[1].format("YYYY-MM-DD"),
-      roomType: {
-        id: isEditing ? formdata.roomType[0].value : formdata.roomType, // format roomtype to relevant format
-      },
+      roomTypeId: isEditing ? formdata.roomType.value : formdata.roomType,
       statusName: formdata.statusName ? "Active" : "Deleted",
     };
 
@@ -165,7 +166,7 @@ const RoomPricingRuleForm = ({
           hasFeedback
         >
           <InputNumber
-            addonAfter="x"
+            addonBefore="x"
             placeholder="1.50"
             step="0.01"
             min="0.01"

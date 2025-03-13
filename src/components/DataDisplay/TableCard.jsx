@@ -119,6 +119,7 @@ const TableCard = ({
             handleEdit={handleEdit}
             openDeleteModal={openDeleteModal}
             loadOneItem={loadOneItem}
+            privileges={privileges}
           />
         );
       })}

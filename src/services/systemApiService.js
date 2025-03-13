@@ -12,6 +12,7 @@ const CIVIL_STATUS_BASE_URL = "/civil-status";
 const EMPLOYEE_BASE_URL = "/employees";
 const EMPLOYEE_DESIGNATION_BASE_URL = "/designations";
 const EMPLOYEE_STATUS_BASE_URL = "/employee-status";
+const IMAGE_BASE_URL = "/images";
 
 // Generic API service for employees
 export const employeeService = createApiService(EMPLOYEE_BASE_URL);
@@ -51,7 +52,7 @@ export const roleService = createApiService(ROLE_BASE_URL);
 // Fetch All employee Details without user accounts
 export const fetchEmployeesWithoutUserAccounts = async () => {
   const response = await axiosInstance.get(
-    `${EMPLOYEE_BASE_URL}/get-without-user-accounts`
+    `${EMPLOYEE_BASE_URL}/without-user-accounts`
   );
   return response.data;
 };
@@ -59,10 +60,29 @@ export const fetchEmployeesWithoutUserAccounts = async () => {
 // get modules without privileges for specific role
 export const fetchModuleWithoutPrivileges = async (roleId) => {
   const response = await axiosInstance.get(
-    `${MODULE_BASE_URL}/get-without-privileges`,
+    `${MODULE_BASE_URL}/without-privileges`,
     {
       params: { roleId: roleId ? roleId : 1 },
     }
   );
   return response.data;
+};
+
+// image upload
+export const uploadImage = async (image) => {
+  const formData = new FormData();
+  formData.append("image", image);
+
+  const resp = await axiosInstance.post(`${IMAGE_BASE_URL}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return resp.data;
+};
+
+// image delete
+export const deleteImage = async (imageName) => {
+  const resp = await axiosInstance.delete(`${IMAGE_BASE_URL}/${imageName}`);
+  return resp.data;
 };

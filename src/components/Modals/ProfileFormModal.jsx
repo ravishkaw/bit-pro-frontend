@@ -6,8 +6,6 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 
-import useEmployees from "../../hooks/useEmployees";
-
 import PersonalInfo from "../Forms/PersonalInfo";
 import ContactInformation from "../Forms/ContactInformation";
 import EmploymentInformation from "../Forms/EmploymentInformation";
@@ -19,6 +17,7 @@ import {
 
 // Profile modal for view add and update profile form
 const ProfileFormModal = ({
+  additionalData,
   open,
   module,
   closeFormModal,
@@ -35,13 +34,13 @@ const ProfileFormModal = ({
   const [form] = Form.useForm();
 
   const {
-    designations,
-    employeeStatus,
+    designations = {},
+    employeeStatus = {},
     nationalities,
     idTypes,
     genders,
     civilStatus,
-  } = useEmployees();
+  } = additionalData;
 
   // sets formdata based on form modal state
   useEffect(() => {

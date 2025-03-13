@@ -5,9 +5,10 @@ import usePagination from "./usePagination";
 
 // General hook to manage All CRUD Operations
 const useCrudHandler = ({
-  service,
+  service, // axios service function
   entityName,
-  formatData = (data) => data,
+  formatData = (data) => data, // special formattings
+  additionalFunc = [], // additional useEffect funtions
 }) => {
   const [data, setData] = useState([]); // list of data
   const [loading, setLoading] = useState(false);
@@ -29,7 +30,7 @@ const useCrudHandler = ({
         sortOrder: paginationDetails.sortOrder,
         searchQuery: paginationDetails.searchQuery,
       });
-      setData(resp.data);
+      setData(resp.data || resp);
       setPaginationDetails((prev) => ({ ...prev, total: resp.totalElements })); // Update total count
     } catch (err) {
       setData([]);
@@ -50,17 +51,18 @@ const useCrudHandler = ({
     paginationDetails.searchQuery,
   ]);
 
+  useEffect(() => {
+    additionalFunc.forEach((func) => func());
+  }, []);
+
   // fetch a single item
   const loadOneItem = async (id) => {
-    setLoading(true);
     try {
       const item = await getById(id);
       return formatData(item); // format if there is formatter provided
     } catch (err) {
       toast.error(err.message || `Failed to load ${entityName} details`);
       return null;
-    } finally {
-      setLoading(false);
     }
   };
 

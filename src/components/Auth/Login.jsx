@@ -60,7 +60,7 @@ const Login = () => {
         }}
       />
       <Card
-        bordered={false}
+        variant="borderless"
         style={{
           width: "90%",
           maxWidth: 1000,

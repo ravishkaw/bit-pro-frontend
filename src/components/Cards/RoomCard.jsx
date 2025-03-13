@@ -1,57 +1,36 @@
-import { Col, Card, Image, Tag, Typography, Avatar, Space, Flex } from "antd";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  EyeOutlined,
-  TeamOutlined,
-} from "@ant-design/icons";
-import { useThemeContext } from "../../contexts/ThemeContext";
+import { Col, Card, Image, Tag, Typography, Flex } from "antd";
+import { TeamOutlined } from "@ant-design/icons";
+
 import Styles from "../../constants/Styles";
+import CardActions from "./CardActions";
 
 const { Meta } = Card;
 const { Text } = Typography;
 
 const RoomCard = ({
   room,
-  privileges,
+  modulePrivileges,
   handleView,
   handleEdit,
   loadOneRoom,
   openDeleteModal,
 }) => {
-  //define card actions based on privileges
-  const actions = [];
-  if (privileges.select_privilege) {
-    actions.push(
-      <EyeOutlined
-        style={{ color: "blue" }}
-        onClick={() => handleView(loadOneRoom, room.id)}
-      />
-    );
-  }
-  if (privileges.update_privilege) {
-    actions.push(
-      <EditOutlined
-        style={{ color: "#fadb14" }}
-        onClick={() => handleEdit(loadOneRoom, room.id)}
-      />
-    );
-  }
-  if (privileges.delete_privilege) {
-    actions.push(
-      <DeleteOutlined
-        style={{ color: "red" }}
-        onClick={() => openDeleteModal(room)}
-      />
-    );
-  }
+  // card actions
+  const { actions } = CardActions(
+    handleView,
+    handleEdit,
+    openDeleteModal,
+    modulePrivileges,
+    loadOneRoom,
+    room
+  );
 
   const { boxShadow } = Styles();
 
   return (
     <Col md={8} sm={12} xs={24}>
       <Card
-        bordered={false}
+        variant="borderless"
         cover={
           <Image
             style={{
@@ -59,9 +38,8 @@ const RoomCard = ({
               height: "200px",
               objectFit: "fill",
             }}
-            alt={room.roomNumber}
-            // src={room.photoPath}
-            src="https://i.pinimg.com/originals/e6/4d/f7/e64df7b4341fd3ac448d70cb31457c1c.jpg"
+            alt={room.number}
+            src={import.meta.env.VITE_IMAGE_URL + room.photo}
           />
         }
         style={{
@@ -73,9 +51,9 @@ const RoomCard = ({
         <Meta
           title={
             <Flex justify="space-between" wrap>
-              <Text strong>Room : {room.roomNumber}</Text>
-              <Tag color={room.status.name === "Available" ? "green" : "red"}>
-                {room.status.name}
+              <Text strong>Room : {room.number}</Text>
+              <Tag color={room.statusName === "Available" ? "green" : "red"}>
+                {room.statusName}
               </Tag>
             </Flex>
           }

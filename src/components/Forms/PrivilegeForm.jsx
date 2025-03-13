@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { Row, Col, Form, Select, Switch, Modal } from "antd";
-import usePrivileges from "../../hooks/usePrivileges";
+
 import FormOnFinishButtons from "./FormOnFinishButtons";
+
+import { mapToSelectOptions } from "../../utils/utils";
 
 // Privilege Form
 const PrivilegeForm = ({
+  additionalData,
   open,
   module,
   closeFormModal,
@@ -18,7 +21,7 @@ const PrivilegeForm = ({
   const [modules, setModules] = useState([]);
   const [form] = Form.useForm();
 
-  const { getModulesWithoutPrivileges, roles } = usePrivileges();
+  const { getModulesWithoutPrivileges, roles } = additionalData;
 
   // Fetch modules without privileges for the selected role
   const fetchModules = async (roleId) => {
@@ -42,14 +45,8 @@ const PrivilegeForm = ({
     if (isEditing && selectedObject) {
       // map the values to match with form
       const editValues = {
-        role: {
-          value: selectedObject?.roleId?.id,
-          label: selectedObject?.roleId?.name,
-        },
-        module: {
-          value: selectedObject?.moduleId?.id,
-          label: selectedObject?.moduleId?.name,
-        },
+        role: mapToSelectOptions([selectedObject?.role]),
+        module: mapToSelectOptions([selectedObject?.module]),
         privileges: {
           select: selectedObject?.selectOp,
           insert: selectedObject?.insertOp,
@@ -71,8 +68,8 @@ const PrivilegeForm = ({
       insertOp: formData.privileges.insert,
       deleteOp: formData.privileges.delete,
       updateOp: formData.privileges.update,
-      roleId: { id: isEditing ? formData.role.value : formData.role }, // edit values sets the label to. so have to get id only
-      moduleId: { id: isEditing ? formData.module.value : formData.module },
+      role: { id: isEditing ? formData.role[0].value : formData.role }, // edit values sets the label to. so have to get id only
+      module: { id: isEditing ? formData.module[0].value : formData.module },
     };
 
     // add and update
