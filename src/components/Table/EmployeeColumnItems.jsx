@@ -13,10 +13,10 @@ const statusColors = {
 // Column items for the Employee table
 export const employeeColumnItems = (
   modulePrivileges,
-  openDeleteModal,
   handleEdit,
   loadOneItem,
-  handleView
+  handleView,
+  opendeleteRestoreModal
 ) => [
   {
     title: "Employee No",
@@ -63,6 +63,7 @@ export const employeeColumnItems = (
     title: "Actions",
     key: "operation",
     fixed: "right",
+    align: "center",
     render: (_, record) => (
       <TableActions
         modulePrivilege={modulePrivileges}
@@ -71,7 +72,8 @@ export const employeeColumnItems = (
         handleEdit={handleEdit}
         handleView={handleView}
         showView={true}
-        openDeleteModal={openDeleteModal}
+        opendeleteRestoreModal={opendeleteRestoreModal}
+        isDeleted={record.employeeStatus?.name === "Deleted"}
       />
     ),
   },

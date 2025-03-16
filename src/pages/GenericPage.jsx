@@ -4,7 +4,7 @@ import { useAuth } from "../contexts/AuthContext";
 import useModalStates from "../hooks/useModalStates";
 
 import TableCard from "../components/DataDisplay/TableCard";
-import DeleteConfirmModal from "../components/Modals/DeleteConfirmModal";
+import DeleteRestoreConfirmationModal from "../components/Modals/DeleteRestoreConfirmationModal";
 import UpdateConfirmationModal from "../components/Modals/UpdateConfirmationModal";
 
 // generic page ( table / card with add, serach)
@@ -43,16 +43,16 @@ const GenericPage = ({
     formModalState,
     openFormModal,
     closeFormModal,
-    deleteModal,
-    setDeleteModal,
-    openDeleteModal,
-    viewModal,
-    closeViewModal,
-    showUpdateModal,
-    updateConfirmModal,
-    setUpdateConfirmModal,
     handleEdit,
     handleView,
+    deleteRestoreModal,
+    opendeleteRestoreModal,
+    closedeleteRestoreModal,
+    viewModal,
+    closeViewModal,
+    updateConfirmModal,
+    showUpdateConfirmModal,
+    closeUpdateConfirmModal,
   } = useModalStates();
 
   // Extract form modal state details
@@ -61,10 +61,10 @@ const GenericPage = ({
   // Generate table columns dynamically
   const columns = columnItems(
     modulePrivileges,
-    openDeleteModal,
     handleEdit,
     loadOneItem,
-    handleView
+    handleView,
+    opendeleteRestoreModal
   );
 
   return (
@@ -84,8 +84,7 @@ const GenericPage = ({
             handleEdit={handleEdit}
             handleView={handleView}
             openFormModal={openFormModal}
-            openDeleteModal={openDeleteModal}
-            restoreItem={restoreItem}
+            opendeleteRestoreModal={opendeleteRestoreModal}
             loadOneItem={loadOneItem}
           />
 
@@ -98,7 +97,7 @@ const GenericPage = ({
             selectedObject={selectedObject}
             addItem={addItem}
             updateItem={updateItem}
-            showUpdateModal={showUpdateModal}
+            showUpdateConfirmModal={showUpdateConfirmModal}
             additionalData={additionalData}
           />
 
@@ -121,16 +120,16 @@ const GenericPage = ({
               <UpdateConfirmationModal
                 updateFunction={updateItem}
                 updateConfirmModal={updateConfirmModal}
-                setUpdateConfirmModal={setUpdateConfirmModal}
+                closeUpdateConfirmModal={closeUpdateConfirmModal}
                 closeModal={closeFormModal}
               />
 
-              {/* Appears when deleting */}
-              <DeleteConfirmModal
-                module={module}
-                deleteModal={deleteModal}
-                setDeleteModal={setDeleteModal}
-                deleteFunction={deleteItem}
+              {/* Appears when deleting or restore */}
+              <DeleteRestoreConfirmationModal
+                deleteRestoreModal={deleteRestoreModal}
+                closedeleteRestoreModal={closedeleteRestoreModal}
+                deleteItem={deleteItem}
+                restoreItem={restoreItem}
               />
             </>
           )}

@@ -29,7 +29,7 @@ const RoomPricingRuleForm = ({
   isEditing,
   selectedObject,
   addItem,
-  showUpdateModal,
+  showUpdateConfirmModal,
 }) => {
   const [initialFormData, setInitialFormData] = useState({});
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -42,12 +42,13 @@ const RoomPricingRuleForm = ({
   useEffect(() => {
     if (open && isEditing && selectedObject) {
       const roomType = roomTypes.find(
-        (type) => (type.name = selectedObject.roomTypeId)
+        (type) => type.value == selectedObject.roomTypeId
       );
       const updatedFormData = {
         ...selectedObject,
         roomType: roomType,
         dateRange: [selectedObject?.startDate, selectedObject?.endDate], // format to range picker
+        statusName: selectedObject?.statusName == "Active" ? true : false,
       };
 
       form.setFieldsValue(updatedFormData);
@@ -67,7 +68,7 @@ const RoomPricingRuleForm = ({
       startDate: formdata.dateRange[0].format("YYYY-MM-DD"),
       endDate: formdata.dateRange[1].format("YYYY-MM-DD"),
       roomTypeId: isEditing ? formdata.roomType.value : formdata.roomType,
-      statusName: formdata.statusName ? "Active" : "Deleted",
+      statusName: formdata.statusName ? "Active" : "Inactive",
     };
 
     delete updatedData.dateRange; // delete date range from updatedData object
@@ -75,7 +76,7 @@ const RoomPricingRuleForm = ({
     if (isEditing) {
       // get changed values
       const updatedValues = getChangedFieldValues(initialFormData, formdata);
-      showUpdateModal(updatedValues, selectedObject.id, updatedData);
+      showUpdateConfirmModal(updatedValues, selectedObject.id, updatedData);
     } else {
       setConfirmLoading(true);
       await addItem(updatedData);

@@ -7,7 +7,7 @@ const InventoryForm = ({
   isEditing,
   selectedObject,
   addItem,
-  showUpdateModal,
+  showUpdateConfirmModal,
 }) => {
   return (
     <Modal

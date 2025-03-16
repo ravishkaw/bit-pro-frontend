@@ -24,7 +24,7 @@ const TableCard = ({
   handleView,
   handleEdit,
   openFormModal, // function to open create/edit form modal
-  openDeleteModal, // function to open delete modal
+  opendeleteRestoreModal, // function to open delete / restore modal
   loadOneItem, // Load single object funtion (loadOneEmployee)
 }) => {
   const { isMobile } = useMobileContext();
@@ -117,7 +117,7 @@ const TableCard = ({
             data={data}
             handleView={handleView}
             handleEdit={handleEdit}
-            openDeleteModal={openDeleteModal}
+            opendeleteRestoreModal={opendeleteRestoreModal}
             loadOneItem={loadOneItem}
             privileges={privileges}
           />

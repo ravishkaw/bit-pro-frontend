@@ -13,13 +13,13 @@ const RoomCard = ({
   handleView,
   handleEdit,
   loadOneRoom,
-  openDeleteModal,
+  opendeleteRestoreModal,
 }) => {
   // card actions
   const { actions } = CardActions(
     handleView,
     handleEdit,
-    openDeleteModal,
+    opendeleteRestoreModal,
     modulePrivileges,
     loadOneRoom,
     room
@@ -59,18 +59,46 @@ const RoomCard = ({
           }
           description={
             <>
-              <Flex justify="space-between">
-                <Text strong>{room.roomType.name}</Text>
-                <Text strong>
-                  <TeamOutlined /> {room.capacity} people
+              <Flex
+                justify="space-between"
+                align="center"
+                style={{ marginBottom: "12px" }}
+              >
+                <Text strong style={{ fontSize: "15px" }}>
+                  Room Type: {room.roomType.name}
+                </Text>
+                <Tag
+                  color="blue"
+                  style={{ padding: "2px 8px", fontWeight: "bold" }}
+                >
+                  ${room.price}
+                </Tag>
+              </Flex>
+
+              <Text strong style={{ display: "block", marginBottom: "8px" }}>
+                Capacity:
+              </Text>
+              <Flex gap={12} wrap="wrap" style={{ marginBottom: "16px" }}>
+                <Flex align="center" gap={4}>
+                  <TeamOutlined style={{ color: "#1890ff" }} />
+                  <Text>{room.adultNo || 0} Adults</Text>
+                </Flex>
+                <Flex align="center" gap={4}>
+                  <TeamOutlined style={{ color: "#52c41a" }} />
+                  <Text>{room.childNo || 0} Children</Text>
+                </Flex>
+                <Flex align="center" gap={4}>
+                  <TeamOutlined style={{ color: "#faad14" }} />
+                  <Text>{room.infantNo || 0} Infant</Text>
+                </Flex>
+              </Flex>
+
+              <Flex align="center">
+                <Text type="secondary">
+                  <span style={{ fontWeight: "bold" }}>Floor:</span>{" "}
+                  {room.floorNumber}
                 </Text>
               </Flex>
-              {/* <Text type="secondary">{room.description}</Text> */}
-              {/* <br /> */}
-              <Text>Floor: {room.floorNumber}</Text>
-              <br />
-              <Text strong>Price: ${room.roomType.basePrice}/night</Text>
-              <br />
             </>
           }
         />

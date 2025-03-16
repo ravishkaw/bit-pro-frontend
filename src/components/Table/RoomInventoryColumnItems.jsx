@@ -4,9 +4,10 @@ import TableActions from "./TableActions";
 // Create table columns with permission-based edit/delete actions
 export const RoomInventoryColumnItems = (
   modulePrivileges,
-  openDeleteModal,
   handleEdit,
-  loadOneItem
+  loadOneItem,
+  handleView,
+  opendeleteRestoreModal
 ) => [
   {
     title: "Room No",
@@ -39,7 +40,7 @@ export const RoomInventoryColumnItems = (
         apiFunction={loadOneItem}
         record={record}
         handleEdit={handleEdit}
-        openDeleteModal={openDeleteModal}
+        opendeleteRestoreModal={opendeleteRestoreModal}
       />
     ),
   },

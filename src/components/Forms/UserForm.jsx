@@ -22,7 +22,7 @@ const UserForm = ({
   isEditing,
   selectedObject,
   addItem,
-  showUpdateModal,
+  showUpdateConfirmModal,
 }) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [initialFormData, setInitialFormData] = useState({}); // formatted selected user object holder
@@ -56,12 +56,13 @@ const UserForm = ({
 
   // Handle edit populate the wanted fields
   useEffect(() => {
-    if (open && isEditing && selectedObject) {      
+    if (open && isEditing && selectedObject) {
       // format the user into form structure
       const updatedUser = {
         ...selectedObject,
         employee: mappedEmployees,
-      };      
+        statusName: selectedObject?.statusName == "Active" ? true : false,
+      };
       form.setFieldsValue(updatedUser);
       setInitialFormData(updatedUser);
       triggerFormFieldsValidation(form);
@@ -85,15 +86,15 @@ const UserForm = ({
     const updatedData = {
       ...formData,
       employee: employee,
-      statusName: formData.statusName ? "Active" : "Deleted",
-    };    
+      statusName: formData.statusName ? "Active" : "Inactive",
+    };
 
     if (isEditing) {
       // get changed values
       const updatedValues = getChangedFieldValues(initialFormData, formData, {
         roles,
       });
-      showUpdateModal(updatedValues, selectedObject.id, updatedData);
+      showUpdateConfirmModal(updatedValues, selectedObject.id, updatedData);
     } else {
       setConfirmLoading(true);
       await addItem(updatedData);

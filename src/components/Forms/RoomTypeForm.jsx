@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Form, Input, InputNumber, Modal, Switch } from "antd";
+import { Form, Input, InputNumber, Modal, Select, Switch } from "antd";
 
 import FormOnFinishButtons from "./FormOnFinishButtons";
 import FormInputTooltip from "./FormInputTooltip";
@@ -11,23 +11,30 @@ import {
 
 // Form of room type add or edit
 const RoomTypeForm = ({
+  additionalData,
   open,
   module,
   closeFormModal,
   isEditing,
   selectedObject,
   addItem,
-  showUpdateModal,
+  showUpdateConfirmModal,
 }) => {
   const [initialFormData, setInitialFormData] = useState({});
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [form] = Form.useForm();
 
+  const { bedTypes } = additionalData;
+
   // Set initial values when editing
   useEffect(() => {
     if (open && isEditing && selectedObject) {
-      form.setFieldsValue(selectedObject);
-      setInitialFormData(selectedObject);
+      const updatedData = {
+        ...selectedObject,
+        statusName: selectedObject?.statusName == "Active" ? true : false,
+      };
+      form.setFieldsValue(updatedData);
+      setInitialFormData(updatedData);
       triggerFormFieldsValidation(form);
     } else if (open) {
       form.resetFields();
@@ -40,7 +47,7 @@ const RoomTypeForm = ({
     // Format and update formdata
     const updatedData = {
       ...formdata,
-      statusName: formdata.statusName ? "Active" : "Deleted",
+      statusName: formdata.statusName ? "Active" : "Inactive",
     };
 
     if (isEditing) {
@@ -48,7 +55,7 @@ const RoomTypeForm = ({
       const updatedValues = getChangedFieldValues(initialFormData, formdata, {
         module,
       });
-      showUpdateModal(updatedValues, selectedObject.id, updatedData);
+      showUpdateConfirmModal(updatedValues, selectedObject.id, updatedData);
     } else {
       setConfirmLoading(true);
       await addItem(updatedData);
@@ -89,6 +96,25 @@ const RoomTypeForm = ({
           hasFeedback
         >
           <Input placeholder="E.g., Single, Double, Deluxe Suite" />
+        </Form.Item>
+
+        <Form.Item
+          name="bedTypeId"
+          label={
+            <FormInputTooltip
+              label="Bed Type"
+              title="Select bed type that in the room type"
+            />
+          }
+          rules={[{ required: true, message: "Please enter room type name" }]}
+          hasFeedback
+        >
+          <Select
+            placeholder="Select bed type"
+            options={bedTypes}
+            showSearch
+            optionFilterProp="label"
+          />
         </Form.Item>
 
         <Form.Item
@@ -143,8 +169,8 @@ const RoomTypeForm = ({
           required
         >
           <Switch
-            checkedChildren="Available"
-            unCheckedChildren="Unavailable"
+            checkedChildren="Active"
+            unCheckedChildren="Inactive"
             defaultChecked={false}
           />
         </Form.Item>

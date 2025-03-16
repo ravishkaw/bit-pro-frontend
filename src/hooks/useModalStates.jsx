@@ -23,10 +23,11 @@ const useModalStates = () => {
     selectedObject: null, // The object being viewed
   });
 
-  // State for Delete Confirmation modal
-  const [deleteModal, setDeleteModal] = useState({
+  // State for DeleteRestore Confirmation modal
+  const [deleteRestoreModal, setdeleteRestoreModal] = useState({
     open: false, // Whether the modal is open
-    selectedObject: null, // The object being deleted
+    isDelete: true, // Whether model is delete or restore
+    selectedObject: null, // The object being delete / Restore
   });
 
   // Open the Add/Edit form modal
@@ -38,6 +39,12 @@ const useModalStates = () => {
     });
   };
 
+  // Load single object data and open the form modal
+  const handleEdit = async (apiFunction, id) => {
+    const singleObject = await apiFunction(id); // fetch single object with the id like single employee, room
+    openFormModal(true, singleObject);
+  };
+
   // Close the Add/Edit form modal
   const closeFormModal = () => {
     setFormModalState({
@@ -47,16 +54,30 @@ const useModalStates = () => {
     });
   };
 
-  // Open the Delete Confirmation modal
-  const openDeleteModal = (record) => {
-    setDeleteModal({
+  // Open the deleteRestore Confirmation modal
+  const opendeleteRestoreModal = (isDelete, record) => {
+    setdeleteRestoreModal({
       open: true,
-      selectedObject: record, // Pass the record to be deleted
+      isDelete: isDelete, // Set to true for delete, false for restore
+      selectedObject: record, // Pass the record to be delete/Restore
+    });
+  };
+
+  // close the deleteRestore Confirmation modal
+  const closedeleteRestoreModal = () => {
+    setdeleteRestoreModal({
+      open: false,
+      isDelete: true, // reset to true / default delete
+      selectedObject: null, // Reset all state values
     });
   };
 
   // Show the Update Confirmation modal with updated data
-  const showUpdateModal = (updatedValues, selectedObjectId, updatedData) => {
+  const showUpdateConfirmModal = (
+    updatedValues,
+    selectedObjectId,
+    updatedData
+  ) => {
     setUpdateConfirmModal({
       open: true,
       updatedValues, // Updated field values
@@ -65,40 +86,44 @@ const useModalStates = () => {
     });
   };
 
-  // Close the view form modal
-  const closeViewModal = () => {
-    setViewModal({ open: false, selectedObject: null });
+  // close the Update Confirmation modal
+  const closeUpdateConfirmModal = () => {
+    setUpdateConfirmModal({
+      open: false,
+      updatedValues: null,
+      selectedObjectId: null,
+      updatedData: null,
+    });
   };
 
-  // Handle view action: Load single object data and open the view modal
+  // Load single object data and open the view modal
   const handleView = async (apiFunction, id) => {
     const singleObject = await apiFunction(id); // fetch single object  with the id like single employee, room
     setViewModal({ open: true, selectedObject: singleObject });
   };
 
-  // Handle edit action: Load single object data and open the form modal
-  const handleEdit = async (apiFunction, id) => {
-    const singleObject = await apiFunction(id); // fetch single object with the id like single employee, room
-    openFormModal(true, singleObject);
+  // Close the view form modal
+  const closeViewModal = () => {
+    setViewModal({ open: false, selectedObject: null });
   };
 
   // Return all modal states and functions for external use
   return {
     formModalState,
     setFormModalState,
-    updateConfirmModal,
-    setUpdateConfirmModal,
-    viewModal,
-    setViewModal,
-    deleteModal,
-    setDeleteModal,
+    handleEdit,
     openFormModal,
     closeFormModal,
-    closeViewModal,
-    openDeleteModal,
-    showUpdateModal,
-    handleEdit,
+    viewModal,
+    setViewModal,
     handleView,
+    closeViewModal,
+    deleteRestoreModal,
+    opendeleteRestoreModal,
+    closedeleteRestoreModal,
+    updateConfirmModal,
+    showUpdateConfirmModal,
+    closeUpdateConfirmModal,
   };
 };
 

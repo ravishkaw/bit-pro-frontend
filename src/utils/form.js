@@ -30,16 +30,6 @@ export const getChangedFieldValues = (
         initialValue = dateFormat(initialValue);
         updatedValue = dateFormat(updatedValue);
       }
-      // format status name of room type
-      else if (
-        key === "statusName" &&
-        (additionalData?.module == "Room Type" ||
-          additionalData?.module == "Room Facility")
-      ) {
-        formattedKey = "Status";
-        initialValue = initialValue ? "Available" : "Unavailable";
-        updatedValue = updatedValue ? "Available" : "Unavailable";
-      }
       // format status (false to inactive, true to active)
       else if (
         key === "accountStatus" ||

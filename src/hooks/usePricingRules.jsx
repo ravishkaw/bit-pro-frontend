@@ -54,6 +54,7 @@ const usePricingRules = () => {
     addItem,
     updateItem,
     deleteItem,
+    restoreItem,
   } = useCrudHandler(config);
 
   // Return states and functions for external use
@@ -68,6 +69,7 @@ const usePricingRules = () => {
     addItem,
     updateItem,
     deleteItem,
+    restoreItem,
   };
 };
 

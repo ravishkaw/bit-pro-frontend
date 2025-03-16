@@ -2,12 +2,20 @@ import { Tag } from "antd";
 
 import TableActions from "./TableActions";
 
+// Tag colors for status
+const statusColors = {
+  Active: "green",
+  Inactive: "orange",
+  Deleted: "red",
+};
+
 // Column items for the user table
 export const userColumnItems = (
   modulePrivileges,
-  openDeleteModal,
   handleEdit,
-  loadOneItem
+  loadOneItem,
+  handleView,
+  opendeleteRestoreModal
 ) => [
   {
     title: "Employee Name",
@@ -28,12 +36,12 @@ export const userColumnItems = (
   {
     title: "Account Status",
     dataIndex: "statusName",
-    render: (_, record) =>
-      record.statusName == "Active" ? (
-        <Tag color="green">Active</Tag>
-      ) : (
-        <Tag color="red">Inactive</Tag>
-      ),
+    render: (_, record) => {
+      const statusName = record?.statusName || "N/A";
+      return (
+        <Tag color={statusColors[statusName] || "default"}>{statusName}</Tag>
+      );
+    },
     sorter: true,
     align: "center",
   },
@@ -60,7 +68,8 @@ export const userColumnItems = (
         apiFunction={loadOneItem}
         record={record}
         handleEdit={handleEdit}
-        openDeleteModal={openDeleteModal}
+        opendeleteRestoreModal={opendeleteRestoreModal}
+        isDeleted={record?.statusName === "Deleted"}
       />
     ),
   },

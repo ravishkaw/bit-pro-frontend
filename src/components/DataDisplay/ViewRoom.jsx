@@ -13,10 +13,11 @@ import {
   Tag,
 } from "antd";
 import dayjs from "dayjs";
+import { TeamOutlined } from "@ant-design/icons";
 
 import usePrintContent from "../../hooks/usePrintContent";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 // Modal of view room
 const ViewRoom = ({
@@ -42,19 +43,16 @@ const ViewRoom = ({
     (roomType) => roomType.id == selectedRoom?.roomTypeId
   );
 
-const selectedRoomFacilities = selectedRoom?.roomFacilityIds
-  ?.map((facilityId) =>
-    roomFacilities.find((facility) => facility.id == facilityId)
-  )
-  .filter(Boolean);
+  const selectedRoomFacilities = selectedRoom?.roomFacilityIds
+    ?.map((facilityId) =>
+      roomFacilities.find((facility) => facility.id == facilityId)
+    )
+    .filter(Boolean);
 
   // All value mappings for room details
   const roomInfo = [
-    { key: "1", label: "Capacity", children: selectedRoom?.capacity },
-    { key: "2", label: "Floor Number", children: selectedRoom?.floorNumber },
-    { key: "3", label: "Description", children: selectedRoom?.description },
     {
-      key: "4",
+      key: "1",
       label: "Status",
       children: (
         <Tag
@@ -65,25 +63,53 @@ const selectedRoomFacilities = selectedRoom?.roomFacilityIds
       ),
     },
     {
-      key: "5",
+      key: "2",
       label: "Room Type",
       children: selectedRoomType?.name,
     },
     {
+      key: "3",
+      label: "Price",
+      children: <Tag color="blue">${selectedRoom?.price}</Tag>,
+    },
+    {
+      key: "4",
+      label: "Description",
+      children: selectedRoom?.description,
+    },
+    { key: "5", label: "Floor Number", children: selectedRoom?.floorNumber },
+    {
       key: "6",
-      label: "Base Price",
-      children: `$${selectedRoomType?.basePrice}`,
+      label: "Capacity",
+      children: (
+        <>
+          <Flex gap={12} wrap="wrap" style={{ marginBottom: "16px" }}>
+            <Flex align="center" gap={4}>
+              <TeamOutlined style={{ color: "#1890ff" }} />
+              <Text>{selectedRoom?.adultNo || 0} Adults</Text>
+            </Flex>
+            <Flex align="center" gap={4}>
+              <TeamOutlined style={{ color: "#52c41a" }} />
+              <Text>{selectedRoom?.childNo || 0} Children</Text>
+            </Flex>
+            <Flex align="center" gap={4}>
+              <TeamOutlined style={{ color: "#faad14" }} />
+              <Text>{selectedRoom?.infantNo || 0} Infant</Text>
+            </Flex>
+          </Flex>
+        </>
+      ),
     },
   ];
 
   const pricingRules = selectedRoomType?.pricingRules?.map((rule, index) => ({
     key: `pricing-${index}`,
     // label: `${index + 1}`,
-    children: `⁕ ${rule.description} (${dayjs(rule.startDate).format(
-      "YYYY-MM-DD"
-    )} to ${dayjs(rule.endDate).format("YYYY-MM-DD")}) - Multiplier: ${
-      rule.pricingMultiplier
-    }`,
+    children: `⁕ ${dayjs(rule.startDate).format("YYYY-MM-DD")} to ${dayjs(
+      rule.endDate
+    ).format("YYYY-MM-DD")} → Multiplier: ${rule.pricingMultiplier} - ${
+      rule.description
+    } `,
   }));
 
   const inventory = [
@@ -117,32 +143,33 @@ const selectedRoomFacilities = selectedRoom?.roomFacilityIds
 
         <Row gutter={[20, 20]}>
           <Col xs={24} sm={8}>
-            <Image
+            <img
               style={{
                 borderRadius: 8,
                 maxHeight: "300px",
+                width: "100%",
                 objectFit: "fill",
               }}
               alt={selectedRoom?.number}
               src={import.meta.env.VITE_IMAGE_URL + selectedRoom?.photo}
             />
+            <Descriptions
+              title={null}
+              items={roomInfo}
+              column={1}
+              size="small"
+              style={{ margin: 4 }}
+            />
+          </Col>
+          <Col xs={24} sm={16}>
             <Divider orientation="left" style={{ marginBottom: 0 }}>
               <Title level={5}>Facilities</Title>
             </Divider>
             <Descriptions
               title={null}
               items={facilities}
-              column={3}
+              column={4}
               size="small"
-            />
-          </Col>
-          <Col xs={24} sm={16}>
-            <Descriptions
-              title={null}
-              items={roomInfo}
-              column={2}
-              size="small"
-              style={{ margin: 4 }}
             />
             <Divider orientation="left" style={{ marginBottom: 0 }}>
               <Title level={5}>Inventory</Title>

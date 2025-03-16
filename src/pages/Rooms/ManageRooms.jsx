@@ -2,7 +2,6 @@ import {
   Row,
   Col,
   Card,
-  Tabs,
   Flex,
   Empty,
   Button,
@@ -15,16 +14,17 @@ import {
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 
 import { useAuth } from "../../contexts/AuthContext";
+import { useThemeContext } from "../../contexts/ThemeContext";
 import useRooms from "../../hooks/useRooms";
 import useModalStates from "../../hooks/useModalStates";
 
 import RoomCard from "../../components/Cards/RoomCard";
-import DeleteConfirmModal from "../../components/Modals/DeleteConfirmModal";
+import DeleteRestoreConfirmationModal from "../../components/Modals/DeleteRestoreConfirmationModal";
 import UpdateConfirmationModal from "../../components/Modals/UpdateConfirmationModal";
 import RoomForm from "../../components/Forms/RoomForm";
 import ViewRoom from "../../components/DataDisplay/ViewRoom";
+
 import Styles from "../../constants/Styles";
-import { useThemeContext } from "../../contexts/ThemeContext";
 import { mapToSelectOptions } from "../../utils/utils";
 
 const ManageRooms = () => {
@@ -37,6 +37,7 @@ const ManageRooms = () => {
   const modulePrivileges = privileges?.find(
     (privilegedModule) => privilegedModule.module_name === module
   );
+
   // Destructure functions and states from custom hooks
   const {
     rooms,
@@ -47,6 +48,7 @@ const ManageRooms = () => {
     addItem,
     updateItem,
     deleteItem,
+    restoreItem,
   } = useRooms();
 
   const { boxShadow } = Styles();
@@ -57,14 +59,14 @@ const ManageRooms = () => {
     closeFormModal,
     viewModal,
     closeViewModal,
-    deleteModal,
-    setDeleteModal,
-    openDeleteModal,
+    deleteRestoreModal,
+    opendeleteRestoreModal,
+    closedeleteRestoreModal,
     handleEdit,
     handleView,
-    showUpdateModal,
     updateConfirmModal,
-    setUpdateConfirmModal,
+    showUpdateConfirmModal,
+    closeUpdateConfirmModal,
   } = useModalStates();
 
   const { open, isEditing, selectedObject } = formModalState; // Extract modal state details
@@ -144,7 +146,7 @@ const ManageRooms = () => {
                       modulePrivileges={modulePrivileges}
                       handleView={handleView}
                       handleEdit={handleEdit}
-                      openDeleteModal={openDeleteModal}
+                      opendeleteRestoreModal={opendeleteRestoreModal}
                       loadOneRoom={loadOneItem}
                     />
                   ))) || (
@@ -164,9 +166,8 @@ const ManageRooms = () => {
         closeFormModal={closeFormModal}
         selectedObject={selectedObject}
         addItem={addItem}
-        showUpdateModal={showUpdateModal}
+        showUpdateConfirmModal={showUpdateConfirmModal}
         additionalData={additionalData}
-        mappedRoomTypes={mappedRoomTypes}
       />
 
       {rooms && rooms.length > 0 && (
@@ -183,18 +184,19 @@ const ManageRooms = () => {
           />
 
           {/* Appears when deleting a room */}
-          <DeleteConfirmModal
+          <DeleteRestoreConfirmationModal
             module={module}
-            deleteModal={deleteModal}
-            setDeleteModal={setDeleteModal}
-            deleteFunction={deleteItem}
+            deleteRestoreModal={deleteRestoreModal}
+            closedeleteRestoreModal={closedeleteRestoreModal}
+            deleteItem={deleteItem}
+            restoreItem={restoreItem}
           />
 
           {/* Appears when confirming an update */}
           <UpdateConfirmationModal
             updateFunction={updateItem}
             updateConfirmModal={updateConfirmModal}
-            setUpdateConfirmModal={setUpdateConfirmModal}
+            closeUpdateConfirmModal={closeUpdateConfirmModal}
             closeModal={closeFormModal}
           />
         </>

@@ -32,7 +32,7 @@ const RoomInventoryForm = ({
   isEditing,
   selectedObject,
   addItem,
-  showUpdateModal,
+  showUpdateConfirmModal,
 }) => {
   const [initialFormData, setInitialFormData] = useState({});
   const [selectedRoom, setSelectedRoom] = useState({});
@@ -126,7 +126,7 @@ const RoomInventoryForm = ({
       if (isEditing) {
         // Get changed values for update
         const updatedValues = getChangedFieldValues(initialFormData, formdata);
-        showUpdateModal(updatedValues, selectedObject.id, updatedData);
+        showUpdateConfirmModal(updatedValues, selectedObject.id, updatedData);
       } else {
         setConfirmLoading(true);
         await addItem(updatedData);

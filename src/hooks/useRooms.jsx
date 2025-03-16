@@ -47,6 +47,7 @@ const useRooms = () => {
     addItem,
     updateItem,
     deleteItem,
+    restoreItem,
   } = useCrudHandler(config);
 
   return {
@@ -58,6 +59,7 @@ const useRooms = () => {
     addItem,
     updateItem,
     deleteItem,
+    restoreItem,
   };
 };
 

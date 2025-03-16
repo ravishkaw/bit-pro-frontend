@@ -1,15 +1,35 @@
-import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  EyeOutlined,
+  UndoOutlined,
+} from "@ant-design/icons";
 
 //define card actions based on privileges
 const CardActions = (
   handleView,
   handleEdit,
-  openDeleteModal,
+  opendeleteRestoreModal,
   privileges,
   loadOneItem,
   data
 ) => {
   const actions = [];
+
+  if (
+    (data?.statusName === "Deleted" ||
+      data?.employeeStatus?.name === "Deleted") &&
+    privileges.select_privilege
+  ) {
+    actions.push(
+      <UndoOutlined
+        style={{ color: "blue" }}
+        onClick={() => opendeleteRestoreModal(false, data)}
+      />
+    );
+    return { actions };
+  }
+
   if (privileges.select_privilege) {
     actions.push(
       <EyeOutlined
@@ -30,7 +50,7 @@ const CardActions = (
     actions.push(
       <DeleteOutlined
         style={{ color: "red" }}
-        onClick={() => openDeleteModal(data)}
+        onClick={() => opendeleteRestoreModal(true, data)}
       />
     );
   }

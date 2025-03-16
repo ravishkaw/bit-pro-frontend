@@ -4,6 +4,7 @@ import { createApiService } from "./apiService";
 const ROOM_BASE_URL = "/rooms";
 const ROOM_STATUS_BASE_URL = "/room-status";
 const ROOM_TYPE_BASE_URL = "/room-types";
+const BED_TYPE_BASE_URL = "/bed-types";
 const ROOM_PRICING_RULE_BASE_URL = "/pricing-rules";
 const ROOM_FACILITIES = "/room-facilities";
 
@@ -12,6 +13,9 @@ export const roomService = createApiService(ROOM_BASE_URL);
 
 // Generic API service for room status
 export const roomStatusService = createApiService(ROOM_STATUS_BASE_URL);
+
+// Generic API service for bed types
+export const bedTypeService = createApiService(BED_TYPE_BASE_URL);
 
 // Generic API service for room types
 export const roomTypeService = createApiService(ROOM_TYPE_BASE_URL);

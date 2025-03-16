@@ -1,12 +1,20 @@
 import { Tag } from "antd";
 import TableActions from "./TableActions";
 
+// Tag colors for status
+const statusColors = {
+  Active: "green",
+  Inactive: "orange",
+  Deleted: "red",
+};
+
 // Create table columns with permission-based edit/delete actions
 export const RoomFacilitiesColumnItems = (
   modulePrivileges,
-  openDeleteModal,
   handleEdit,
-  loadOneItem
+  loadOneItem,
+  handleView,
+  opendeleteRestoreModal
 ) => [
   {
     title: "Name",
@@ -26,12 +34,12 @@ export const RoomFacilitiesColumnItems = (
   {
     title: "Status",
     dataIndex: "statusName",
-    render: (_, record) =>
-      record?.statusName == "Active" ? (
-        <Tag color="green">Available</Tag>
-      ) : (
-        <Tag color="red">Unavailable</Tag>
-      ),
+    render: (_, record) => {
+      const statusName = record?.statusName || "N/A";
+      return (
+        <Tag color={statusColors[statusName] || "default"}>{statusName}</Tag>
+      );
+    },
     sorter: true,
   },
   {
@@ -45,7 +53,8 @@ export const RoomFacilitiesColumnItems = (
         apiFunction={loadOneItem}
         record={record}
         handleEdit={handleEdit}
-        openDeleteModal={openDeleteModal}
+        opendeleteRestoreModal={opendeleteRestoreModal}
+        isDeleted={record?.statusName === "Deleted"}
       />
     ),
   },

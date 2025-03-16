@@ -10,9 +10,10 @@ const tagColor = (op) => (
 // Column items for the privilege table
 const PrivilegeColumnItems = (
   modulePrivileges,
-  openDeleteModal,
   handleEdit,
-  loadOneItem
+  loadOneItem,
+  handleView,
+  opendeleteRestoreModal
 ) => [
   // {
   //   title: "ID",
@@ -67,7 +68,7 @@ const PrivilegeColumnItems = (
         apiFunction={loadOneItem}
         record={record}
         handleEdit={handleEdit}
-        openDeleteModal={openDeleteModal}
+        opendeleteRestoreModal={opendeleteRestoreModal}
       />
     ),
   },

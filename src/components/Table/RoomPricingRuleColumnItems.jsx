@@ -1,12 +1,20 @@
 import { Tag } from "antd";
 import TableActions from "./TableActions";
 
+// Tag colors for status
+const statusColors = {
+  Active: "green",
+  Inactive: "orange",
+  Deleted: "red",
+};
+
 // Room PricingRules columns
 export const PricingRulesColumnItems = (
   modulePrivileges,
-  openDeleteModal,
   handleEdit,
-  loadOneItem
+  loadOneItem,
+  handleView,
+  opendeleteRestoreModal
 ) => [
   {
     title: "Room Type",
@@ -35,12 +43,12 @@ export const PricingRulesColumnItems = (
   {
     title: "Status",
     dataIndex: "statusName",
-    render: (_, record) =>
-      record?.statusName == "Active" ? (
-        <Tag color="green">Active</Tag>
-      ) : (
-        <Tag color="red">Deleted</Tag>
-      ),
+    render: (_, record) => {
+      const statusName = record?.statusName || "N/A";
+      return (
+        <Tag color={statusColors[statusName] || "default"}>{statusName}</Tag>
+      );
+    },
   },
   {
     title: "Actions",
@@ -53,7 +61,8 @@ export const PricingRulesColumnItems = (
         apiFunction={loadOneItem}
         record={record}
         handleEdit={handleEdit}
-        openDeleteModal={openDeleteModal}
+        opendeleteRestoreModal={opendeleteRestoreModal}
+        isDeleted={record?.statusName === "Deleted"}
       />
     ),
   },

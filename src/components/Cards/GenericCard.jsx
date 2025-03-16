@@ -1,6 +1,7 @@
 import { Card, Col, Row, Tag } from "antd";
-import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
+
 import CardActions from "./CardActions";
+import Styles from "../../constants/Styles";
 
 // Card for pages
 const GenericCard = ({
@@ -8,7 +9,7 @@ const GenericCard = ({
   data,
   handleView,
   handleEdit,
-  openDeleteModal,
+  opendeleteRestoreModal,
   privileges,
   loadOneItem,
 }) => {
@@ -21,7 +22,7 @@ const GenericCard = ({
   const { actions } = CardActions(
     handleView,
     handleEdit,
-    openDeleteModal,
+    opendeleteRestoreModal,
     privileges,
     loadOneItem,
     data
@@ -44,8 +45,14 @@ const GenericCard = ({
     Disposed: "geekblue",
   };
 
+  const { boxShadow } = Styles();
+
   return (
-    <Card actions={actions} style={{ marginBottom: 10 }}>
+    <Card
+      variant="borderless"
+      actions={actions}
+      style={{ ...boxShadow, marginBottom: 10 }}
+    >
       {newColumns.map((column, index) => {
         // set data into value
         let value = data[column.dataIndex];

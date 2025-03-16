@@ -8,7 +8,7 @@ const { Title, Text } = Typography;
 const UpdateConfirmationModal = ({
   updateFunction, // api crud update function
   updateConfirmModal, // modal state
-  setUpdateConfirmModal, // set the modal state
+  closeUpdateConfirmModal,
   closeModal, // modal state of form modal
 }) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -21,23 +21,13 @@ const UpdateConfirmationModal = ({
     setConfirmLoading(true);
     await updateFunction(selectedObjectId, updatedData);
     setConfirmLoading(false);
-    setUpdateConfirmModal({
-      open: false,
-      updatedValues: null,
-      selectedObjectId: null,
-      updatedData: null,
-    });
+    closeUpdateConfirmModal();
     closeModal();
   };
 
   // Cancel the confirmation
   const handleCancel = () => {
-    setUpdateConfirmModal({
-      open: false,
-      updatedValues: null,
-      selectedObjectId: null,
-      updatedData: null,
-    });
+    closeUpdateConfirmModal();
   };
 
   return (

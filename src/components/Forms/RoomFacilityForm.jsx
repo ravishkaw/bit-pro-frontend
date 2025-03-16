@@ -17,7 +17,7 @@ const RoomFacilityForm = ({
   isEditing,
   selectedObject,
   addItem,
-  showUpdateModal,
+  showUpdateConfirmModal,
 }) => {
   const [initialFormData, setInitialFormData] = useState({});
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -30,7 +30,7 @@ const RoomFacilityForm = ({
     if (open && isEditing && selectedObject) {
       const formattedRoomFacility = {
         ...selectedObject,
-        statusName: selectedObject.statusName == "Active" ? true : false,
+        statusName: selectedObject?.statusName == "Active" ? true : false,
       };
       form.setFieldsValue(formattedRoomFacility);
       setInitialFormData(formattedRoomFacility);
@@ -46,7 +46,7 @@ const RoomFacilityForm = ({
     // Format and update formdata
     const updatedData = {
       ...formdata,
-      statusName: formdata.statusName ? "Active" : "Deleted",
+      statusName: formdata.statusName ? "Active" : "Inactive",
     };
 
     if (isEditing) {
@@ -54,7 +54,7 @@ const RoomFacilityForm = ({
       const updatedValues = getChangedFieldValues(initialFormData, formdata, {
         module,
       });
-      showUpdateModal(updatedValues, selectedObject.id, updatedData);
+      showUpdateConfirmModal(updatedValues, selectedObject.id, updatedData);
     } else {
       setConfirmLoading(true);
       await addItem(updatedData);

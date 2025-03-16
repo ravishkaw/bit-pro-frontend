@@ -45,6 +45,7 @@ const useUsers = () => {
     addItem,
     updateItem,
     deleteItem,
+    restoreItem,
     loading,
     paginationDetails,
     setPaginationDetails,
@@ -61,6 +62,7 @@ const useUsers = () => {
     addItem,
     updateItem,
     deleteItem,
+    restoreItem,
   };
 };
 

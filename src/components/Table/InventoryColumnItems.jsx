@@ -15,9 +15,10 @@ const statusColors = {
 // column items for inventory table
 export const InventoryColumnItems = (
   modulePrivileges,
-  openDeleteModal,
   handleEdit,
-  loadOneItem
+  loadOneItem,
+  handleView,
+  opendeleteRestoreModal
 ) => [
   {
     title: "Item Name",
@@ -65,7 +66,7 @@ export const InventoryColumnItems = (
         apiFunction={loadOneItem}
         record={record}
         handleEdit={handleEdit}
-        openDeleteModal={openDeleteModal}
+        opendeleteRestoreModal={opendeleteRestoreModal}
       />
     ),
   },

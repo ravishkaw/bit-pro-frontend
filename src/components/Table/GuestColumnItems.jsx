@@ -4,10 +4,10 @@ import TableActions from "./TableActions";
 // Column items for the Guest table
 export const guestColumnItems = (
   modulePrivileges,
-  openDeleteModal,
   handleEdit,
   loadOneItem,
-  handleView
+  handleView,
+  opendeleteRestoreModal
 ) => [
   {
     title: "Full Name",
@@ -56,7 +56,8 @@ export const guestColumnItems = (
         handleEdit={handleEdit}
         handleView={handleView}
         showView={true}
-        openDeleteModal={openDeleteModal}
+        opendeleteRestoreModal={opendeleteRestoreModal}
+        isDeleted={record?.statusName == "Deleted"}
       />
     ),
   },
