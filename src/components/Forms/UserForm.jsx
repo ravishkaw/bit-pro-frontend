@@ -245,7 +245,7 @@ const UserForm = ({
                         (role.label === "Admin" && !hasAdminRole) || // Non-admin can't select Admin role
                         (role.label === "Admin" &&
                           isEditing &&
-                          selectedObject?.username === user.username) // Admin can't remove own Admin role
+                          selectedObject?.id === user.userId) // Admin can't remove own Admin role
                       }
                       value={role.value}
                     >

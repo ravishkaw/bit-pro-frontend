@@ -38,6 +38,11 @@ const ViewPerson = ({
     additionalData?.idTypes,
     selectedPerson?.idTypeId
   );
+  // title name
+  const title = findLabelByValue(
+    additionalData?.titles,
+    selectedPerson?.titleId
+  );
   // gender
   const gender = findLabelByValue(
     additionalData?.genders,
@@ -85,7 +90,7 @@ const ViewPerson = ({
 
   // All value mappings
   const personalInfo = [
-    { key: "1", label: "Full Name", children: fullName },
+    { key: "1", label: "Full Name", children: `${title} ${fullName}` },
     { key: "2", label: "Calling Name", children: callingName },
     {
       key: "3",

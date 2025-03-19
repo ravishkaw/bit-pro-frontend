@@ -28,7 +28,7 @@ const AppSider = ({ isMobile, collapsed, drawerOpen, setDrawerOpen }) => {
               style={{ width: "3rem" }}
             />
             <Typography.Title level={4} style={{ margin: 0, marginRight: 20 }}>
-              Villa Waterlilly
+              Villa Water Lilly
             </Typography.Title>
           </Flex>
         )}

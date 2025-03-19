@@ -7,6 +7,7 @@ const MODULE_BASE_URL = "/modules";
 const ROLE_BASE_URL = "/roles";
 const NATIONALITIES_BASE_URL = "/nationalities";
 const ID_TYPE_BASE_URL = "/id-types";
+const TITLE_BASE_URL = "/titles";
 const GENDER_BASE_URL = "/genders";
 const CIVIL_STATUS_BASE_URL = "/civil-status";
 const EMPLOYEE_BASE_URL = "/employees";
@@ -27,6 +28,9 @@ export const nationalitiesService = createApiService(NATIONALITIES_BASE_URL);
 
 // Generic API service for idType
 export const idTypeService = createApiService(ID_TYPE_BASE_URL);
+
+// Generic API service for title
+export const titleService = createApiService(TITLE_BASE_URL);
 
 // Generic API service for gender
 export const genderService = createApiService(GENDER_BASE_URL);

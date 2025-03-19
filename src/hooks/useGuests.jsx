@@ -6,8 +6,14 @@ import useProfileData from "./useProfileData";
 // Custom hook to manage guest operations
 const useGuests = () => {
   // get profile data
-  const { genders, idTypes, civilStatus, nationalities, loadProfileData } =
-    useProfileData();
+  const {
+    genders,
+    idTypes,
+    civilStatus,
+    nationalities,
+    titles,
+    loadProfileData,
+  } = useProfileData();
 
   // Format guest data to match form requirements
   const formatGuestData = (guest) => ({
@@ -38,7 +44,7 @@ const useGuests = () => {
   // Return states and functions for external use
   return {
     data,
-    additionalData: { genders, idTypes, civilStatus, nationalities },
+    additionalData: { genders, idTypes, civilStatus, nationalities, titles },
     loadOneItem,
     addItem,
     updateItem,

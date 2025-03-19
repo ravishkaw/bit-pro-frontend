@@ -46,14 +46,14 @@ export const employeeColumnItems = (
     title: "Designation",
     dataIndex: "designation",
     sorter: true,
-    render: (_, record) => record.designation?.name || "N/A",
+    render: (_, record) => record?.designationName || "N/A",
   },
   {
     title: "Status",
     dataIndex: "employeeStatus",
     sorter: true,
     render: (_, record) => {
-      const statusName = record.employeeStatus?.name || "N/A";
+      const statusName = record?.employeeStatusName || "N/A";
       return (
         <Tag color={statusColors[statusName] || "default"}>{statusName}</Tag>
       );
@@ -73,7 +73,7 @@ export const employeeColumnItems = (
         handleView={handleView}
         showView={true}
         opendeleteRestoreModal={opendeleteRestoreModal}
-        isDeleted={record.employeeStatus?.name === "Deleted"}
+        isDeleted={record?.employeeStatusName === "Deleted"}
       />
     ),
   },

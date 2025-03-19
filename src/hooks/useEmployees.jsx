@@ -19,8 +19,14 @@ const useEmployees = () => {
   const [employeeStatus, setEmployeeStatus] = useState([]);
 
   // get profile data
-  const { genders, idTypes, civilStatus, nationalities, loadProfileData } =
-    useProfileData();
+  const {
+    genders,
+    idTypes,
+    civilStatus,
+    nationalities,
+    titles,
+    loadProfileData,
+  } = useProfileData();
 
   // Fetch and map employee designations and status
   const getEmployeeSpecificData = async () => {
@@ -78,6 +84,7 @@ const useEmployees = () => {
       genders,
       civilStatus,
       nationalities,
+      titles,
     },
     paginationDetails,
     setPaginationDetails,

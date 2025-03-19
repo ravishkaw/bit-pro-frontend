@@ -15,6 +15,7 @@ const PersonalInfo = ({
   idTypes,
   genders,
   civilStatus,
+  titles,
 }) => {
   // Destructure validations
   const {
@@ -74,6 +75,7 @@ const PersonalInfo = ({
 
     // Update form values
     form.setFieldsValue({
+      titleId: formData.titleId,
       idTypeId: formData.idTypeId,
       nationalityId: formData.nationalityId,
       genderId: formData.genderId,
@@ -155,7 +157,18 @@ const PersonalInfo = ({
   return (
     <>
       <Row gutter={16}>
-        <Col xs={24} sm={16}>
+        <Col xs={4} sm={4}>
+          <Form.Item
+            name="titleId"
+            label={<FormInputTooltip label="Title" title="Select the title" />}
+            rules={[{ required: true }]}
+            hasFeedback
+          >
+            <Select options={titles} placeholder="Select title" />
+          </Form.Item>
+        </Col>
+
+        <Col xs={20} sm={12}>
           <Form.Item
             name="fullName"
             label={

@@ -10,12 +10,13 @@ const Dashboard = () => {
     { title: "Privilege module" },
     { title: "Room facilitity" },
     { title: "Room pricing rule" },
+    { title: "Room" },
+    { title: "Guest Module" },
   ];
 
   const onGoing = [
+    { title: "Inventory" },
     { title: "Room Inventory" },
-    { title: "Room" },
-    { title: "Guest Module > Duplicate of Employee with minor changes" },
     { title: "Room reservation" },
   ];
 
@@ -30,11 +31,15 @@ const Dashboard = () => {
         "Make again and familiar with app sider functions and some other functions that made with AI",
       done: false,
     },
-    { title: "Room module - ui and forms", done: false },
+    {
+      title:
+        "Make a method to delete previous image -> when update value checking can delete it***",
+      done: false,
+    },
+    { title: "Room page filtering", done: false },
     { title: "Finish inventory - only made fetch all->fe & be", done: false },
     { title: "Room Inventory needs more attention and fixes", done: false },
     { title: "Notification popover", done: false },
-    { title: "Pictures endpoint", done: true },
   ];
 
   const { boxShadow } = Styles();

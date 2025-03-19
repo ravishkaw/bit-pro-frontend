@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
   const checkSession = async () => {
     try {
       const response = await session();
-      setUser({ userId: response.userId });
+      setUser({ userId: response.userId, role: response?.roles });
       setPrivilegedModules(response.privilegedModules);
       setPrivileges(response.privileges);
       // messageApi.success("Session verified. Login successful!");
@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await login(loginFormData);
       if (response) {
-        setUser({ userId: response.userId });
+        setUser({ userId: response.userId, role: response?.roles });
         setPrivilegedModules(response.privilegedModules);
         setPrivileges(response.privileges);
         messageApi.success("Login successful");

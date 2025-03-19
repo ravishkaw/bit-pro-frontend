@@ -24,7 +24,7 @@ const ProfileFormModal = ({
   isEditing,
   selectedObject,
   addItem,
-  showUpdateModal,
+  showUpdateConfirmModal,
 }) => {
   const [current, setCurrent] = useState(0);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -40,6 +40,7 @@ const ProfileFormModal = ({
     idTypes,
     genders,
     civilStatus,
+    titles,
   } = additionalData;
 
   // sets formdata based on form modal state
@@ -94,8 +95,9 @@ const ProfileFormModal = ({
         idTypes,
         genders,
         civilStatus,
+        titles,
       });
-      showUpdateModal(updatedValues, selectedObject.id, data);
+      showUpdateConfirmModal(updatedValues, selectedObject.id, data);
     } else {
       setConfirmLoading(true);
       await addItem(data);
@@ -127,6 +129,7 @@ const ProfileFormModal = ({
           idTypes={idTypes}
           genders={genders}
           civilStatus={civilStatus}
+          titles={titles}
         />
       ),
       icon: <UserOutlined />,
