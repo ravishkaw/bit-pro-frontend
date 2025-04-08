@@ -83,7 +83,13 @@ const ManageRooms = () => {
     <>
       <Card
         variant="borderless"
-        style={{ ...boxShadow, marginBottom: 20 }}
+        style={{
+          ...boxShadow,
+          marginBottom: 20,
+          position: "sticky",
+          top: 68,
+          zIndex: 1,
+        }}
         styles={{ body: { padding: 20 } }}
       >
         <Row gutter={[20, 20]}>

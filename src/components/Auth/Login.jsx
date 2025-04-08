@@ -17,9 +17,10 @@ const Login = () => {
   const themeToggleStyle = {
     fontSize: "1.25rem",
     color: isDarkMode && "white",
-    float: "right",
+    position: "absolute",
     top: 5,
     right: 5,
+    zIndex: 3,
   };
 
   return (
@@ -55,7 +56,7 @@ const Login = () => {
           left: 0,
           width: "100%",
           height: "100%",
-          backgroundColor: "#e0e2ec92",
+          backgroundColor: "#6b6c7287",
           zIndex: -1,
         }}
       />

@@ -10,6 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null); // Logged-in user
   const [privilegedModules, setPrivilegedModules] = useState([]); // Modules user can access
   const [privileges, setPrivileges] = useState([]); // User's modules and their permissions
+  const [loading, setLoading] = useState(true); // loading state
 
   // For showing messages
   const [messageApi, contextHolder] = message.useMessage();
@@ -17,6 +18,7 @@ export const AuthProvider = ({ children }) => {
   // Check the use session exists
   const checkSession = async () => {
     try {
+      setLoading(true);
       const response = await session();
       setUser({ userId: response.userId, role: response?.roles });
       setPrivilegedModules(response.privilegedModules);
@@ -25,6 +27,8 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       messageApi.warning("Please Login!");
       console.error("Session check failed:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,7 +69,14 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, privileges, privilegedModules, handleLogin, handleLogout }}
+      value={{
+        loading,
+        user,
+        privileges,
+        privilegedModules,
+        handleLogin,
+        handleLogout,
+      }}
     >
       {contextHolder} {/* Needed for messages to work */}
       {children}

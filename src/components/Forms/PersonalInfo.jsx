@@ -157,18 +157,7 @@ const PersonalInfo = ({
   return (
     <>
       <Row gutter={16}>
-        <Col xs={4} sm={4}>
-          <Form.Item
-            name="titleId"
-            label={<FormInputTooltip label="Title" title="Select the title" />}
-            rules={[{ required: true }]}
-            hasFeedback
-          >
-            <Select options={titles} placeholder="Select title" />
-          </Form.Item>
-        </Col>
-
-        <Col xs={20} sm={12}>
+        <Col xs={20} sm={16}>
           <Form.Item
             name="fullName"
             label={
@@ -178,6 +167,9 @@ const PersonalInfo = ({
             hasFeedback
           >
             <Input
+              addonBefore={
+                <Select options={titles} placeholder="Title" />
+              }
               placeholder="E.g., John Doe"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}

@@ -18,6 +18,7 @@ const Dashboard = () => {
     { title: "Inventory" },
     { title: "Room Inventory" },
     { title: "Room reservation" },
+    { title: "Packages" },
   ];
 
   const todo = [
@@ -37,6 +38,7 @@ const Dashboard = () => {
       done: false,
     },
     { title: "Room page filtering", done: false },
+    { title: "Logics changed one remember", done: false },
     { title: "Finish inventory - only made fetch all->fe & be", done: false },
     { title: "Room Inventory needs more attention and fixes", done: false },
     { title: "Notification popover", done: false },

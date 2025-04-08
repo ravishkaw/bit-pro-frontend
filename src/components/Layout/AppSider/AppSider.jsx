@@ -65,7 +65,8 @@ const AppSider = ({ isMobile, collapsed, drawerOpen, setDrawerOpen }) => {
       trigger={null}
       collapsible
       collapsed={collapsed}
-      width={250}
+      width={280}
+      theme="light"
     >
       {siderContent}
     </Layout.Sider>

@@ -12,6 +12,9 @@ export const ThemeProvider = ({ children }) => {
   const toggleTheme = () => {
     setIsDarkMode((prev) => {
       localStorage.setItem("darkThemeEnabled", JSON.stringify(!prev));
+      setTimeout(() => {
+        window.location.reload();
+      }, 50);
       return !prev;
     });
   };

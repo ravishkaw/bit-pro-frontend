@@ -10,8 +10,11 @@ import { protectedRoutes } from "./routeConfig";
 import PrivateRoute from "./PrivateRoute";
 import ModuleAccess from "./ModuleAccess";
 import AppLayout from "../components/Layout/AppLayout";
+import { useAuth } from "../contexts/AuthContext";
+import { Spin } from "antd";
 
 const AppRoutes = () => {
+  const { loading } = useAuth();
   //Renders a protected routes with privilege checking
   const renderProtectedRoute = ({
     path, //Route path
@@ -34,6 +37,10 @@ const AppRoutes = () => {
       }
     />
   );
+
+  if (loading) {
+    return <Spin fullscreen />;
+  }
 
   return (
     <Routes>

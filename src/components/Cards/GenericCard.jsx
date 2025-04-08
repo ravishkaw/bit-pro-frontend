@@ -75,7 +75,8 @@ const GenericCard = ({
           column.dataIndex === "module" ||
           column.dataIndex === "role"
         ) {
-          value = data[column.dataIndex].name; // designation :{id:1, name:"admin"}
+          // ! bugs
+          // value = data[column.dataIndex].label; // designation :{id:1, name:"admin"}
 
           // Apply tag colors to employeeStatus
           if (column.dataIndex === "employeeStatus" && tagColors[value]) {

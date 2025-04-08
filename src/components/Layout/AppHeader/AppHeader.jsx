@@ -46,12 +46,12 @@ const AppHeader = ({ isMobile, collapsed, setCollapsed, setDrawerOpen }) => {
     borderBottomLeftRadius: 8,
     margin: isScrolled ? "0 20px" : "0",
     transition: "margin 0.3s ease",
-    backgroundColor: isScrolled && (isDarkMode ? "#212235f9" : "#ffffffe6"),
+    backgroundColor: isScrolled && (isDarkMode ? "#000000e6" : "#ffffffe6"),
     boxShadow:
       isScrolled &&
       (isDarkMode
-        ? "0 .25rem .5rem -0.25rem #1011216b"
-        : "0 .25rem .5rem -0.25rem #262b436b"),
+        ? "#10112142 0px 0.25rem 0.875rem 0px"
+        : "#262b4328 0px 0.25rem 0.875rem 0px"),
   };
 
   // button style
@@ -60,7 +60,6 @@ const AppHeader = ({ isMobile, collapsed, setCollapsed, setDrawerOpen }) => {
     lineHeight: "1.25rem",
     verticalAlign: "middle",
     borderRadius: "50%",
-    color: isDarkMode && "white",
     padding: 5,
   };
 
