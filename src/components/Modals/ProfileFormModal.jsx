@@ -195,7 +195,7 @@ const ProfileFormModal = ({
             </Button>
           )}
           <Space>
-            {current === 0 && <Button onClick={closeFormModal}>Cancel</Button>}
+            {/* {current === 0 && <Button onClick={closeFormModal}>Cancel</Button>} */}
             {current > 0 && <Button onClick={prev}>Previous</Button>}
             {current < items.length - 1 && (
               <Button type="primary" onClick={next}>

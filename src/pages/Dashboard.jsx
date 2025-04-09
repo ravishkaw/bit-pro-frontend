@@ -1,5 +1,4 @@
 import { Card, List, Row, Col, Typography, Tag } from "antd";
-import Styles from "../constants/Styles";
 
 const { Text, Title } = Typography;
 
@@ -44,12 +43,10 @@ const Dashboard = () => {
     { title: "Notification popover", done: false },
   ];
 
-  const { boxShadow } = Styles();
-
   return (
     <Row gutter={[20, 20]}>
       <Col md={8} xs={24}>
-        <Card variant="borderless" style={{ ...boxShadow }}>
+        <Card variant="borderless">
           <Title level={3}>Finished</Title>
           <List
             dataSource={finished}
@@ -63,7 +60,7 @@ const Dashboard = () => {
       </Col>
 
       <Col md={8} xs={24}>
-        <Card variant="borderless" style={{ ...boxShadow }}>
+        <Card variant="borderless">
           <Title level={3}>On Going</Title>
           <List
             dataSource={onGoing}
@@ -79,7 +76,7 @@ const Dashboard = () => {
       </Col>
 
       <Col md={8} xs={24}>
-        <Card variant="borderless" style={{ ...boxShadow }}>
+        <Card variant="borderless">
           <Title level={3}>To do</Title>
           <List
             dataSource={todo}

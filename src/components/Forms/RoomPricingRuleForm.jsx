@@ -134,6 +134,7 @@ const RoomPricingRuleForm = ({
           <RangePicker
             style={{ width: "100%" }}
             placeholder={["Start Date", "End Date"]}
+            placement="bottomRight"
           />
         </Form.Item>
 

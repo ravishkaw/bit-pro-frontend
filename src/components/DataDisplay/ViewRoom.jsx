@@ -134,7 +134,7 @@ const ViewRoom = ({
       footer={null}
     >
       <div ref={contentRef}>
-        <Divider orientation="center" style={{ marginTop: 0 }}>
+        <Divider orientation="center">
           <Title
             level={3}
             style={{ margin: 0 }}
@@ -210,7 +210,7 @@ const ViewRoom = ({
           <span></span>
         )}
         <Space>
-          <Button onClick={() => closeViewModal()}>Close</Button>
+          {/* <Button onClick={() => closeViewModal()}>Close</Button> */}
           <Button color="primary" variant="solid" onClick={() => printFn()}>
             Print
           </Button>

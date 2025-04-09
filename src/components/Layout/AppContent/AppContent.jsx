@@ -8,7 +8,7 @@ const AppContent = ({ children }) => {
 export default AppContent;
 
 const contentStyle = {
-  padding: "20px",
+  padding: "16px",
   width: "100%",
   maxWidth: "1440px",
   margin: "0 auto",

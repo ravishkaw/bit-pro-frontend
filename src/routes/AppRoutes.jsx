@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router";
+import { BrowserRouter as Router, Route, Routes } from "react-router";
 import Login from "../components/Auth/Login";
 
 import Unauthorized from "../pages/Shared/Unauthorized";
@@ -39,25 +39,27 @@ const AppRoutes = () => {
   );
 
   if (loading) {
-    return <Spin fullscreen />;
+    return <Spin fullscreen size="large" percent="auto" />;
   }
 
   return (
-    <Routes>
-      {/* Public route - Login page */}
-      <Route index element={<Login />} />
+    <Router>
+      <Routes>
+        {/* Public route - Login page */}
+        <Route index element={<Login />} />
 
-      {/* Protected routes wrapper with app layout */}
-      <Route path="/" element={<AppLayout />}>
-        {/* Generate all protected routes from config */}
-        {protectedRoutes.map(renderProtectedRoute)}
-      </Route>
+        {/* Protected routes wrapper with app layout */}
+        <Route path="/" element={<AppLayout />}>
+          {/* Generate all protected routes from config */}
+          {protectedRoutes.map(renderProtectedRoute)}
+        </Route>
 
-      {/* Unauthorized , NotFound and server error routes */}
-      <Route path="/unauthorized" element={<Unauthorized />} />
-      <Route path="/server-error" element={<ServerError />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+        {/* Unauthorized , NotFound and server error routes */}
+        <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="/server-error" element={<ServerError />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
   );
 };
 

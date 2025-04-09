@@ -1,13 +1,19 @@
 import { Button, Col, Layout, Row, Drawer, Flex, Typography } from "antd";
 import { MenuFoldOutlined } from "@ant-design/icons";
 
+import { useThemeContext } from "../../../contexts/ThemeContext";
+
 import SiderContent from "./SiderContent";
 
-import companyLogoCollapsed from "../../../assets/logoCollapsed.png";
+import blackLogo from "../../../assets/logo-black.png";
+import whiteLogo from "../../../assets/logo-white.png";
 
 // Main sider component - Uses sider for desktop and drawer for mobile
 const AppSider = ({ isMobile, collapsed, drawerOpen, setDrawerOpen }) => {
   // Main sider content to render in sider and drawer
+
+  const { isDarkMode } = useThemeContext();
+
   const siderContent = (
     <Row align="middle" justify="center" gutter={[0, 24]}>
       <Col
@@ -16,21 +22,19 @@ const AppSider = ({ isMobile, collapsed, drawerOpen, setDrawerOpen }) => {
       >
         {collapsed ? (
           <img
-            src={companyLogoCollapsed}
+            src={isDarkMode ? whiteLogo : blackLogo}
             alt="Company Logo"
-            style={{ height: "auto", width: "3rem" }}
+            style={{ height: "auto", width: "3rem", marginTop: "2rem" }}
           />
         ) : (
-          <Flex justify="center" align="center" gap={8}>
+          <>
             <img
-              src={companyLogoCollapsed}
+              src={isDarkMode ? whiteLogo : blackLogo}
               alt="Company Logo"
-              style={{ width: "3rem" }}
+              style={{ width: "5rem" }}
             />
-            <Typography.Title level={4} style={{ margin: 0, marginRight: 20 }}>
-              Villa Water Lilly
-            </Typography.Title>
-          </Flex>
+            <Typography.Title level={4}>Villa Water Lilly</Typography.Title>
+          </>
         )}
       </Col>
       <Col span={24}>

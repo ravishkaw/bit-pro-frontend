@@ -17,9 +17,8 @@ export const PricingRulesColumnItems = (
   opendeleteRestoreModal
 ) => [
   {
-    title: "Room Type",
-    dataIndex: "roomTypeName",
-    sorter: true,
+    title: "Description",
+    dataIndex: "description",
   },
   {
     title: "Start Date",
@@ -31,10 +30,7 @@ export const PricingRulesColumnItems = (
     dataIndex: "endDate",
     sorter: true,
   },
-  {
-    title: "Description",
-    dataIndex: "description",
-  },
+
   {
     title: "Pricing Multiplier",
     dataIndex: "pricingMultiplier",

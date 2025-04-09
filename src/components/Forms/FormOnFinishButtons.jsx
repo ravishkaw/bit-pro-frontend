@@ -5,7 +5,7 @@ const FormOnFinishButtons = ({ closeFormModal, isEditing, confirmLoading }) => {
   return (
     <Flex justify="end">
       <Space>
-        <Button onClick={closeFormModal}>Cancel</Button>
+        {/* <Button onClick={closeFormModal}>Cancel</Button> */}
         <Button
           color={isEditing ? "yellow" : "green"}
           variant="solid"

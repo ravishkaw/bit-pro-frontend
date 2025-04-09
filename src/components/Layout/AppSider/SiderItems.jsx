@@ -69,12 +69,6 @@ export const siderItems = [
         icon: <AppstoreOutlined />,
         privilege: "Room Inventory",
       },
-      {
-        key: "/room-pricing-rules",
-        label: "Room Pricing Rules",
-        icon: <DollarCircleOutlined />,
-        privilege: "Room Pricing Rule",
-      },
     ],
   },
   {

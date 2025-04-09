@@ -13,7 +13,6 @@ import {
 } from "antd";
 import { EditOutlined, UserOutlined } from "@ant-design/icons";
 import { useAuth } from "../contexts/AuthContext";
-import Styles from "../constants/Styles";
 import { userService } from "../services/systemApiService";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -44,7 +43,6 @@ const UserProfile = () => {
     }
   }, [user?.userId]);
 
-  const { boxShadow } = Styles();
   const [isEditing, setIsEditing] = useState(false);
 
   // Handle edit toggle
@@ -54,13 +52,7 @@ const UserProfile = () => {
   };
 
   return (
-    <Card
-      variant="borderless"
-      style={{
-        ...boxShadow,
-        padding: 16,
-      }}
-    >
+    <Card variant="borderless" style={{ padding: 16 }}>
       {loading ? (
         <div style={{ textAlign: "center", padding: "40px 0" }}>
           <Spin size="large" />

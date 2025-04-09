@@ -7,7 +7,6 @@ import usePageChange from "../../hooks/usePageChange";
 import TableTitle from "../Table/TableTitle";
 import SkeletonCards from "../Cards/SkeletonCards";
 import GenericCard from "../Cards/GenericCard";
-import Styles from "../../constants/Styles";
 
 const { Search } = Input;
 
@@ -51,8 +50,6 @@ const TableCard = ({
     });
   };
 
-  const { boxShadow } = Styles(); // box shadow property
-
   // Desktop view - render table
   if (!isMobile) {
     return (
@@ -78,7 +75,7 @@ const TableCard = ({
         }}
         scroll={{ x: "max-content" }} // horizontal scrolling
         onChange={handlePageChange}
-        style={{ ...boxShadow, borderRadius: 8 }}
+        style={{ borderRadius: 8 }}
       />
     );
   }
@@ -90,7 +87,7 @@ const TableCard = ({
   ) : (
     <>
       {/* Mobile view header with search and add button */}
-      <Flex justify="space-between" gap="middle" style={{ marginBottom: 10 }}>
+      <Flex justify="space-between" gap="middle" style={{ marginBottom: 16 }}>
         <Search
           placeholder={`Search ${module}`}
           onSearch={handleSearch}

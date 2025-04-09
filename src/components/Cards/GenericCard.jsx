@@ -1,7 +1,6 @@
 import { Card, Col, Row, Tag } from "antd";
 
 import CardActions from "./CardActions";
-import Styles from "../../constants/Styles";
 
 // Card for pages
 const GenericCard = ({
@@ -45,14 +44,8 @@ const GenericCard = ({
     Disposed: "geekblue",
   };
 
-  const { boxShadow } = Styles();
-
   return (
-    <Card
-      variant="borderless"
-      actions={actions}
-      style={{ ...boxShadow, marginBottom: 10 }}
-    >
+    <Card variant="borderless" actions={actions} style={{ marginBottom: 16 }}>
       {newColumns.map((column, index) => {
         // set data into value
         let value = data[column.dataIndex];

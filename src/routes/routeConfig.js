@@ -9,7 +9,6 @@ import {
   ManageRooms,
   RoomFacilities,
   RoomInventory,
-  RoomPricingRules,
   RoomTypes,
 } from "../pages/Rooms";
 import Inventory from "../pages/Inventory/Inventory";
@@ -77,11 +76,6 @@ export const protectedRoutes = [
     path: "/room-inventory",
     element: RoomInventory,
     module: "Room Inventory",
-  },
-  {
-    path: "/room-pricing-rules",
-    element: RoomPricingRules,
-    module: "Room Pricing Rule",
   },
 
   // Inventory Routes

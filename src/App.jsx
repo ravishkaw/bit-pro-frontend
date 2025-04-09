@@ -1,5 +1,4 @@
 import { ConfigProvider, theme } from "antd";
-import { BrowserRouter as Router } from "react-router";
 import { ToastContainer } from "react-toastify";
 
 import AppRoutes from "./routes/AppRoutes";
@@ -25,7 +24,8 @@ const App = () => {
           },
           Menu: {
             itemBg: "transparent",
-            borderRadius: 8,
+            itemSelectedBg: "#666cff",
+            itemSelectedColor: "#ffffff",
           },
           Tooltip: {
             colorBgSpotlight: "#666cff",
@@ -38,10 +38,8 @@ const App = () => {
         },
       }}
     >
-      <Router>
-        <AppRoutes />
-        <ToastContainer newestOnTop theme={isDarkMode ? "dark" : "light"} />
-      </Router>
+      <AppRoutes />
+      <ToastContainer newestOnTop theme={isDarkMode ? "dark" : "light"} />
     </ConfigProvider>
   );
 };

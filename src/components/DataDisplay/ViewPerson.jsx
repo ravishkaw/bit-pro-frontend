@@ -129,10 +129,9 @@ const ViewPerson = ({
       width={850}
       onCancel={closeViewModal}
       footer={null}
-      centered
     >
       <div ref={contentRef}>
-        <Divider orientation="center" style={{ marginTop: 0 }}>
+        <Divider orientation="center">
           <Title level={3}>{`${capitalize(module)} Details - ${
             selectedPerson?.fullName
           }`}</Title>
@@ -169,7 +168,7 @@ const ViewPerson = ({
           <span></span>
         )}
         <Space>
-          <Button onClick={() => closeViewModal()}>Close</Button>
+          {/* <Button onClick={() => closeViewModal()}>Close</Button> */}
           <Button type="primary" onClick={() => printFn()}>
             Print
           </Button>

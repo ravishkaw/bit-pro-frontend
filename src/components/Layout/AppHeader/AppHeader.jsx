@@ -44,7 +44,7 @@ const AppHeader = ({ isMobile, collapsed, setCollapsed, setDrawerOpen }) => {
     zIndex: 100,
     borderBottomRightRadius: 8,
     borderBottomLeftRadius: 8,
-    margin: isScrolled ? "0 20px" : "0",
+    margin: isScrolled ? "0 16px" : "0",
     transition: "margin 0.3s ease",
     backgroundColor: isScrolled && (isDarkMode ? "#000000e6" : "#ffffffe6"),
     boxShadow:

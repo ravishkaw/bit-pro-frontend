@@ -1,7 +1,7 @@
+import { useState } from "react";
 import { Col, Card, Image, Tag, Typography, Flex } from "antd";
 import { TeamOutlined } from "@ant-design/icons";
 
-import Styles from "../../constants/Styles";
 import CardActions from "./CardActions";
 
 const { Meta } = Card;
@@ -15,6 +15,9 @@ const RoomCard = ({
   loadOneRoom,
   opendeleteRestoreModal,
 }) => {
+  // Image preview
+  const [previewVisible, setPreviewVisible] = useState(false);
+
   // card actions
   const { actions } = CardActions(
     handleView,
@@ -24,8 +27,6 @@ const RoomCard = ({
     loadOneRoom,
     room
   );
-
-  const { boxShadow } = Styles();
 
   return (
     <Col md={8} sm={12} xs={24}>
@@ -40,10 +41,16 @@ const RoomCard = ({
             }}
             alt={room.number}
             src={import.meta.env.VITE_IMAGE_URL + room.photo}
+            onClick={() => setPreviewVisible(true)}
+            preview={{
+              visible: previewVisible,
+              onVisibleChange: (visible) => {
+                if (!visible) setPreviewVisible(false);
+              },
+            }}
           />
         }
         style={{
-          ...boxShadow,
           height: "100%",
         }}
         actions={actions}
