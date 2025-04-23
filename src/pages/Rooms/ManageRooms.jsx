@@ -1,54 +1,54 @@
-import {
-  Row,
-  Col,
-  Card,
-  Flex,
-  Empty,
-  Button,
-  Space,
-  Skeleton,
-  Select,
-  Typography,
-  Input,
-  Statistic,
-} from "antd";
-import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { useEffect, useState } from "react";
+import { Row, Col, Empty, Skeleton, Modal } from "antd";
 
 import { useAuth } from "../../contexts/AuthContext";
 import { useThemeContext } from "../../contexts/ThemeContext";
-import useRooms from "../../hooks/useRooms";
-import useModalStates from "../../hooks/useModalStates";
 
+import useRooms from "../../hooks/room/useRooms";
+import useRoomFacilities from "../../hooks/room/useRoomFacilities";
+import useModalStates from "../../hooks/common/useModalStates";
+
+import GenericPage from "../GenericPage";
 import RoomCard from "../../components/Cards/RoomCard";
+import RoomFilter from "../../components/Cards/RoomFilter";
+import ViewRoom from "../../components/DataDisplay/ViewRoom";
+import { RoomFacilitiesColumnItems } from "../../components/Table/RoomFacilitiesColumnItems";
+import RoomStatistics from "../../components/Statistics/RoomStatistics";
+
 import DeleteRestoreConfirmationModal from "../../components/Modals/DeleteRestoreConfirmationModal";
 import UpdateConfirmationModal from "../../components/Modals/UpdateConfirmationModal";
+
 import RoomForm from "../../components/Forms/RoomForm";
-import ViewRoom from "../../components/DataDisplay/ViewRoom";
+import RoomFacilityForm from "../../components/Forms/RoomFacilityForm";
 
 import { mapToSelectOptions } from "../../utils/utils";
 
 const ManageRooms = () => {
-  let module = "Room"; // Define the module for rooms
+  let roomModule = "Room"; // Define the module for rooms
+  let roomFacilityModule = "Room Facility"; // Define the module for room facilities
+  const rowKey = "id"; // define row key for table
+
+  const [facilityModalOpen, setFacilityModalOpen] = useState(false);
 
   // Find the module related to "Room" in the privileges
   const { privileges } = useAuth();
   const { isDarkMode } = useThemeContext();
 
   const modulePrivileges = privileges?.find(
-    (privilegedModule) => privilegedModule.module_name === module
+    (privilegedModule) => privilegedModule.module_name === roomModule
   );
 
   // Destructure functions and states from custom hooks
   const {
     rooms,
     loading,
-    setSelectedTab,
     additionalData,
     loadOneItem,
     addItem,
     updateItem,
     deleteItem,
     restoreItem,
+    loadReferenceData,
   } = useRooms();
 
   const {
@@ -67,101 +67,36 @@ const ManageRooms = () => {
     closeUpdateConfirmModal,
   } = useModalStates();
 
+  const roomFacilityhookData = useRoomFacilities();
+
   const { open, isEditing, selectedObject } = formModalState; // Extract modal state details
-  const { roomTypes } = additionalData;
+  const { roomTypes, roomStatus } = additionalData;
+
+  // To update reference data when facility data changes
+  useEffect(() => {
+    if (roomFacilityhookData.data) {
+      loadReferenceData();
+    }
+  }, [roomFacilityhookData.data]);
 
   const mappedRoomTypes = mapToSelectOptions(roomTypes);
 
-  // Function to handle tab change
-  const handleTabChange = (value) => {
-    setSelectedTab(value);
-  };
+  const openModal = () => setFacilityModalOpen(true);
+  const closeModal = () => setFacilityModalOpen(false);
 
   return (
     <>
-      <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
-        <Col lg={6} xs={12}>
-          <Card variant="borderless" style={{ height: "100%" }}>
-            <Statistic
-              title="Total Rooms"
-              value={0}
-              valueStyle={{ color: "#3f8600" }}
-            />
-          </Card>
-        </Col>
-        <Col lg={6} xs={12}>
-          <Card variant="borderless" style={{ height: "100%" }}>
-            <Statistic
-              title="Available Rooms"
-              value={0}
-              valueStyle={{ color: "#3f8600" }}
-            />
-          </Card>
-        </Col>
-        <Col lg={6} xs={12}>
-          <Card variant="borderless" style={{ height: "100%" }}>
-            <Statistic
-              title="Available Rooms"
-              value={0}
-              valueStyle={{ color: "#3f8600" }}
-            />
-          </Card>
-        </Col>
-        <Col lg={6} xs={12}>
-          <Card variant="borderless" style={{ height: "100%" }}>
-            <Statistic
-              valueRender={() => (
-                <Flex vertical gap={8}>
-                  <Button>Manage Room Facilities</Button>
-                  <Button>Manage Room Inventories</Button>
-                </Flex>
-              )}
-              valueStyle={{ color: "#3f8600" }}
-            />
-          </Card>
-        </Col>
-      </Row>
-      <Card
-        variant="borderless"
-        style={{ position: "sticky", top: 68, zIndex: 1, marginBottom: 16 }}
-      >
-        <Flex align="center" gap={8} wrap>
-          <Typography.Title level={5} style={{ margin: 0 }}>
-            Filter Rooms
-          </Typography.Title>
-          <Typography.Text>By room type</Typography.Text>
-          <Select
-            placeholder="select the room type"
-            options={[
-              {
-                value: "all",
-                label: "All Rooms",
-              },
-              ...mappedRoomTypes,
-            ]}
-            onChange={handleTabChange}
-            defaultValue={"all"}
-          />
-          <Select placeholder="by availability" />
-          <Space size="large" align="center">
-            <Input.Search
-              allowClear
-              placeholder="Search rooms"
-              enterButton={
-                <Button type={isDarkMode ? "primary" : "default"}>
-                  <SearchOutlined />
-                </Button>
-              }
-            />
-            {modulePrivileges?.insert_privilege && (
-              <Button type="primary" onClick={() => openFormModal(false)}>
-                <PlusOutlined />
-                Add New Room
-              </Button>
-            )}
-          </Space>
-        </Flex>
-      </Card>
+      <RoomStatistics
+        rooms={rooms}
+        roomFacilityhookData={roomFacilityhookData}
+        openModal={openModal}
+      />
+      <RoomFilter
+        mappedRoomTypes={mappedRoomTypes}
+        roomStatus={roomStatus}
+        modulePrivileges={modulePrivileges}
+        openFormModal={openFormModal}
+      />
       <Row>
         <Col span={24}>
           <Row gutter={[16, 16]}>
@@ -195,7 +130,7 @@ const ManageRooms = () => {
       <RoomForm
         isEditing={isEditing}
         open={open}
-        module={module}
+        module={roomModule}
         closeFormModal={closeFormModal}
         selectedObject={selectedObject}
         addItem={addItem}
@@ -207,7 +142,7 @@ const ManageRooms = () => {
         <>
           {/* Displays detailed information about a room */}
           <ViewRoom
-            module={module}
+            module={roomModule}
             viewModal={viewModal}
             modulePrivileges={modulePrivileges}
             closeViewModal={closeViewModal}
@@ -218,7 +153,7 @@ const ManageRooms = () => {
 
           {/* Appears when deleting a room */}
           <DeleteRestoreConfirmationModal
-            module={module}
+            module={roomModule}
             deleteRestoreModal={deleteRestoreModal}
             closedeleteRestoreModal={closedeleteRestoreModal}
             deleteItem={deleteItem}
@@ -234,6 +169,27 @@ const ManageRooms = () => {
           />
         </>
       )}
+
+      {/* Modal of room facilities */}
+      <Modal
+        title="Room Facilities"
+        open={facilityModalOpen}
+        onCancel={closeModal}
+        width={850}
+        footer={null}
+        styles={{
+          header: { background: !isDarkMode ? "#f5f5f5" : "#1f1f1f" },
+          content: { background: !isDarkMode ? "#f5f5f5" : "#1f1f1f" },
+        }}
+      >
+        <GenericPage
+          module={roomFacilityModule}
+          hookData={roomFacilityhookData}
+          rowKey={rowKey}
+          columnItems={RoomFacilitiesColumnItems}
+          CustomForm={RoomFacilityForm}
+        />
+      </Modal>
     </>
   );
 };

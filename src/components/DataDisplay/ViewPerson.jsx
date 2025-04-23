@@ -9,7 +9,7 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 
-import usePrintContent from "../../hooks/usePrintContent";
+import usePrintContent from "../../hooks/common/usePrintContent";
 
 import { capitalize } from "../../utils/textUtils";
 

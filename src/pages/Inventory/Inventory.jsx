@@ -1,4 +1,4 @@
-import useInventory from "../../hooks/useInventory";
+import useInventory from "../../hooks/inventory/useInventory";
 
 import InventoryForm from "../../components/Forms/InventoryForm";
 import { InventoryColumnItems } from "../../components/Table/InventoryColumnItems";

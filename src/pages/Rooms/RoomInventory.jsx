@@ -1,4 +1,4 @@
-import useRoomInventory from "../../hooks/useRoomInventory";
+import useRoomInventory from "../../hooks/room/useRoomInventory";
 
 import GenericPage from "../GenericPage";
 import { RoomInventoryColumnItems } from "../../components/Table/RoomInventoryColumnItems";

@@ -1,7 +1,7 @@
 import { Col, Row } from "antd";
 
 import { useAuth } from "../contexts/AuthContext";
-import useModalStates from "../hooks/useModalStates";
+import useModalStates from "../hooks/common/useModalStates";
 
 import TableCard from "../components/DataDisplay/TableCard";
 import DeleteRestoreConfirmationModal from "../components/Modals/DeleteRestoreConfirmationModal";
@@ -86,6 +86,7 @@ const GenericPage = ({
             openFormModal={openFormModal}
             opendeleteRestoreModal={opendeleteRestoreModal}
             loadOneItem={loadOneItem}
+            showView={showView}
           />
 
           {/* Form for adding or editing a object */}

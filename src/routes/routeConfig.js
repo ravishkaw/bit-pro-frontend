@@ -1,17 +1,17 @@
 // Import page components
 import Dashboard from "../pages/Dashboard";
-import UserProfile from "../pages/UserProfile";
-import ManageEmployee from "../pages/ManageEmployees";
-import { ManageGuests, RoomReservation } from "../pages/Reservation";
-import ManageUsers from "../pages/ManageUsers";
-import ManagePrivileges from "../pages/ManagePrivileges";
+import UserProfile from "../pages/Profile/UserProfile";
+import ManageEmployee from "../pages/Profile/ManageEmployees";
 import {
-  ManageRooms,
-  RoomFacilities,
-  RoomInventory,
-  RoomTypes,
-} from "../pages/Rooms";
+  ManageGuests,
+  RoomReservation,
+  RoomReservationAmenities,
+} from "../pages/Reservation";
+import ManageUsers from "../pages/System/ManageUsers";
+import ManagePrivileges from "../pages/System/ManagePrivileges";
+import { ManageRooms, RoomInventory, RoomTypes } from "../pages/Rooms";
 import Inventory from "../pages/Inventory/Inventory";
+import ManagePackages from "../pages/Packages/ManagePackages";
 
 //Route Configuration
 export const protectedRoutes = [
@@ -51,12 +51,18 @@ export const protectedRoutes = [
     module: "Guest",
   },
 
-  // Room and reservation Management Routes
+  // Reservation Management Routes
   {
     path: "/room-reservations",
     element: RoomReservation,
     module: "Room Reservation",
   },
+  {
+    path: "/room-reservation-amenities",
+    element: RoomReservationAmenities,
+    module: "Room Reservation Amenity",
+  },
+  // Room Routes
   {
     path: "/rooms",
     element: ManageRooms,
@@ -68,16 +74,17 @@ export const protectedRoutes = [
     module: "Room Type",
   },
   {
-    path: "/room-facilities",
-    element: RoomFacilities,
-    module: "Room Facility",
-  },
-  {
     path: "/room-inventory",
     element: RoomInventory,
     module: "Room Inventory",
   },
 
+  // Package Routes
+  {
+    path: "/packages",
+    element: ManagePackages,
+    module: "Package",
+  },
   // Inventory Routes
   {
     path: "/inventory",

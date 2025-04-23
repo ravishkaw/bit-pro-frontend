@@ -3,6 +3,8 @@ import { Modal, Typography } from "antd";
 import { WarningFilled, QuestionCircleFilled } from "@ant-design/icons";
 import { toast } from "react-toastify";
 
+import { getEntityDisplayMessage } from "../../utils/getEntityDisplayMessage";
+
 // Confirmation modal for actions like delete or restore
 const DeleteRestoreConfirmationModal = ({
   deleteRestoreModal,
@@ -63,14 +65,9 @@ const DeleteRestoreConfirmationModal = ({
         {icon}
         <br />
         <br />
-        {`Are you sure you want to ${action} ${
-          selectedObject?.fullName || // Employee, Guest
-          selectedObject?.username || // User
-          (selectedObject?.roomNumber && `Room ${selectedObject.roomNumber}`) || // Rooms
-          (selectedObject?.moduleId?.name && selectedObject?.roleId?.name
-            ? `${selectedObject.moduleId.name} privilege of ${selectedObject.roleId.name}` // Privilege
-            : "this item") // Any other
-        }?`}
+        {`Are you sure you want to ${action} ${getEntityDisplayMessage(
+          selectedObject
+        )}?`}
       </Typography.Title>
     </Modal>
   );

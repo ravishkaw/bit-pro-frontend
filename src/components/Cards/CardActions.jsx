@@ -12,14 +12,15 @@ const CardActions = (
   opendeleteRestoreModal,
   privileges,
   loadOneItem,
-  data
+  data,
+  showView
 ) => {
   const actions = [];
 
   if (
     (data?.statusName === "Deleted" ||
       data?.employeeStatus?.name === "Deleted") &&
-    privileges.select_privilege
+    privileges?.select_privilege
   ) {
     actions.push(
       <UndoOutlined
@@ -30,7 +31,7 @@ const CardActions = (
     return { actions };
   }
 
-  if (privileges.select_privilege) {
+  if (privileges?.select_privilege && showView) {
     actions.push(
       <EyeOutlined
         style={{ color: "blue" }}
@@ -38,7 +39,7 @@ const CardActions = (
       />
     );
   }
-  if (privileges.update_privilege) {
+  if (privileges?.update_privilege) {
     actions.push(
       <EditOutlined
         style={{ color: "#fadb14" }}
@@ -46,7 +47,7 @@ const CardActions = (
       />
     );
   }
-  if (privileges.delete_privilege) {
+  if (privileges?.delete_privilege) {
     actions.push(
       <DeleteOutlined
         style={{ color: "red" }}

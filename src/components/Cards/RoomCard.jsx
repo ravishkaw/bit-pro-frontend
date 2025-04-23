@@ -14,9 +14,10 @@ const RoomCard = ({
   handleEdit,
   loadOneRoom,
   opendeleteRestoreModal,
+  showView,
 }) => {
   // Image preview
-  const [previewVisible, setPreviewVisible] = useState(false);
+  // const [previewVisible, setPreviewVisible] = useState(false);
 
   // card actions
   const { actions } = CardActions(
@@ -25,29 +26,31 @@ const RoomCard = ({
     opendeleteRestoreModal,
     modulePrivileges,
     loadOneRoom,
-    room
+    room,
+    (showView = true)
   );
 
   return (
     <Col md={8} sm={12} xs={24}>
       <Card
-        variant="borderless"
+        hoverable
         cover={
-          <Image
+          <img
             style={{
+              padding: 20,
               borderRadius: "8px 8px 0 0",
               height: "200px",
               objectFit: "fill",
             }}
             alt={room.number}
             src={import.meta.env.VITE_IMAGE_URL + room.photo}
-            onClick={() => setPreviewVisible(true)}
-            preview={{
-              visible: previewVisible,
-              onVisibleChange: (visible) => {
-                if (!visible) setPreviewVisible(false);
-              },
-            }}
+            // onClick={() => setPreviewVisible(true)}
+            // preview={{
+            //   visible: previewVisible,
+            //   onVisibleChange: (visible) => {
+            //     if (!visible) setPreviewVisible(false);
+            //   },
+            // }}
           />
         }
         style={{

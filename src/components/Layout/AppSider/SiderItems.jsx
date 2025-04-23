@@ -38,6 +38,12 @@ export const siderItems = [
         icon: <CalendarOutlined />,
         privilege: "Room Reservation",
       },
+      {
+        key: "/room-reservation-amenities",
+        label: "Reservation Amenities",
+        icon: <CalendarOutlined />,
+        privilege: "Room Reservation Amenity",
+      },
     ],
   },
   {
@@ -58,12 +64,6 @@ export const siderItems = [
         privilege: "Room Type",
       },
       {
-        key: "/room-facilities",
-        label: "Room Facilities",
-        icon: <GiftOutlined />,
-        privilege: "Room Facility",
-      },
-      {
         key: "/room-inventory",
         label: "Room Inventory",
         icon: <AppstoreOutlined />,
@@ -76,6 +76,12 @@ export const siderItems = [
     label: "Manage Employees",
     icon: <TeamOutlined />,
     privilege: "Employee",
+  },
+  {
+    key: "/packages",
+    label: "Manage Packages",
+    icon: <ShopOutlined />,
+    privilege: "Package",
   },
   {
     key: "inventory",

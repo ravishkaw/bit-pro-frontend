@@ -1,4 +1,4 @@
-import useGuests from "../../hooks/useGuests";
+import useGuests from "../../hooks/profile/useGuests";
 
 import GenericPage from "../GenericPage";
 import { guestColumnItems } from "../../components/Table/GuestColumnItems";

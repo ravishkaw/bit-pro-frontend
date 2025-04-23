@@ -1,14 +1,14 @@
-import { Pagination, Table, Button, Flex, Input } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { Pagination, Table, Card } from "antd";
 
 import { useMobileContext } from "../../contexts/MobileContext";
-import usePageChange from "../../hooks/usePageChange";
+import { useThemeContext } from "../../contexts/ThemeContext";
+
+import usePageChange from "../../hooks/common/usePageChange";
 
 import TableTitle from "../Table/TableTitle";
 import SkeletonCards from "../Cards/SkeletonCards";
 import GenericCard from "../Cards/GenericCard";
-
-const { Search } = Input;
+import SearchAddHeader from "./SearchAddHeader";
 
 // render table or cards based on screen size
 const TableCard = ({
@@ -25,12 +25,14 @@ const TableCard = ({
   openFormModal, // function to open create/edit form modal
   opendeleteRestoreModal, // function to open delete / restore modal
   loadOneItem, // Load single object funtion (loadOneEmployee)
+  showView, // To show view button
 }) => {
   const { isMobile } = useMobileContext();
+  const { isDarkMode } = useThemeContext();
 
   // Format the pagination message
   const paginationEntries = (total, range) => {
-    return `Showing ${range[0]}-${range[1]} entries of ${total} ${module}s`;
+    return `Showing ${range[0]}-${range[1]} entries of ${total}`;
   };
 
   // Get pagination handler functions
@@ -75,7 +77,10 @@ const TableCard = ({
         }}
         scroll={{ x: "max-content" }} // horizontal scrolling
         onChange={handlePageChange}
-        style={{ borderRadius: 8 }}
+        style={{
+          borderRadius: 8,
+          border: isDarkMode ? "1px solid #303030" : "1px solid #f0f0f0",
+        }}
       />
     );
   }
@@ -86,30 +91,31 @@ const TableCard = ({
     <SkeletonCards />
   ) : (
     <>
-      {/* Mobile view header with search and add button */}
-      <Flex justify="space-between" gap="middle" style={{ marginBottom: 16 }}>
-        <Search
-          placeholder={`Search ${module}`}
-          onSearch={handleSearch}
-          defaultValue={paginationDetails?.searchQuery || ""}
-          allowClear
-          onClear={() => handleSearch("")}
-          onChange={(e) => e.target.value < 1 && handleSearch("")} // clear search when input is empty
+      <Card
+        variant="borderless"
+        style={{
+          position: "sticky",
+          top: 64,
+          zIndex: 1,
+          borderRadius: 0,
+          background: !isDarkMode ? "#f5f5f5" : "#000",
+          boxShadow: "none",
+        }}
+      >
+        {/* Mobile view header with search and add button */}
+        <SearchAddHeader
+          module={module}
+          privileges={privileges}
+          handleSearch={handleSearch}
+          paginationDetails={paginationDetails}
+          openFormModal={openFormModal}
         />
-
-        {/* Add new item button */}
-        <Button type="primary" onClick={() => openFormModal(false)}>
-          <PlusOutlined />
-          Add New Entry
-        </Button>
-      </Flex>
-
+      </Card>
       {/* Render card for each data item */}
       {dataSource?.map((data) => {
         return (
           <GenericCard
             key={data.id}
-            module={module}
             columns={columns}
             data={data}
             handleView={handleView}
@@ -117,6 +123,7 @@ const TableCard = ({
             opendeleteRestoreModal={opendeleteRestoreModal}
             loadOneItem={loadOneItem}
             privileges={privileges}
+            showView={showView}
           />
         );
       })}

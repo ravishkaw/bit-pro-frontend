@@ -37,11 +37,19 @@ export const InventoryColumnItems = (
     title: "Quantity",
     dataIndex: "quantity",
     sorter: true,
+    align: "center",
+  },
+  {
+    title: "Used Quantity",
+    dataIndex: "usedQuantity",
+    sorter: true,
+    align: "center",
   },
   {
     title: "Last Restocked Date",
     dataIndex: "lastRestockedDate",
     sorter: true,
+    align: "center",
   },
   {
     title: "Status",

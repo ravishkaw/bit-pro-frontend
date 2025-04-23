@@ -33,11 +33,6 @@ export const RoomTypeColumns = (
     sorter: true,
   },
   {
-    title: "Price Today",
-    dataIndex: "priceForDay",
-    sorter: true,
-  },
-  {
     title: "Description",
     dataIndex: "description",
   },

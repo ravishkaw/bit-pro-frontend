@@ -12,10 +12,10 @@ import {
   List,
   Tag,
 } from "antd";
-import dayjs from "dayjs";
+
 import { TeamOutlined } from "@ant-design/icons";
 
-import usePrintContent from "../../hooks/usePrintContent";
+import usePrintContent from "../../hooks/common/usePrintContent";
 
 const { Title, Text } = Typography;
 
@@ -102,16 +102,6 @@ const ViewRoom = ({
     },
   ];
 
-  const pricingRules = selectedRoomType?.pricingRules?.map((rule, index) => ({
-    key: `pricing-${index}`,
-    // label: `${index + 1}`,
-    children: `⁕ ${dayjs(rule.startDate).format("YYYY-MM-DD")} to ${dayjs(
-      rule.endDate
-    ).format("YYYY-MM-DD")} → Multiplier: ${rule.pricingMultiplier} - ${
-      rule.description
-    } `,
-  }));
-
   const inventory = [
     {
       key: `inventory`,
@@ -129,7 +119,7 @@ const ViewRoom = ({
     <Modal
       title={null}
       open={open}
-      width={1000}
+      width={850}
       onCancel={closeViewModal}
       footer={null}
     >
@@ -142,7 +132,7 @@ const ViewRoom = ({
         </Divider>
 
         <Row gutter={[20, 20]}>
-          <Col xs={24} sm={8}>
+          <Col xs={24} sm={10}>
             <img
               style={{
                 borderRadius: 8,
@@ -153,6 +143,8 @@ const ViewRoom = ({
               alt={selectedRoom?.number}
               src={import.meta.env.VITE_IMAGE_URL + selectedRoom?.photo}
             />
+          </Col>
+          <Col xs={24} sm={14}>
             <Descriptions
               title={null}
               items={roomInfo}
@@ -160,8 +152,6 @@ const ViewRoom = ({
               size="small"
               style={{ margin: 4 }}
             />
-          </Col>
-          <Col xs={24} sm={16}>
             <Divider orientation="left" style={{ marginBottom: 0 }}>
               <Title level={5}>Facilities</Title>
             </Divider>
@@ -177,15 +167,6 @@ const ViewRoom = ({
             <Descriptions
               title={null}
               items={inventory}
-              column={1}
-              size="small"
-            />
-            <Divider orientation="left" style={{ marginBottom: 0 }}>
-              <Title level={5}>Pricing Rules</Title>
-            </Divider>
-            <Descriptions
-              title={null}
-              items={pricingRules}
               column={1}
               size="small"
             />

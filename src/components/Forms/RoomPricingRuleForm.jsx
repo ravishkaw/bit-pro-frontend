@@ -1,13 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  Switch,
-  Modal,
-} from "antd";
+import { DatePicker, Form, Input, InputNumber, Switch, Modal } from "antd";
 
 import FormInputTooltip from "./FormInputTooltip";
 import FormOnFinishButtons from "./FormOnFinishButtons";
@@ -22,7 +14,6 @@ const { RangePicker } = DatePicker;
 
 // Form of room pricing rule add/ edit
 const RoomPricingRuleForm = ({
-  additionalData,
   open,
   module,
   closeFormModal,
@@ -35,18 +26,13 @@ const RoomPricingRuleForm = ({
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [form] = Form.useForm();
 
-  const { roomTypes } = additionalData;
   const { noteValidation } = formValidations;
 
   // Handle edit populate the wanted fields
   useEffect(() => {
     if (open && isEditing && selectedObject) {
-      const roomType = roomTypes.find(
-        (type) => type.value == selectedObject.roomTypeId
-      );
       const updatedFormData = {
         ...selectedObject,
-        roomType: roomType,
         dateRange: [selectedObject?.startDate, selectedObject?.endDate], // format to range picker
         statusName: selectedObject?.statusName == "Active" ? true : false,
       };
@@ -67,7 +53,6 @@ const RoomPricingRuleForm = ({
       ...formdata,
       startDate: formdata.dateRange[0].format("YYYY-MM-DD"),
       endDate: formdata.dateRange[1].format("YYYY-MM-DD"),
-      roomTypeId: isEditing ? formdata.roomType.value : formdata.roomType,
       statusName: formdata.statusName ? "Active" : "Inactive",
     };
 
@@ -105,19 +90,21 @@ const RoomPricingRuleForm = ({
         onFinish={onFinish}
       >
         <Form.Item
-          name="roomType"
+          name="description"
           label={
-            <FormInputTooltip label="Room Type" title="Select the room type" />
+            <FormInputTooltip
+              label="Description"
+              title="Brief explanation of this pricing rule"
+            />
           }
-          rules={[{ required: true, message: "Select a room type" }]}
+          rules={[
+            ...noteValidation,
+            { required: true, message: "Please enter a description" },
+            { min: 3, message: "Please enter at least 3 characters " },
+          ]}
           hasFeedback
         >
-          <Select
-            showSearch
-            placeholder="Select room type"
-            options={roomTypes}
-            disabled={isEditing}
-          />
+          <Input.TextArea placeholder="E.g., Weekend rate, Summer season, Holiday pricing" />
         </Form.Item>
 
         <Form.Item
@@ -136,24 +123,6 @@ const RoomPricingRuleForm = ({
             placeholder={["Start Date", "End Date"]}
             placement="bottomRight"
           />
-        </Form.Item>
-
-        <Form.Item
-          name="description"
-          label={
-            <FormInputTooltip
-              label="Description"
-              title="Brief explanation of this pricing rule"
-            />
-          }
-          rules={[
-            ...noteValidation,
-            { required: true, message: "Please enter a description" },
-            { min: 3, message: "Please enter at least 3 characters " },
-          ]}
-          hasFeedback
-        >
-          <Input.TextArea placeholder="E.g., Weekend rate, Summer season, Holiday pricing" />
         </Form.Item>
 
         <Form.Item

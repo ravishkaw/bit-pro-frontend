@@ -38,15 +38,15 @@ const Dashboard = () => {
     },
     { title: "Room page filtering", done: false },
     { title: "Logics changed one remember", done: false },
-    { title: "Finish inventory - only made fetch all->fe & be", done: false },
     { title: "Room Inventory needs more attention and fixes", done: false },
     { title: "Notification popover", done: false },
+    { title: "Make pricing rule uniqueness checking", done: false },
   ];
 
   return (
     <Row gutter={[20, 20]}>
       <Col md={8} xs={24}>
-        <Card variant="borderless">
+        <Card>
           <Title level={3}>Finished</Title>
           <List
             dataSource={finished}
@@ -60,7 +60,7 @@ const Dashboard = () => {
       </Col>
 
       <Col md={8} xs={24}>
-        <Card variant="borderless">
+        <Card>
           <Title level={3}>On Going</Title>
           <List
             dataSource={onGoing}
@@ -76,7 +76,7 @@ const Dashboard = () => {
       </Col>
 
       <Col md={8} xs={24}>
-        <Card variant="borderless">
+        <Card>
           <Title level={3}>To do</Title>
           <List
             dataSource={todo}

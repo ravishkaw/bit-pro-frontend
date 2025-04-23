@@ -11,6 +11,7 @@ const GenericCard = ({
   opendeleteRestoreModal,
   privileges,
   loadOneItem,
+  showView,
 }) => {
   // Filter out the columns
   const newColumns = columns.filter((column) => {
@@ -24,7 +25,8 @@ const GenericCard = ({
     opendeleteRestoreModal,
     privileges,
     loadOneItem,
-    data
+    data,
+    showView
   );
 
   // Tag colors
@@ -45,7 +47,7 @@ const GenericCard = ({
   };
 
   return (
-    <Card variant="borderless" actions={actions} style={{ marginBottom: 16 }}>
+    <Card actions={actions} style={{ marginBottom: 16 }}>
       {newColumns.map((column, index) => {
         // set data into value
         let value = data[column.dataIndex];
