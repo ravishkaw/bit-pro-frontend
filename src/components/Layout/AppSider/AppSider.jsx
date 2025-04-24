@@ -10,21 +10,30 @@ import whiteLogo from "../../../assets/logo-white.png";
 
 // Main sider component - Uses sider for desktop and drawer for mobile
 const AppSider = ({ isMobile, collapsed, drawerOpen, setDrawerOpen }) => {
-  // Main sider content to render in sider and drawer
-
   const { isDarkMode } = useThemeContext();
 
+  // Fixed header for logo and title
+  const headerStyle = {
+    height: 150,
+    paddingTop: 16,
+    position: "sticky",
+    top: 0,
+    zIndex: 2,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+  };
+
+  // Main sider content to render in sider and drawer
   const siderContent = (
-    <Row align="middle" justify="center" gutter={[0, 24]}>
-      <Col
-        span={24}
-        style={{ textAlign: "center", height: "60px", marginTop: 8 }}
-      >
+    <>
+      <div style={headerStyle}>
         {collapsed ? (
           <img
             src={isDarkMode ? whiteLogo : blackLogo}
             alt="Company Logo"
-            style={{ height: "auto", width: "3rem", marginTop: "2rem" }}
+            style={{ height: "auto", width: "3rem", marginTop: "1rem" }}
           />
         ) : (
           <>
@@ -36,11 +45,14 @@ const AppSider = ({ isMobile, collapsed, drawerOpen, setDrawerOpen }) => {
             <Typography.Title level={4}>Villa Water Lilly</Typography.Title>
           </>
         )}
-      </Col>
-      <Col span={24}>
+      </div>
+      <div
+        className={`sider-content-scroll${isDarkMode ? " dark" : ""}`}
+        style={contentStyle}
+      >
         <SiderContent />
-      </Col>
-    </Row>
+      </div>
+    </>
   );
 
   // desktop - sider , mobile - drawer
@@ -84,6 +96,10 @@ const siderStyle = {
   position: "sticky",
   top: 0,
   bottom: 0,
-  overflow: "auto",
-  scrollbarWidth: "thin",
+};
+
+const contentStyle = {
+  overflowY: "auto",
+  maxHeight: "calc(100vh - 150px)",
+  paddingTop: 16,
 };

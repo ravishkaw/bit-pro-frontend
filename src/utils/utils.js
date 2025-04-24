@@ -11,23 +11,6 @@ export const mapToSelectOptions = (data) =>
       item.itemName,
   }));
 
-// Helper function to get the level of keys of sider items
-export const getLevelKeys = (items) => {
-  const key = {};
-  const func = (items, level = 1) => {
-    items.forEach((item) => {
-      if (item.key) {
-        key[item.key] = level;
-      }
-      if (item.children) {
-        func(item.children, level + 1);
-      }
-    });
-  };
-  func(items);
-  return key;
-};
-
 // Get greeting based on hour of the day
 export const getGreeting = () => {
   const hour = new Date().getHours();

@@ -7,18 +7,12 @@ import { useHeaderTitleContext } from "../../../contexts/HeaderTitleContext";
 
 import { siderItems } from "./SiderItems";
 
-import { getLevelKeys } from "../../../utils/utils";
-
 const SiderContent = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [selectedKey, setSelectedKey] = useState(location.pathname);
-  const [stateOpenKeys, setStateOpenKeys] = useState([]);
   const { findLabel } = useHeaderTitleContext();
   const { privilegedModules } = useAuth();
-
-  // get the level of keys
-  const levelKeys = getLevelKeys(siderItems);
 
   // filter menu items based on privileges
   const filterMenuItems = (menuItems) => {
@@ -56,31 +50,6 @@ const SiderContent = () => {
     findLabel(location.pathname, filteredSiderItems);
   }, [location.pathname, filteredSiderItems, findLabel]);
 
-  // set the key when changing
-  const onOpenChange = (openKeys) => {
-    const currentOpenKey = openKeys.find(
-      (key) => stateOpenKeys.indexOf(key) === -1
-    );
-
-    // Open
-    if (currentOpenKey !== undefined) {
-      const repeatIndex = openKeys
-        .filter((key) => key !== currentOpenKey)
-        .findIndex((key) => levelKeys[key] === levelKeys[currentOpenKey]);
-
-      setStateOpenKeys(
-        openKeys
-          // Remove repeat key
-          .filter((_, index) => index !== repeatIndex)
-          // Remove current level all child
-          .filter((key) => levelKeys[key] <= levelKeys[currentOpenKey])
-      );
-    } else {
-      // Close
-      setStateOpenKeys(openKeys);
-    }
-  };
-
   return (
     <Menu
       mode="inline"
@@ -88,8 +57,6 @@ const SiderContent = () => {
       onClick={(e) => navigate(e.key)}
       defaultSelectedKeys={[selectedKey]}
       selectedKeys={[selectedKey]}
-      openKeys={stateOpenKeys}
-      onOpenChange={onOpenChange}
       style={{ border: "none" }}
     />
   );

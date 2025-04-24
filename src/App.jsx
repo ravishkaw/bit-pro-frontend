@@ -4,6 +4,7 @@ import { ToastContainer } from "react-toastify";
 import AppRoutes from "./routes/AppRoutes";
 // import { lightTheme, darkTheme } from "./constants/ColorPalette";
 import { useThemeContext } from "./contexts/ThemeContext";
+import "./App.css";
 
 const App = () => {
   const { isDarkMode } = useThemeContext();
