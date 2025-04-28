@@ -41,6 +41,7 @@ const Dashboard = () => {
     { title: "Room Inventory needs more attention and fixes", done: false },
     { title: "Notification popover", done: false },
     { title: "Make pricing rule uniqueness checking", done: false },
+    { title: "Room reservation source add", done: false },
   ];
 
   return (

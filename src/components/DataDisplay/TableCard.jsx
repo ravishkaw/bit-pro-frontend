@@ -1,4 +1,4 @@
-import { Pagination, Table, Card } from "antd";
+import { Table } from "antd";
 
 import { useMobileContext } from "../../contexts/MobileContext";
 import { useThemeContext } from "../../contexts/ThemeContext";
@@ -7,8 +7,7 @@ import usePageChange from "../../hooks/common/usePageChange";
 
 import TableTitle from "../Table/TableTitle";
 import SkeletonCards from "../Cards/SkeletonCards";
-import GenericCard from "../Cards/GenericCard";
-import SearchAddHeader from "./SearchAddHeader";
+import MobileCardView from "./MobileCardView";
 
 // render table or cards based on screen size
 const TableCard = ({
@@ -90,56 +89,22 @@ const TableCard = ({
     // Show skeleton loading state
     <SkeletonCards />
   ) : (
-    <>
-      <Card
-        variant="borderless"
-        style={{
-          position: "sticky",
-          top: 64,
-          zIndex: 1,
-          borderRadius: 0,
-          background: !isDarkMode ? "#f5f5f5" : "#000",
-          boxShadow: "none",
-        }}
-      >
-        {/* Mobile view header with search and add button */}
-        <SearchAddHeader
-          module={module}
-          privileges={privileges}
-          handleSearch={handleSearch}
-          paginationDetails={paginationDetails}
-          openFormModal={openFormModal}
-        />
-      </Card>
-      {/* Render card for each data item */}
-      {dataSource?.map((data) => {
-        return (
-          <GenericCard
-            key={data.id}
-            columns={columns}
-            data={data}
-            handleView={handleView}
-            handleEdit={handleEdit}
-            opendeleteRestoreModal={opendeleteRestoreModal}
-            loadOneItem={loadOneItem}
-            privileges={privileges}
-            showView={showView}
-          />
-        );
-      })}
-
-      {/* pagination for mobile view */}
-      <Pagination
-        total={paginationDetails?.total || dataSource?.length}
-        current={paginationDetails?.current}
-        pageSize={paginationDetails?.pageSize}
-        showSizeChanger
-        simple
-        pageSizeOptions={["5", "10", "20"]}
-        onChange={handleCardPageChange}
-        align="center"
-      />
-    </>
+    <MobileCardView
+      isDarkMode={isDarkMode}
+      module={module}
+      privileges={privileges}
+      handleSearch={handleSearch}
+      paginationDetails={paginationDetails}
+      openFormModal={openFormModal}
+      dataSource={dataSource}
+      columns={columns}
+      handleView={handleView}
+      handleEdit={handleEdit}
+      opendeleteRestoreModal={opendeleteRestoreModal}
+      loadOneItem={loadOneItem}
+      showView={showView}
+      handleCardPageChange={handleCardPageChange}
+    />
   );
 };
 

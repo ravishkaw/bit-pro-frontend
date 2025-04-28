@@ -177,7 +177,6 @@ const ProfileFormModal = ({
           size="small"
           current={current}
           items={items}
-          className="site-navigation-steps"
         />
         <div style={{ marginTop: 16 }}>{steps[current].content}</div>
 

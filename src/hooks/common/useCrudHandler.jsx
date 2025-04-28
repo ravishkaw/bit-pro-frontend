@@ -9,6 +9,7 @@ const useCrudHandler = ({
   entityName,
   formatData = (data) => data, // special formattings
   additionalFunc = [], // additional useEffect funtions
+  disableAutoLoad = false, // load data on mount or not
 }) => {
   const [data, setData] = useState([]); // list of data
   const [loading, setLoading] = useState(false);
@@ -42,7 +43,9 @@ const useCrudHandler = ({
 
   // Load data when pagination or sorting changes
   useEffect(() => {
-    loadData();
+    if (!disableAutoLoad) {
+      loadData();
+    }
   }, [
     paginationDetails.current,
     paginationDetails.pageSize,

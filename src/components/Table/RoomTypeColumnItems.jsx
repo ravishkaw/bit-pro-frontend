@@ -31,6 +31,13 @@ export const RoomTypeColumns = (
     title: "Base Price",
     dataIndex: "basePrice",
     sorter: true,
+    render: (_, record) => {
+      const basePrice = record.basePrice || 0;
+      return `${basePrice.toLocaleString("en-LK", {
+        style: "currency",
+        currency: "LKR",
+      })}`;
+    },
   },
   {
     title: "Description",
