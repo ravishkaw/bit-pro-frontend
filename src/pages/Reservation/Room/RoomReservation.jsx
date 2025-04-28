@@ -18,7 +18,7 @@ import MobileCardView from "../../../components/DataDisplay/MobileCardView";
 const RoomReservation = () => {
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [modalState, setModalState] = useState({
-    open: true,
+    open: false,
     isEditing: false,
     selectedReservation: null,
   });
