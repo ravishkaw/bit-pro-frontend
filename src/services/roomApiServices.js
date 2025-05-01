@@ -26,6 +26,26 @@ export const pricingRuleService = createApiService(ROOM_PRICING_RULE_BASE_URL);
 // Generic API service for room facilities
 export const roomFacilitiesService = createApiService(ROOM_FACILITIES);
 
+// Fetch all rooms available rooms
+export const fetchAvailableRooms = async (
+  checkInDate,
+  checkOutDate,
+  adults,
+  children,
+  infants
+) => {
+  const response = await axiosInstance.get(`${ROOM_BASE_URL}/available-rooms`, {
+    params: {
+      checkInDate: checkInDate,
+      checkOutDate: checkOutDate,
+      adults: adults,
+      children: children,
+      infants: infants,
+    },
+  });
+  return response.data;
+};
+
 // Fetch all rooms types without pagination
 export const fetchAllRoomTypes = async () => {
   const response = await axiosInstance.get(`${ROOM_TYPE_BASE_URL}/get-all`);

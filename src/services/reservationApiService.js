@@ -9,6 +9,7 @@ const ROOM_RESERVAION_AMENITY_CATEGORIES_URL =
   "/room-reservation-amenity-categories";
 const ROOM_RESERVATION_STATUS_URL = "/room-reservation-status";
 const ROOM_RESERVATION_TYPE_URL = "/room-reservation-types";
+const ROOM_RESERVATION_SOURCE_URL = "/room-reservation-sources";
 
 // Generic API service for guests
 export const guestService = createApiService(GUEST_BASE_URL);
@@ -31,6 +32,23 @@ export const getReservationsToAStatus = async (params) => {
 export const roomReservationService = createApiService(
   ROOM_RESERVATION_BASE_URL
 );
+
+export const checkRoomReservationPricing = async (params) => {
+  const requestData = {
+    roomId: params.roomId,
+    checkInDate: params.checkInDate,
+    checkOutDate: params.checkOutDate,
+    amenities: params.amenities,
+    roomPackageId: params.roomPackageId,
+    taxId: [1],
+  };
+  const response = await axiosInstance.post(
+    `${ROOM_RESERVATION_BASE_URL}/calculate-pricing`,
+    requestData
+  );
+
+  return response.data;
+};
 
 // Generic API service for event reservations
 export const eventReservationService = createApiService(
@@ -55,4 +73,9 @@ export const roomReservationStatusService = createApiService(
 // Generic API service for room reservation types
 export const roomReservationTypeService = createApiService(
   ROOM_RESERVATION_TYPE_URL
+);
+
+// Generic API service for room reservation sources
+export const roomReservationSourceService = createApiService(
+  ROOM_RESERVATION_SOURCE_URL
 );

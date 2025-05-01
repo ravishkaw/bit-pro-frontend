@@ -3,21 +3,26 @@ import { useEffect, useState } from "react";
 import {
   getReservationsToAStatus,
   roomReservationService,
+  roomReservationSourceService,
   roomReservationStatusService,
   roomReservationTypeService,
+  checkRoomReservationPricing,
 } from "../../services/reservationApiService";
 import useCrudHandler from "../common/useCrudHandler";
 
 import { mapToSelectOptions } from "../../utils/utils";
 import usePagination from "../common/usePagination";
+import { fetchAvailableRooms } from "../../services/roomApiServices";
 
 // Custom hook to manage room reservation operations
 const useRoomReservation = () => {
   const [reservationData, setReservationData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedTab, setSelectedTab] = useState("Checked-In");
+
   const [reservationTypes, setReservationTypes] = useState([]);
   const [reservationStatus, setReservationStatus] = useState([]);
+  const [reservationSources, setReservationSources] = useState([]);
 
   const { paginationDetails, setPaginationDetails } = usePagination();
 
@@ -45,12 +50,14 @@ const useRoomReservation = () => {
   // load reference data for room reservation
   const loadReferenceData = async () => {
     try {
-      const [types, status] = await Promise.all([
+      const [types, status, sources] = await Promise.all([
         roomReservationTypeService.getAll(),
         roomReservationStatusService.getAll(),
+        roomReservationSourceService.getAll(),
       ]);
       setReservationTypes(mapToSelectOptions(types));
       setReservationStatus(mapToSelectOptions(status));
+      setReservationSources(mapToSelectOptions(sources));
     } catch (error) {
       setReservationStatus([]);
       setReservationTypes([]);
@@ -80,12 +87,40 @@ const useRoomReservation = () => {
   const { loadOneItem, addItem, updateItem, deleteItem, restoreItem } =
     useCrudHandler({ ...config, disableAutoLoad: true });
 
+  // get available rooms for a stay between two dates with adults, children and infants
+  const fetchRooms = async (
+    checkInDate,
+    checkOutDate,
+    adults,
+    children,
+    infants
+  ) => {
+    try {
+      const resp = await fetchAvailableRooms(
+        checkInDate,
+        checkOutDate,
+        adults,
+        children,
+        infants
+      );
+      return resp;
+    } catch (err) {
+      console.log("error fetching rooms");
+    }
+  };
+
   // Return states and functions for external use
   return {
     reservationData,
-    additionalData: { reservationTypes, reservationStatus },
+    fetchRooms,
+    additionalData: {
+      reservationTypes,
+      reservationStatus,
+      reservationSources,
+    },
     selectedTab,
     setSelectedTab,
+    checkRoomReservationPricing,
     loadOneItem,
     addItem,
     updateItem,

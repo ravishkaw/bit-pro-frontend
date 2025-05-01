@@ -1,144 +1,176 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
-  Typography,
+  Form,
   Select,
+  Button,
   Card,
   InputNumber,
-  Button,
   Divider,
+  Typography,
+  Space,
   Row,
   Col,
-  Space,
-  Form,
+  Flex,
+  Input,
 } from "antd";
 
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
 
-const RoomReservationExtraForm = ({ onSubmit, initialValues = {} }) => {
-  // Sample data - replace with actual API calls
-  const packages = [
-    {
-      id: 1,
-      name: "Basic Package",
-      price: 50,
-      description: "Daily housekeeping, wifi",
-    },
-    {
-      id: 2,
-      name: "Premium Package",
-      price: 100,
-      description: "Daily housekeeping, wifi, breakfast",
-    },
-    {
-      id: 3,
-      name: "Luxury Package",
-      price: 200,
-      description: "Daily housekeeping, wifi, all meals, spa access",
-    },
-  ];
+const RoomReservationExtraForm = ({
+  form,
+  isEditing,
+  setCurrent,
+  next,
+  prev,
+  amenities,
+  roomPackages,
+  checkRoomReservationPricing,
+  setPricingLoading,
+  setPricingInformation,
+}) => {
+  const [selectedPackage, setSelectedPackage] = useState(null);
+  const [selectedAmenities, setSelectedAmenities] = useState([]);
 
-  const amenities = [
-    { id: 1, name: "Champagne Bottle", price: 75, maxQuantity: 5 },
-    { id: 2, name: "Fruit Basket", price: 25, maxQuantity: 3 },
-    { id: 3, name: "Spa Treatment", price: 120, maxQuantity: 10 },
-    { id: 4, name: "Airport Transfer", price: 60, maxQuantity: 2 },
-  ];
-
-  const [selectedPackage, setSelectedPackage] = useState(
-    initialValues.packageId || ""
-  );
-  const [selectedAmenities, setSelectedAmenities] = useState(
-    initialValues.amenities || []
-  );
-  const [totalPrice, setTotalPrice] = useState(0);
-
-  // Update total price whenever selections change
-  useEffect(() => {
-    let price = 0;
-
-    // Add package price
-    if (selectedPackage) {
-      const packageItem = packages.find((p) => p.id === selectedPackage);
-      if (packageItem) price += packageItem.price;
-    }
-
-    // Add amenities prices
-    selectedAmenities.forEach((amenity) => {
-      const amenityItem = amenities.find((a) => a.id === amenity.id);
-      if (amenityItem) price += amenityItem.price * amenity.quantity;
-    });
-
-    setTotalPrice(price);
-  }, [selectedPackage, selectedAmenities]);
-
+  // Handle package selection
   const handlePackageChange = (value) => {
     setSelectedPackage(value);
   };
 
-  const handleAmenityQuantityChange = (amenityId, quantity) => {
-    const amenity = amenities.find((a) => a.id === amenityId);
+  // Handle amenity quantity change
+  const handleAmenityQuantityChange = (amenityId, newQty) => {
+    const newQuantity = Math.max(0, Math.min(10, newQty || 0));
 
-    // Ensure quantity is within valid range
-    if (quantity < 0) quantity = 0;
-    if (quantity > amenity.maxQuantity) quantity = amenity.maxQuantity;
+    setSelectedAmenities((prevAmenities) => {
+      // If quantity is 0, remove from selection
+      if (newQuantity === 0) {
+        return prevAmenities.filter((amenity) => amenity.id !== amenityId);
+      }
 
-    // Check if amenity already exists in the selected list
-    const existingIndex = selectedAmenities.findIndex(
-      (a) => a.id === amenityId
-    );
-
-    if (existingIndex >= 0) {
-      // Update existing amenity
-      const updatedAmenities = [...selectedAmenities];
-      if (quantity === 0) {
-        // Remove amenity if quantity is 0
-        updatedAmenities.splice(existingIndex, 1);
-      } else {
-        // Update quantity
+      // If already selected, update quantity
+      const existingIndex = prevAmenities.findIndex(
+        (amenity) => amenity.id === amenityId
+      );
+      if (existingIndex >= 0) {
+        const updatedAmenities = [...prevAmenities];
         updatedAmenities[existingIndex] = {
           ...updatedAmenities[existingIndex],
-          quantity,
+          quantity: newQuantity,
         };
+        return updatedAmenities;
       }
-      setSelectedAmenities(updatedAmenities);
-    } else if (quantity > 0) {
-      // Add new amenity
-      setSelectedAmenities([...selectedAmenities, { id: amenityId, quantity }]);
+
+      // Add new selection
+      return [...prevAmenities, { id: amenityId, quantity: newQuantity }];
+    });
+  };
+
+  // check pricing
+  const checkPricing = async () => {
+    setPricingLoading(true);
+    try {
+      // Get the form values properly
+      const roomId = form.getFieldValue("roomId").value;
+      const checkInDate = form.getFieldValue("reservationDateRange")[0];
+      const checkOutDate = form.getFieldValue("reservationDateRange")[1];
+
+      // Ensure we have valid data before proceeding
+      if (!roomId || !checkInDate || !checkOutDate || !selectedPackage) {
+        console.error("Missing required reservation details");
+        setPricingLoading(false);
+        return;
+      }
+
+      const formattedCheckInDate =
+        checkInDate?.format?.("YYYY-MM-DD") || checkInDate;
+      const formattedCheckOutDate =
+        checkOutDate?.format?.("YYYY-MM-DD") || checkOutDate;
+
+      const resp = await checkRoomReservationPricing({
+        roomId: roomId,
+        checkInDate: formattedCheckInDate,
+        checkOutDate: formattedCheckOutDate,
+        amenities: selectedAmenities.map((amenity) => ({
+          amenityId: amenity.id,
+          quantity: amenity.quantity,
+        })),
+        roomPackageId: selectedPackage,
+      });
+
+      setPricingInformation(resp);
+      setPricingLoading(false);
+    } catch (error) {
+      setPricingLoading(false);
+      console.error("Error checking pricing:", error);
     }
+  };
+
+  // Handle next
+  const handleNext = async () => {
+    form.setFieldsValue({
+      amenities: selectedAmenities,
+      packageId: selectedPackage,
+    });
+
+    await checkPricing();
+    next();
+  };
+
+  // Reset form fields and state
+  const handleReset = () => {
+    form.resetFields();
+    setCurrent(0);
+    setSelectedAmenities([]);
+    setSelectedPackage([]);
   };
 
   return (
     <>
       {/* Package Selection */}
       <div>
-        <Form.Item label="Select a Package" name="packageId">
+        <Form.Item
+          label="Select a Package"
+          name="packageId"
+          rules={[{ required: true, message: "Please select a package" }]}
+        >
           <Select
             placeholder="Select a package"
-            style={{ width: "100%" }}
-            value={selectedPackage || undefined}
             onChange={handlePackageChange}
           >
-            <Option value="">None</Option>
-            {packages.map((pkg) => (
+            {roomPackages.map((pkg) => (
               <Option key={pkg.id} value={pkg.id}>
-                {pkg.name} - ${pkg.price}
+                {pkg.name} -{" "}
+                {pkg.price.toLocaleString("en-LK", {
+                  style: "currency",
+                  currency: "LKR",
+                })}
               </Option>
             ))}
           </Select>
-          {selectedPackage && (
-            <Text type="secondary">
-              {packages.find((p) => p.id === selectedPackage)?.description}
-            </Text>
-          )}
         </Form.Item>
+
+        {selectedPackage && (
+          <Text
+            type="secondary"
+            style={{ marginTop: -16, display: "block", marginBottom: 16 }}
+          >
+            {roomPackages
+              .find((p) => p.id === selectedPackage)
+              ?.amenities?.map(
+                (amenity) =>
+                  `| ${amenity.amenityName} ${
+                    amenity.quantity > 0 ? `(${amenity.quantity}) ` : " "
+                  }`
+              )}
+          </Text>
+        )}
       </div>
 
       <Divider />
 
       {/* Amenities Selection */}
       <div>
-        <Form.Item label="Add Optional Amenities" name="packageId">
+        <Form.Item label="Add Optional Amenities">
           <Row gutter={[16, 16]}>
             {amenities.map((amenity) => {
               const selectedAmenity = selectedAmenities.find(
@@ -150,7 +182,13 @@ const RoomReservationExtraForm = ({ onSubmit, initialValues = {} }) => {
                 <Col xs={24} sm={12} md={6} key={amenity.id}>
                   <Card style={{ height: "100%" }} hoverable>
                     <Title level={5}>{amenity.name}</Title>
-                    <Text type="secondary">${amenity.price} each</Text>
+                    <Text type="secondary">
+                      {amenity.price.toLocaleString("en-LK", {
+                        style: "currency",
+                        currency: "LKR",
+                      })}{" "}
+                      each
+                    </Text>
                     <div
                       style={{
                         display: "flex",
@@ -169,7 +207,7 @@ const RoomReservationExtraForm = ({ onSubmit, initialValues = {} }) => {
                       </Button>
                       <InputNumber
                         min={0}
-                        max={amenity.maxQuantity}
+                        max={10}
                         value={quantity}
                         onChange={(value) =>
                           handleAmenityQuantityChange(amenity.id, value)
@@ -185,13 +223,13 @@ const RoomReservationExtraForm = ({ onSubmit, initialValues = {} }) => {
                         onClick={() =>
                           handleAmenityQuantityChange(amenity.id, quantity + 1)
                         }
-                        disabled={quantity >= amenity.maxQuantity}
+                        disabled={quantity >= 10}
                       >
                         +
                       </Button>
                     </div>
                     <div style={{ marginTop: 8 }}>
-                      <Text type="secondary">Max: {amenity.maxQuantity}</Text>
+                      <Text type="secondary">Max: 10</Text>
                     </div>
                   </Card>
                 </Col>
@@ -200,6 +238,27 @@ const RoomReservationExtraForm = ({ onSubmit, initialValues = {} }) => {
           </Row>
         </Form.Item>
       </div>
+
+      <Form.Item name="amenities" hidden>
+        <Input hidden />
+      </Form.Item>
+
+      <Flex
+        justify={isEditing ? "end" : "space-between"}
+        style={{ marginTop: 16 }}
+      >
+        {!isEditing && (
+          <Button color="default" variant="dashed" onClick={handleReset}>
+            Reset
+          </Button>
+        )}
+        <Space>
+          <Button onClick={prev}>Previous</Button>
+          <Button type="primary" onClick={handleNext}>
+            Proceed To Checkout
+          </Button>
+        </Space>
+      </Flex>
     </>
   );
 };

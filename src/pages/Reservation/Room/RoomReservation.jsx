@@ -14,6 +14,9 @@ import RoomReservationFormModal from "../../../components/Modals/RoomReservation
 import SearchAddHeader from "../../../components/DataDisplay/SearchAddHeader";
 import SkeletonCards from "../../../components/Cards/SkeletonCards";
 import MobileCardView from "../../../components/DataDisplay/MobileCardView";
+import useGuests from "../../../hooks/profile/useGuests";
+import useRoomPackages from "../../../hooks/packages/useRoomPackages";
+import useRoomReservationAmenities from "../../../hooks/reservation/useRoomReservationAmenities";
 
 const RoomReservation = () => {
   const [calendarOpen, setCalendarOpen] = useState(false);
@@ -36,9 +39,11 @@ const RoomReservation = () => {
 
   const {
     reservationData,
+    fetchRooms,
     additionalData,
     selectedTab,
     setSelectedTab,
+    checkRoomReservationPricing,
     loadOneItem,
     addItem,
     updateItem,
@@ -48,6 +53,10 @@ const RoomReservation = () => {
     paginationDetails,
     setPaginationDetails,
   } = useRoomReservation();
+
+  const guestHookData = useGuests();
+  const { data: roomPackages } = useRoomPackages();
+  const { data: amenities } = useRoomReservationAmenities();
 
   const openFormModal = (isEditing, selectedReservation = null) => {
     setModalState({
@@ -67,8 +76,6 @@ const RoomReservation = () => {
 
   const openCalendar = () => setCalendarOpen(true);
   const closeCalendar = () => setCalendarOpen(false);
-
-  const { reservationStatus, reservationTypes } = additionalData;
 
   // total items message
   const paginationEntries = (total, range) => {
@@ -93,10 +100,6 @@ const RoomReservation = () => {
   };
 
   const items = [
-    // {
-    //   label: "All",
-    //   key: "allReservations",
-    // },
     {
       label: "Current",
       key: "Checked-In",
@@ -123,18 +126,6 @@ const RoomReservation = () => {
     return (
       <>
         <Card>
-          {/* Render search header above tabs on mobile */}
-          {isMobile && (
-            <div style={{ marginBottom: 16 }}>
-              <SearchAddHeader
-                module={selectedTab}
-                privileges={modulePrivileges}
-                handleSearch={handleSearch}
-                paginationDetails={paginationDetails}
-                openFormModal={openFormModal}
-              />
-            </div>
-          )}
           <Tabs
             items={items}
             tabBarExtraContent={
@@ -175,6 +166,12 @@ const RoomReservation = () => {
           selectedObject={modalState.selectedReservation}
           isEditing={modalState.isEditing}
           addItem={addItem}
+          additionalData={additionalData}
+          fetchRooms={fetchRooms}
+          guestHookData={guestHookData}
+          amenities={amenities}
+          roomPackages={roomPackages}
+          checkRoomReservationPricing={checkRoomReservationPricing}
         />
 
         <RoomReservationCalendar
@@ -190,22 +187,24 @@ const RoomReservation = () => {
     // Show skeleton loading state
     <SkeletonCards />
   ) : (
-    <MobileCardView
-      isDarkMode={isDarkMode}
-      module={module}
-      privileges={privileges}
-      handleSearch={handleSearch}
-      paginationDetails={paginationDetails}
-      // openFormModal={openFormModal}
-      // dataSource={dataSource}
-      // columns={columns}
-      // handleView={handleView}
-      // handleEdit={handleEdit}
-      // opendeleteRestoreModal={opendeleteRestoreModal}
-      loadOneItem={loadOneItem}
-      // showView={showView}
-      handleCardPageChange={handleCardPageChange}
-    />
+    <>
+      <MobileCardView
+        isDarkMode={isDarkMode}
+        module={module}
+        privileges={privileges}
+        handleSearch={handleSearch}
+        paginationDetails={paginationDetails}
+        openFormModal={openFormModal}
+        // dataSource={dataSource}
+        // columns={columns}
+        // handleView={handleView}
+        // handleEdit={handleEdit}
+        // opendeleteRestoreModal={opendeleteRestoreModal}
+        loadOneItem={loadOneItem}
+        // showView={showView}
+        handleCardPageChange={handleCardPageChange}
+      />
+    </>
   );
 };
 

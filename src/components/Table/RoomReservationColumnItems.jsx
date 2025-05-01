@@ -10,8 +10,8 @@ export const RoomReservationColumnItems = (
   opendeleteRestoreModal
 ) => [
   {
-    title: "Guest(s)",
-    dataIndex: "guests",
+    title: "Primary Guest",
+    dataIndex: "primaryGuestFullName",
     sorter: true,
     fixed: "left",
   },

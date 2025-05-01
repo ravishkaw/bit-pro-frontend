@@ -10,6 +10,7 @@ import FormInputTooltip from "./FormInputTooltip";
 const PersonalInfo = ({
   form,
   formData,
+  module,
   modelOpen,
   nationalities,
   idTypes,
@@ -104,7 +105,7 @@ const PersonalInfo = ({
   }, [fullName, form]);
 
   // Restrict employee age to 18 or higher
-  const maxDate = dayjs().subtract(18, "years");
+  const maxDate = module === "Employee" && dayjs().subtract(18, "years");
 
   // Handle nationality change and update ID type
   const handleNationality = (value) => {
@@ -119,8 +120,13 @@ const PersonalInfo = ({
 
   // Handle ID type change
   const handleIdTypes = (e) => {
+    if (!isSriLankan) {
+      return;
+    }
     setIdType(e.target.value);
     form.resetFields(["idNumber"]); // Clear ID number if ID type changes
+    form.resetFields(["dob"]);
+    form.resetFields(["genderId"]);
   };
 
   // Get ID number validation based on ID type
@@ -168,7 +174,9 @@ const PersonalInfo = ({
           >
             <Input
               addonBefore={
-                <Select options={titles} placeholder="Title" />
+                <Form.Item name="titleId" noStyle>
+                  <Select options={titles} placeholder="Title" />
+                </Form.Item>
               }
               placeholder="E.g., John Doe"
               value={fullName}
@@ -281,7 +289,11 @@ const PersonalInfo = ({
               />
             }
             name="dob"
-            rules={dobValidation}
+            rules={
+              module === "Employee"
+                ? dobValidation
+                : [{ required: true, message: "Date of Birth is required" }]
+            }
             required
             hasFeedback
           >

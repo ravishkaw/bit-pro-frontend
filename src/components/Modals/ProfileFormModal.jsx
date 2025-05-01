@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Flex, Form, Modal, Space, Steps } from "antd";
+import { Button, Flex, Form, Modal, Space, Steps, message } from "antd";
 import {
   ContactsOutlined,
   IdcardOutlined,
@@ -32,6 +32,7 @@ const ProfileFormModal = ({
   const [initialFormData, setInitialFormData] = useState({});
 
   const [form] = Form.useForm();
+  const [messageApi, contextHolder] = message.useMessage();
 
   const {
     designations = {},
@@ -71,7 +72,7 @@ const ProfileFormModal = ({
         triggerFormFieldsValidation(form);
       }
     } catch (error) {
-      console.log("Validation Failed:", error);
+      messageApi.error("Please fill all the required fields");
     }
   };
 
@@ -130,6 +131,7 @@ const ProfileFormModal = ({
           genders={genders}
           civilStatus={civilStatus}
           titles={titles}
+          module={module}
         />
       ),
       icon: <UserOutlined />,
@@ -161,60 +163,63 @@ const ProfileFormModal = ({
     }));
 
   return (
-    <Modal
-      title={`${!isEditing ? "Add New" : "Update"} ${module}`}
-      open={open}
-      width={850}
-      footer={null}
-      maskClosable={false}
-      onCancel={closeFormModal}
-      afterClose={afterModalClose}
-      destroyOnClose
-    >
-      <Form form={form} layout="vertical" labelWrap onFinish={onFinish}>
-        <Steps
-          type="navigation"
-          size="small"
-          current={current}
-          items={items}
-        />
-        <div style={{ marginTop: 16 }}>{steps[current].content}</div>
+    <>
+      {contextHolder}
+      <Modal
+        title={`${!isEditing ? "Add New" : "Update"} ${module}`}
+        open={open}
+        width={850}
+        footer={null}
+        maskClosable={false}
+        onCancel={closeFormModal}
+        afterClose={afterModalClose}
+        destroyOnClose
+      >
+        <Form form={form} layout="vertical" labelWrap onFinish={onFinish}>
+          <Steps
+            type="navigation"
+            size="small"
+            current={current}
+            items={items}
+          />
+          <div style={{ marginTop: 16 }}>{steps[current].content}</div>
 
-        <Flex justify={isEditing ? "end" : "space-between"}>
-          {!isEditing && (
-            <Button
-              color="default"
-              variant="dashed"
-              onClick={() => {
-                form.resetFields();
-                setCurrent(0);
-              }}
-            >
-              Reset
-            </Button>
-          )}
-          <Space>
-            {/* {current === 0 && <Button onClick={closeFormModal}>Cancel</Button>} */}
-            {current > 0 && <Button onClick={prev}>Previous</Button>}
-            {current < items.length - 1 && (
-              <Button type="primary" onClick={next}>
-                Next
-              </Button>
-            )}
-            {current === items.length - 1 && (
+          <Flex justify={isEditing ? "end" : "space-between"}>
+            {!isEditing && (
               <Button
-                color={isEditing ? "primary" : "green"}
-                variant="solid"
-                htmlType="submit"
-                loading={confirmLoading}
+                color="default"
+                variant="dashed"
+                onClick={() => {
+                  form.resetFields();
+                  setCurrent(0);
+                }}
               >
-                {isEditing ? "Update" : "Submit"}
+                Reset
               </Button>
             )}
-          </Space>
-        </Flex>
-      </Form>
-    </Modal>
+            <Space>
+              {/* {current === 0 && <Button onClick={closeFormModal}>Cancel</Button>} */}
+              {current > 0 && <Button onClick={prev}>Previous</Button>}
+              {current < items.length - 1 && (
+                <Button type="primary" onClick={next}>
+                  Next
+                </Button>
+              )}
+              {current === items.length - 1 && (
+                <Button
+                  color={isEditing ? "primary" : "green"}
+                  variant="solid"
+                  htmlType="submit"
+                  loading={confirmLoading}
+                >
+                  {isEditing ? "Update" : "Submit"}
+                </Button>
+              )}
+            </Space>
+          </Flex>
+        </Form>
+      </Modal>
+    </>
   );
 };
 

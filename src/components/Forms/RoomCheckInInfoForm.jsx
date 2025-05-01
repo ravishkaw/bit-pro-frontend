@@ -4,7 +4,7 @@ import {
   Select,
   Button,
   Card,
-  Divider,
+  Alert,
   List,
   Typography,
   Space,
@@ -15,61 +15,37 @@ import {
   Avatar,
   Flex,
   Tag,
-  Tooltip,
+  Input,
 } from "antd";
 import {
   UserOutlined,
   PlusOutlined,
   DeleteOutlined,
-  EditOutlined,
 } from "@ant-design/icons";
 import ProfileFormModal from "../Modals/ProfileFormModal";
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
-const RoomCheckInGuestForm = ({ form, formData, setFormData }) => {
-  const [selectedGuests, setSelectedGuests] = useState([]);
-  const [primaryGuest, setPrimaryGuest] = useState(null);
+const RoomCheckInInfoForm = ({
+  form,
+  isEditing,
+  setCurrent,
+  next,
+  prev,
+  guestHookData,
+  reservationTypes,
+  reservationSources,
+}) => {
+  const [selectedGuests, setSelectedGuests] = useState(
+    form.getFieldValue("guests") || []
+  );
+  const [primaryGuest, setPrimaryGuest] = useState(
+    form.getFieldValue("primaryGuestId") || null
+  );
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Mock guest data - this would come from your API
-  const [guests, setGuests] = useState([
-    {
-      id: 1,
-      name: "John Smith",
-      email: "john@example.com",
-      phone: "+94 77 123 4567",
-      idNumber: "982731465V",
-    },
-    {
-      id: 2,
-      name: "Maria Garcia",
-      email: "maria@example.com",
-      phone: "+94 71 456 7890",
-      idNumber: "895623147X",
-    },
-    {
-      id: 3,
-      name: "Robert Chen",
-      email: "robert@example.com",
-      phone: "+94 76 789 0123",
-      idNumber: "761294538Y",
-    },
-  ]);
-
-  // Add a new guest from ProfileFormModal
-  const handleAddGuest = (guestData) => {
-    const newGuest = {
-      id: guests.length + 1,
-      name: `${guestData.firstName} ${guestData.lastName}`,
-      email: guestData.email,
-      phone: guestData.phoneNumber,
-      idNumber: guestData.idNumber,
-    };
-
-    setGuests([...guests, newGuest]);
-    addGuestToSelection(newGuest);
-  };
+  const { data: guests, additionalData, addItem: addGuestData } = guestHookData;
 
   // Add guest to the selected list
   const addGuestToSelection = (guest) => {
@@ -83,7 +59,7 @@ const RoomCheckInGuestForm = ({ form, formData, setFormData }) => {
       }
 
       // Update form data
-      updateFormData(updatedGuests, primaryGuest || guest.id);
+      updateGuestData(updatedGuests, primaryGuest || guest.id);
     }
   };
 
@@ -97,71 +73,122 @@ const RoomCheckInGuestForm = ({ form, formData, setFormData }) => {
       const newPrimaryId =
         updatedGuests.length > 0 ? updatedGuests[0].id : null;
       setPrimaryGuest(newPrimaryId);
-      updateFormData(updatedGuests, newPrimaryId);
+      updateGuestData(updatedGuests, newPrimaryId);
     } else {
-      updateFormData(updatedGuests, primaryGuest);
+      updateGuestData(updatedGuests, primaryGuest);
+    }
+  };
+
+  // Handle guest selection
+  const handleGuestSelect = (value) => {
+    const selectedGuest = guests.find((g) => g.id === value);
+    if (selectedGuest) {
+      addGuestToSelection(selectedGuest);
+      form.setFieldsValue({ guestSelect: undefined });
     }
   };
 
   // Set a guest as primary
   const setAsPrimary = (guestId) => {
     setPrimaryGuest(guestId);
-    updateFormData(selectedGuests, guestId);
+    updateGuestData(selectedGuests, guestId);
   };
 
-  // Update form data with the current guest selection
-  const updateFormData = (guestList, primaryId) => {
-    if (setFormData) {
-      setFormData((prev) => ({
-        ...prev,
-        guests: guestList,
-        primaryGuestId: primaryId,
-      }));
-    }
-
-    // Update form fields
+  // Update guest data fields
+  const updateGuestData = (guestList, primaryId) => {
     form.setFieldsValue({
-      guestDetails: {
-        guests: guestList,
-        primaryGuestId: primaryId,
-      },
+      guests: guestList,
+      primaryGuestId: primaryId,
     });
   };
 
-  // Filter out already selected guests
-  const getFilteredOptions = () => {
-    return guests.filter(
+  const guestsOptions = () => {
+    const filteredOptions = guests.filter(
       (guest) => !selectedGuests.some((selected) => selected.id === guest.id)
     );
+    return filteredOptions.map((guest) => ({
+      label: `${guest.fullName} (${guest.email})`,
+      value: guest.id,
+    }));
+  };
+
+  // handle next button click
+  const handleNext = () => {
+    const selectedGuests = form.getFieldValue("guests");
+    const primaryGuestId = form.getFieldValue("primaryGuestId");
+
+    if (!selectedGuests || selectedGuests.length === 0 || !primaryGuestId) {
+      setError("Please select at least one guest");
+      return;
+    }
+    setError(null);
+    next();
+  };
+
+  // Reset form fields and state
+  const handleReset = () => {
+    form.resetFields();
+    setCurrent(0);
+    setPrimaryGuest(null);
+    setSelectedGuests([]);
+    setError(null);
   };
 
   return (
     <>
+      {error && (
+        <Alert
+          message={error}
+          type="error"
+          showIcon
+          style={{ marginBottom: 16 }}
+        />
+      )}
+
+      <Row gutter={16}>
+        <Col xs={24} md={12}>
+          <Form.Item
+            name="reservationSource"
+            label="Reservation Source"
+            rules={[{ required: true }]}
+          >
+            <Select
+              showSearch
+              options={reservationSources}
+              placeholder="Select a source"
+              optionFilterProp="label"
+            />
+          </Form.Item>
+        </Col>
+        <Col xs={24} md={12}>
+          <Form.Item
+            name="reservationType"
+            label="Reservation Type"
+            rules={[{ required: true }]}
+          >
+            <Select
+              showSearch
+              options={reservationTypes}
+              placeholder="Select a type"
+              optionFilterProp="label"
+            />
+          </Form.Item>
+        </Col>
+      </Row>
+
       {/* Guest Selection Area */}
-      <Form.Item
-        name="guestSelect"
-        label="Select Guest"
-        rules={[{ required: false }]}
-      >
+      <Form.Item name="guestSelect" label="Select Guest">
         <Row gutter={16}>
           <Col xs={24} md={18}>
             <Select
               showSearch
-              placeholder="Search for a guest by name or ID"
+              placeholder="Search for a guest by name, email, or phone"
               style={{ width: "100%" }}
               filterOption={(input, option) =>
                 option.label.toLowerCase().includes(input.toLowerCase())
               }
-              options={getFilteredOptions().map((guest) => ({
-                value: guest.id,
-                label: `${guest.name} (${guest.idNumber})`,
-              }))}
-              onSelect={(value) => {
-                const selectedGuest = guests.find((g) => g.id === value);
-                if (selectedGuest) {
-                  addGuestToSelection(selectedGuest);
-                }
-              }}
+              options={guestsOptions()}
+              onSelect={handleGuestSelect}
               allowClear
             />
           </Col>
@@ -179,12 +206,12 @@ const RoomCheckInGuestForm = ({ form, formData, setFormData }) => {
       </Form.Item>
 
       {/* Hidden form field to store guest data */}
-      <Form.Item name={["guestDetails", "guests"]} hidden>
-        <input type="hidden" />
+      <Form.Item name="guests" hidden required>
+        <Input hidden />
       </Form.Item>
 
-      <Form.Item name={["guestDetails", "primaryGuestId"]} hidden>
-        <input type="hidden" />
+      <Form.Item name="primaryGuestId" hidden>
+        <Input hidden />
       </Form.Item>
 
       {/* Selected Guests Display */}
@@ -220,7 +247,7 @@ const RoomCheckInGuestForm = ({ form, formData, setFormData }) => {
                   }
                   title={
                     <Flex align="center" gap={8}>
-                      {guest.name}
+                      {guest.fullName}
                       {primaryGuest === guest.id && (
                         <Tag color="green">Primary</Tag>
                       )}
@@ -229,8 +256,7 @@ const RoomCheckInGuestForm = ({ form, formData, setFormData }) => {
                   description={
                     <Space direction="vertical" size={0}>
                       <Text type="secondary">{guest.email}</Text>
-                      <Text type="secondary">{guest.phone}</Text>
-                      <Text type="secondary">ID: {guest.idNumber}</Text>
+                      <Text type="secondary">{guest.mobileNo}</Text>
                     </Space>
                   }
                 />
@@ -240,6 +266,23 @@ const RoomCheckInGuestForm = ({ form, formData, setFormData }) => {
         )}
       </Card>
 
+      <Flex
+        justify={isEditing ? "end" : "space-between"}
+        style={{ marginTop: 16 }}
+      >
+        {!isEditing && (
+          <Button color="default" variant="dashed" onClick={handleReset}>
+            Reset
+          </Button>
+        )}
+        <Space>
+          <Button onClick={prev}>Previous</Button>
+          <Button type="primary" onClick={handleNext}>
+            Next
+          </Button>
+        </Space>
+      </Flex>
+
       {/* Profile Form Modal for adding new guests */}
       <ProfileFormModal
         open={isProfileModalOpen}
@@ -247,17 +290,11 @@ const RoomCheckInGuestForm = ({ form, formData, setFormData }) => {
         closeFormModal={() => setIsProfileModalOpen(false)}
         isEditing={false}
         selectedObject={null}
-        addItem={handleAddGuest}
-        additionalData={{
-          nationalities: [],
-          idTypes: [],
-          genders: [],
-          civilStatus: [],
-          titles: [],
-        }}
+        addItem={addGuestData}
+        additionalData={additionalData}
       />
     </>
   );
 };
 
-export default RoomCheckInGuestForm;
+export default RoomCheckInInfoForm;

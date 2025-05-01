@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Form,
   Space,
@@ -8,38 +8,23 @@ import {
   DatePicker,
   Row,
   Col,
-  Flex,
   Spin,
   Divider,
   Card,
   Empty,
-  notification,
+  Flex,
   Select,
+  Alert,
+  Tag,
 } from "antd";
 import {
-  UserOutlined,
   SearchOutlined,
   CalendarOutlined,
+  TeamOutlined,
 } from "@ant-design/icons";
 
-import FormInputTooltip from "./FormInputTooltip";
-import { formValidations } from "./validations";
-import {
-  getChangedFieldValues,
-  triggerFormFieldsValidation,
-} from "../../utils/form";
-
 // Form for room facility availability check
-const CheckRoomForm = ({
-  open,
-  module,
-  closeFormModal,
-  isEditing,
-  selectedObject,
-  addItem,
-  showUpdateConfirmModal,
-}) => {
-  const [loading, setLoading] = useState(false);
+const CheckRoomForm = ({ form, fetchRooms, isEditing, setCurrent, next }) => {
   const [searching, setSearching] = useState(false);
   const [availableRooms, setAvailableRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -48,7 +33,9 @@ const CheckRoomForm = ({
     children: 0,
     infants: 0,
   });
+  const [error, setError] = useState(null);
 
+  // Handle capacity change for adults, children, and infants
   const handleCapacityChange = (type, value) => {
     setCapacity((prev) => ({
       ...prev,
@@ -56,211 +43,279 @@ const CheckRoomForm = ({
     }));
   };
 
+  // get available rooms for a stay between two dates with adults, children and infants
   const handleSearch = async () => {
     try {
+      setError(null);
       setSearching(true);
 
-      // Simulate API call to search for available rooms
-      setTimeout(() => {
-        // Mock data for available rooms
-        const mockRooms = [
-          {
-            id: 1,
-            name: "Deluxe Room",
-            price: 150,
-            capacity: 2,
-            description: "Cozy room with garden view",
-          },
-          {
-            id: 2,
-            name: "Family Suite",
-            price: 250,
-            capacity: 4,
-            description: "Spacious suite with sea view",
-          },
-          {
-            id: 3,
-            name: "Garden Villa",
-            price: 350,
-            capacity: 6,
-            description: "Private villa with pool access",
-          },
-        ];
+      // Check if date range is selected
+      const dateRange = form.getFieldValue("reservationDateRange");
 
-        setAvailableRooms(mockRooms);
+      if (!dateRange || !dateRange[0] || !dateRange[1]) {
         setSearching(false);
-      }, 1500);
+        throw new Error("Please select check-in and check-out dates");
+      }
+
+      const checkInDate = dateRange[0].format("YYYY-MM-DD");
+      const checkOutDate = dateRange[1].format("YYYY-MM-DD");
+
+      const rooms = await fetchRooms(
+        checkInDate,
+        checkOutDate,
+        capacity.adults,
+        capacity.children,
+        capacity.infants
+      );
+      setSearching(false);
+      setAvailableRooms(rooms);
     } catch (error) {
-      notification.error({
-        message: "Validation Error",
-        description: "Please check your inputs and try again",
-      });
+      setError(error.message || "Failed to search for rooms");
+      setAvailableRooms([]);
     }
   };
 
+  // Handle room selection
+  const handleRoomSelect = (room) => {
+    setSelectedRoom(room);
+    form.setFieldsValue({
+      roomId: { label: `Room ${room.number}`, value: room.id },
+    });
+    setError(null);
+  };
+
+  // Disable past dates in the date picker
   const disabledDate = (current) => {
     return current && current < new Date().setHours(0, 0, 0, 0);
   };
 
+  // Reset form fields and state
+  const handleReset = () => {
+    form.resetFields();
+    setCurrent(0);
+    setAvailableRooms([]);
+    setSelectedRoom(null);
+    setCapacity({ adults: 1, children: 0, infants: 0 });
+    setError(null);
+    setSearching(false);
+  };
+
+  // Handle next button click
+  const handleNext = () => {
+    if (form.getFieldValue("roomId") === undefined) {
+      setError("Please select a room");
+      return;
+    }
+    setError(null);
+    next();
+  };
+
   return (
     <>
-      <Spin spinning={loading} size="large" tip="Loading...">
-        <Row gutter={[16, 16]}>
-          <Col xs={24}>
-            <Form.Item
-              name="reservationSource"
-              label="Reservation Source"
-              rules={[{ required: true }]}
-            >
-              <Select
-                showSearch
-                options={[
-                  { label: "Online", value: "online" },
-                  { label: "Phone", value: "phone" },
-                ]}
-                placeholder="Select a source"
-                optionFilterProp="label"
-              />
-            </Form.Item>
-          </Col>
+      {error && (
+        <Alert
+          message={error}
+          type="error"
+          showIcon
+          style={{ marginBottom: 16 }}
+        />
+      )}
+      <Row gutter={[16, 16]}>
+        <Col xs={24} md={15}>
+          <Form.Item
+            name="reservationDateRange"
+            label={
+              <Space>
+                <CalendarOutlined />
+                <span>Check-in & Check-out Dates</span>
+              </Space>
+            }
+            rules={[
+              {
+                required: true,
+                message: "Please select your reservation dates!",
+              },
+            ]}
+          >
+            <DatePicker.RangePicker
+              style={{ width: "100%" }}
+              disabledDate={disabledDate}
+              format="YYYY-MM-DD"
+              placeholder={["Check-in", "Check-out"]}
+            />
+          </Form.Item>
+        </Col>
+        <Col xs={8} md={3}>
+          <Form.Item
+            name="adults"
+            label="Adults"
+            rules={[
+              {
+                required: true,
+                message: "Please select your reservation dates!",
+              },
+            ]}
+          >
+            <InputNumber
+              min={1}
+              max={10}
+              value={capacity.adults}
+              onChange={(value) => handleCapacityChange("adults", value)}
+            />
+          </Form.Item>
+        </Col>
+        <Col xs={8} md={3}>
+          <Form.Item
+            name="children"
+            label="Children"
+            rules={[
+              {
+                required: true,
+                message: "Please select your reservation dates!",
+              },
+            ]}
+          >
+            <InputNumber
+              min={0}
+              max={10}
+              value={capacity.children}
+              onChange={(value) => handleCapacityChange("children", value)}
+            />
+          </Form.Item>
+        </Col>
+        <Col xs={8} md={3}>
+          <Form.Item
+            name="infants"
+            label="Infants"
+            rules={[
+              {
+                required: true,
+                message: "Please select your reservation dates!",
+              },
+            ]}
+          >
+            <InputNumber
+              min={0}
+              max={5}
+              value={capacity.infants}
+              onChange={(value) => handleCapacityChange("infants", value)}
+            />
+          </Form.Item>
+        </Col>
+      </Row>
 
-          <Divider style={{ margin: 0 }} />
+      <Row justify="end">
+        <Col>
+          <Button
+            type="primary"
+            icon={<SearchOutlined />}
+            onClick={handleSearch}
+            loading={searching}
+          >
+            Search Available Rooms
+          </Button>
+        </Col>
+      </Row>
 
-          <Col xs={24} md={15}>
-            <Form.Item
-              name="reservationDateRange"
-              label={
-                <Space>
-                  <CalendarOutlined />
-                  <span>Check-in & Check-out Dates</span>
-                </Space>
-              }
-              rules={[
-                {
-                  required: true,
-                  message: "Please select your reservation dates!",
-                },
-              ]}
-            >
-              <DatePicker.RangePicker
-                style={{ width: "100%" }}
-                disabledDate={disabledDate}
-                format="YYYY-MM-DD"
-                placeholder={["Check-in", "Check-out"]}
-              />
-            </Form.Item>
-          </Col>
-          <Col xs={8} md={3}>
-            <Form.Item
-              name="adults"
-              label="Adults"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select your reservation dates!",
-                },
-              ]}
-            >
-              <InputNumber
-                min={1}
-                max={10}
-                value={capacity.adults}
-                onChange={(value) => handleCapacityChange("adults", value)}
-              />
-            </Form.Item>
-          </Col>
-          <Col xs={8} md={3}>
-            <Form.Item
-              name="children"
-              label="Children"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select your reservation dates!",
-                },
-              ]}
-            >
-              <InputNumber
-                min={0}
-                max={10}
-                value={capacity.children}
-                onChange={(value) => handleCapacityChange("children", value)}
-              />
-            </Form.Item>
-          </Col>
-          <Col xs={8} md={3}>
-            <Form.Item
-              name="infants"
-              label="Infants"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select your reservation dates!",
-                },
-              ]}
-            >
-              <InputNumber
-                min={0}
-                max={5}
-                value={capacity.infants}
-                onChange={(value) => handleCapacityChange("infants", value)}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
+      <Divider style={{ marginTop: 16, marginBottom: 16 }} />
 
+      <Spin spinning={searching}>
         <Row justify="end">
           <Col>
-            <Button
-              type="primary"
-              icon={<SearchOutlined />}
-              onClick={handleSearch}
-              loading={searching}
-            >
-              Search Available Rooms
-            </Button>
+            <Form.Item name="roomId" label="Selected Room" layout="horizontal">
+              <Select suffixIcon={null} disabled />
+            </Form.Item>
           </Col>
         </Row>
 
-        <Divider style={{ marginTop: 16, marginBottom: 16 }} />
-
-        <Spin spinning={searching} tip="Searching for available rooms...">
-          {availableRooms.length > 0 ? (
-            <Row gutter={[16, 16]}>
-              {availableRooms.map((room) => (
-                <Col xs={24} md={8} key={room.id}>
-                  <Card
-                    hoverable
-                    title={room.name}
-                    onClick={() => setSelectedRoom(room.id)}
-                    extra={
-                      <Typography.Text strong>
-                        ${room.price}/night
-                      </Typography.Text>
+        {availableRooms.length > 0 ? (
+          <Row gutter={[16, 16]}>
+            {availableRooms.map((room) => (
+              <Col xs={24} sm={12} md={12} key={room.id}>
+                <Card
+                  hoverable
+                  onClick={() => handleRoomSelect(room)}
+                  style={{
+                    border:
+                      selectedRoom?.id === room.id
+                        ? "2px solid #1890ff"
+                        : undefined,
+                    height: "100%",
+                  }}
+                >
+                  <Card.Meta
+                    title={
+                      <Flex justify="space-between" wrap>
+                        Room {room.number}
+                        <Tag color="processing">
+                          {room.price.toLocaleString("en-LK", {
+                            style: "currency",
+                            currency: "LKR",
+                          })}
+                          /night
+                        </Tag>
+                      </Flex>
                     }
-                  >
-                    <Typography.Paragraph>
-                      {room.description}
-                    </Typography.Paragraph>
-                    <Typography.Text type="secondary">
-                      Max capacity: {room.capacity} guests
-                    </Typography.Text>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
-          ) : (
-            <Empty
-              description={
-                <Typography.Text type="secondary">
-                  Search for available rooms by selecting dates and guests
-                </Typography.Text>
-              }
-              style={{ padding: "20px 0" }}
-            />
-          )}
-        </Spin>
+                    description={
+                      <>
+                        <Flex gap={12} wrap="wrap">
+                          <Flex align="center" gap={4}>
+                            <TeamOutlined style={{ color: "#1890ff" }} />
+                            <Typography.Text>
+                              {room.adultNo || 0} Adults
+                            </Typography.Text>
+                          </Flex>
+                          <Flex align="center" gap={4}>
+                            <TeamOutlined style={{ color: "#52c41a" }} />
+                            <Typography.Text>
+                              {room.childNo || 0} Children
+                            </Typography.Text>
+                          </Flex>
+                          <Flex align="center" gap={4}>
+                            <TeamOutlined style={{ color: "#faad14" }} />
+                            <Typography.Text>
+                              {room.infantNo || 0} Infant
+                            </Typography.Text>
+                          </Flex>
+                        </Flex>
+                        {room.facilities?.map((facility, index) => (
+                          <Typography.Text type="secondary" key={index}>
+                            | {facility}{" "}
+                          </Typography.Text>
+                        ))}
+                      </>
+                    }
+                  />
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        ) : (
+          <Empty
+            description={
+              <Typography.Text type="secondary">
+                Search for available rooms by selecting dates and guests
+              </Typography.Text>
+            }
+          />
+        )}
       </Spin>
+
+      <Flex
+        justify={isEditing ? "end" : "space-between"}
+        style={{ marginTop: 16 }}
+      >
+        {!isEditing && (
+          <Button color="default" variant="dashed" onClick={handleReset}>
+            Reset
+          </Button>
+        )}
+        <Space>
+          <Button type="primary" onClick={handleNext}>
+            Next
+          </Button>
+        </Space>
+      </Flex>
     </>
   );
 };
