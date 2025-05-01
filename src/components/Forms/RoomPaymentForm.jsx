@@ -28,7 +28,7 @@ const RoomPaymentForm = ({
   pricingInformation,
 }) => {
   const [paidAmount, setPaidAmount] = useState(0);
-  const [remainingAmount, setRemainingAmount] = useState(0);
+  const [remainingAmount, setRemainingAmount] = useState(0);  
 
   useEffect(() => {
     if (pricingInformation && paidAmount) {
@@ -75,16 +75,25 @@ const RoomPaymentForm = ({
             <Col span={12}>
               <Title level={5}>Price Breakdown</Title>
               <Paragraph>
-                <Text strong>Base Price:</Text> $
-                {pricingInformation.basePrice.toFixed(2)}
+                <Text strong>Base Price:</Text>{" "}
+                {pricingInformation.basePrice.toLocaleString("en-LK", {
+                  style: "currency",
+                  currency: "LKR",
+                })}
               </Paragraph>
               <Paragraph>
-                <Text strong>Discount:</Text> $
-                {pricingInformation.discount.toFixed(2)}
+                <Text strong>Discount:</Text>{" "}
+                {pricingInformation.discount.toLocaleString("en-LK", {
+                  style: "currency",
+                  currency: "LKR",
+                })}
               </Paragraph>
               <Paragraph>
-                <Text strong>Taxes:</Text> $
-                {pricingInformation.totalTaxes.toFixed(2)}
+                <Text strong>Taxes:</Text>{" "}
+                {pricingInformation.totalTaxes.toLocaleString("en-LK", {
+                  style: "currency",
+                  currency: "LKR",
+                })}
               </Paragraph>
 
               {pricingInformation.amenities &&
@@ -110,7 +119,12 @@ const RoomPaymentForm = ({
                 title="Total Price"
                 value={pricingInformation.totalPrice}
                 precision={2}
-                prefix="$"
+                formatter={(value) =>
+                  value.toLocaleString("en-LK", {
+                    style: "currency",
+                    currency: "LKR",
+                  })
+                }
                 valueStyle={{ color: "#3f8600", fontWeight: "bold" }}
               />
             </Col>
@@ -130,8 +144,8 @@ const RoomPaymentForm = ({
                   type="number"
                   placeholder="Enter payment amount"
                   onChange={handlePaidAmountChange}
-                  prefix="$"
-                  suffix="USD"
+                  prefix="Rs."
+                  suffix="LKR"
                   style={{ width: "100%" }}
                 />
               </Form.Item>
@@ -142,7 +156,12 @@ const RoomPaymentForm = ({
                     title="Paid Amount"
                     value={paidAmount}
                     precision={2}
-                    prefix="$"
+                    formatter={(value) =>
+                      value.toLocaleString("en-LK", {
+                        style: "currency",
+                        currency: "LKR",
+                      })
+                    }
                     valueStyle={{ color: "#1677ff" }}
                   />
                 </Col>
@@ -151,7 +170,12 @@ const RoomPaymentForm = ({
                     title="Remaining Balance"
                     value={remainingAmount}
                     precision={2}
-                    prefix="$"
+                    formatter={(value) =>
+                      value.toLocaleString("en-LK", {
+                        style: "currency",
+                        currency: "LKR",
+                      })
+                    }
                     valueStyle={{
                       color: remainingAmount > 0 ? "#cf1322" : "#3f8600",
                     }}
