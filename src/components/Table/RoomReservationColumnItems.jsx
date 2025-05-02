@@ -34,13 +34,13 @@ export const RoomReservationColumnItems = (
     title: "Check-In",
     dataIndex: "checkInDate",
     sorter: true,
-    render: (_, record) => record.checkInDate || record.reservedCheckinDate,
+    render: (_, record) => record.checkInDate || record.reservedCheckInDate,
   },
   {
     title: "Check-Out",
     dataIndex: "checkOutDate",
     sorter: true,
-    render: (_, record) => record.checkOutDate || record.reservedCheckoutDate,
+    render: (_, record) => record.checkOutDate || record.reservedCheckOutDate,
   },
   {
     title: "Total Price",

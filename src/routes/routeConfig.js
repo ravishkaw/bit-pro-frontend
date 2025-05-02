@@ -2,8 +2,8 @@
 import Dashboard from "../pages/Dashboard";
 import UserProfile from "../pages/Profile/UserProfile";
 import ManageEmployee from "../pages/Profile/ManageEmployees";
+import ManageGuests from "../pages/Profile/ManageGuests";
 import {
-  ManageGuests,
   RoomReservation,
   RoomReservationAmenities,
 } from "../pages/Reservation";

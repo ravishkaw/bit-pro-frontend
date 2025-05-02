@@ -16,13 +16,22 @@ import {
   Flex,
   Tag,
   Input,
+  Divider,
+  Tooltip,
 } from "antd";
 import {
   UserOutlined,
   PlusOutlined,
   DeleteOutlined,
+  TeamOutlined,
+  UserAddOutlined,
+  PlusCircleOutlined,
 } from "@ant-design/icons";
 import ProfileFormModal from "../Modals/ProfileFormModal";
+import ChildForm from "./ChildForm";
+import useGuests from "../../hooks/profile/useGuests";
+import FormInputTooltip from "./FormInputTooltip";
+import { mapToSelectOptions } from "../../utils/utils";
 
 const { Text } = Typography;
 
@@ -32,54 +41,124 @@ const RoomCheckInInfoForm = ({
   setCurrent,
   next,
   prev,
-  guestHookData,
-  reservationTypes,
-  reservationSources,
+  additionalData,
+  formData,
+  setFormData,
 }) => {
-  const [selectedGuests, setSelectedGuests] = useState(
-    form.getFieldValue("guests") || []
+  const [selectedGuestIds, setSelectedGuestIds] = useState(
+    formData?.guestIds || []
+  );
+  const [selectedChildIds, setSelectedChildIds] = useState(
+    formData?.childIds || []
   );
   const [primaryGuest, setPrimaryGuest] = useState(
-    form.getFieldValue("primaryGuestId") || null
+    formData?.primaryGuestId || null
   );
+
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isChildModalOpen, setIsChildModalOpen] = useState(false);
+  const [expandedChildSections, setExpandedChildSections] = useState({});
+
+  const [currentParentId, setCurrentParentId] = useState(null);
   const [error, setError] = useState(null);
 
-  const { data: guests, additionalData, addItem: addGuestData } = guestHookData;
+  const {
+    guests,
+    children,
+    reservationTypes,
+    reservationSources,
+    addChild,
+    addGuest,
+  } = additionalData;
 
-  // Add guest to the selected list
+  const {
+    additionalData: { genders, idTypes, civilStatus, nationalities, titles },
+  } = useGuests();
+
+  // Guest options for the select input filtering already selected guests
+  const guestsOptions = () => {
+    const filteredOptions = guests.filter(
+      (guest) => !selectedGuestIds.includes(guest.id)
+    );
+    return filteredOptions.map((guest) => ({
+      label: `${guest.fullName} (${guest.email})`,
+      value: guest.id,
+    }));
+  };
+
+  const mappedGuests = mapToSelectOptions(guests);
+
+  // Child options for the select input filtering already selected children for the parent
+  const childrenOptions = (parentId) => {
+    const filteredOptions = children.filter(
+      (child) =>
+        child.guestId === parentId &&
+        !selectedChildIds.some((selected) => selected.id === child.id)
+    );
+
+    return filteredOptions.map((child) => ({
+      label: child.fullName,
+      value: child.id,
+    }));
+  };
+
+  // Add new guest to the selection
   const addGuestToSelection = (guest) => {
-    if (!selectedGuests.some((g) => g.id === guest.id)) {
-      const updatedGuests = [...selectedGuests, guest];
-      setSelectedGuests(updatedGuests);
+    if (!selectedGuestIds.includes(guest.id)) {
+      const updatedGuestIds = [...selectedGuestIds, guest.id];
+      setSelectedGuestIds(updatedGuestIds);
 
-      // Set as primary guest if this is the first guest
+      // Check if a guest is already set as primary and set it if not
       if (!primaryGuest) {
         setPrimaryGuest(guest.id);
       }
 
-      // Update form data
-      updateGuestData(updatedGuests, primaryGuest || guest.id);
+      updateGuestData(
+        updatedGuestIds,
+        selectedChildIds,
+        primaryGuest || guest.id
+      );
     }
   };
 
-  // Remove guest from the selection
+  // Remove guest from the selection with children
   const removeGuest = (guestId) => {
-    const updatedGuests = selectedGuests.filter((g) => g.id !== guestId);
-    setSelectedGuests(updatedGuests);
+    const updatedGuestIds = selectedGuestIds.filter((id) => id !== guestId);
+    const updatedChildIds = selectedChildIds.filter(
+      (child) => child.guestId !== guestId
+    );
 
-    // Update primary guest if needed
+    setSelectedGuestIds(updatedGuestIds);
+    setSelectedChildIds(updatedChildIds);
+
+    // Check if the removed guest was the primary guest and if set the first guest in the list as the new primary guest
     if (primaryGuest === guestId) {
       const newPrimaryId =
-        updatedGuests.length > 0 ? updatedGuests[0].id : null;
+        updatedGuestIds.length > 0 ? updatedGuestIds[0] : null;
       setPrimaryGuest(newPrimaryId);
-      updateGuestData(updatedGuests, newPrimaryId);
+      updateGuestData(updatedGuestIds, updatedChildIds, newPrimaryId);
     } else {
-      updateGuestData(updatedGuests, primaryGuest);
+      updateGuestData(updatedGuestIds, updatedChildIds, primaryGuest);
     }
   };
 
-  // Handle guest selection
+  // Add new child to the selection
+  const addChildToSelection = (childId, parentId) => {
+    if (!selectedChildIds.some((c) => c.id === childId)) {
+      const updatedChildIds = [...selectedChildIds, { id: childId, parentId }];
+      setSelectedChildIds(updatedChildIds);
+      updateGuestData(selectedGuestIds, updatedChildIds, primaryGuest);
+    }
+  };
+
+  // Remove child from the selection
+  const removeChild = (childId) => {
+    const updatedChildIds = selectedChildIds.filter((c) => c.id !== childId);
+    setSelectedChildIds(updatedChildIds);
+    updateGuestData(selectedGuestIds, updatedChildIds, primaryGuest);
+  };
+
+  // Handle guest selection from the dropdown
   const handleGuestSelect = (value) => {
     const selectedGuest = guests.find((g) => g.id === value);
     if (selectedGuest) {
@@ -88,33 +167,46 @@ const RoomCheckInInfoForm = ({
     }
   };
 
-  // Set a guest as primary
-  const setAsPrimary = (guestId) => {
-    setPrimaryGuest(guestId);
-    updateGuestData(selectedGuests, guestId);
+  // Handle child selection from the dropdown
+  const handleChildSelect = (value, parentId) => {
+    const selectedChild = children.find((c) => c.id === value);
+    if (selectedChild) {
+      addChildToSelection(value, parentId);
+    }
   };
 
-  // Update guest data fields
-  const updateGuestData = (guestList, primaryId) => {
+  // Set the selected guest as primary
+  const setAsPrimary = (guestId) => {
+    setPrimaryGuest(guestId);
+    updateGuestData(selectedGuestIds, selectedChildIds, guestId);
+  };
+
+  // Update the form values for guests and children
+  const updateGuestData = (guestIds, childIds, primaryId) => {
     form.setFieldsValue({
-      guests: guestList,
+      guestIds: guestIds,
+      childIds: childIds,
       primaryGuestId: primaryId,
     });
   };
 
-  const guestsOptions = () => {
-    const filteredOptions = guests.filter(
-      (guest) => !selectedGuests.some((selected) => selected.id === guest.id)
-    );
-    return filteredOptions.map((guest) => ({
-      label: `${guest.fullName} (${guest.email})`,
-      value: guest.id,
+  // Toggle the child section for a specific guest
+  const toggleChildSection = (guestId) => {
+    setExpandedChildSections((prev) => ({
+      ...prev,
+      [guestId]: !prev[guestId],
     }));
   };
 
-  // handle next button click
+  // Open the child modal for adding a new child
+  const openAddChildModal = (parentId) => {
+    setCurrentParentId(parentId);
+    setIsChildModalOpen(true);
+  };
+
+  // Handle next button click
   const handleNext = () => {
-    const selectedGuests = form.getFieldValue("guests");
+    const selectedGuests = form.getFieldValue("guestIds");
     const primaryGuestId = form.getFieldValue("primaryGuestId");
 
     if (!selectedGuests || selectedGuests.length === 0 || !primaryGuestId) {
@@ -125,13 +217,15 @@ const RoomCheckInInfoForm = ({
     next();
   };
 
-  // Reset form fields and state
+  // Handle reset button click
   const handleReset = () => {
     form.resetFields();
     setCurrent(0);
     setPrimaryGuest(null);
-    setSelectedGuests([]);
+    setSelectedGuestIds([]);
+    setSelectedChildIds([]);
     setError(null);
+    setFormData({});
   };
 
   return (
@@ -148,9 +242,15 @@ const RoomCheckInInfoForm = ({
       <Row gutter={16}>
         <Col xs={24} md={12}>
           <Form.Item
-            name="reservationSource"
-            label="Reservation Source"
-            rules={[{ required: true }]}
+            name="roomReservationSourceId"
+            label={
+              <FormInputTooltip
+                label="Reservation Source"
+                title="Select the source of the reservation"
+              />
+            }
+            rules={[{ required: true, message: "Please select a source" }]}
+            hasFeedback
           >
             <Select
               showSearch
@@ -162,9 +262,15 @@ const RoomCheckInInfoForm = ({
         </Col>
         <Col xs={24} md={12}>
           <Form.Item
-            name="reservationType"
-            label="Reservation Type"
-            rules={[{ required: true }]}
+            name="reservationTypeId"
+            label={
+              <FormInputTooltip
+                label="Reservation Type"
+                title="Select the type of the room reservation"
+              />
+            }
+            rules={[{ required: true, message: "Please select a type" }]}
+            hasFeedback
           >
             <Select
               showSearch
@@ -176,13 +282,21 @@ const RoomCheckInInfoForm = ({
         </Col>
       </Row>
 
-      {/* Guest Selection Area */}
-      <Form.Item name="guestSelect" label="Select Guest">
+      <Form.Item
+        name="guestSelect"
+        label={
+          <FormInputTooltip
+            label="Select Guest"
+            title="Select guest/s and children for the reservation"
+          />
+        }
+        hasFeedback
+      >
         <Row gutter={16}>
           <Col xs={24} md={18}>
             <Select
               showSearch
-              placeholder="Search for a guest by name, email, or phone"
+              placeholder="Search a guest by name or email"
               style={{ width: "100%" }}
               filterOption={(input, option) =>
                 option.label.toLowerCase().includes(input.toLowerCase())
@@ -205,8 +319,11 @@ const RoomCheckInInfoForm = ({
         </Row>
       </Form.Item>
 
-      {/* Hidden form field to store guest data */}
-      <Form.Item name="guests" hidden required>
+      <Form.Item name="guestIds" hidden>
+        <Input hidden />
+      </Form.Item>
+
+      <Form.Item name="childIds" hidden>
         <Input hidden />
       </Form.Item>
 
@@ -214,53 +331,143 @@ const RoomCheckInInfoForm = ({
         <Input hidden />
       </Form.Item>
 
-      {/* Selected Guests Display */}
       <Card>
-        {selectedGuests.length === 0 ? (
+        {selectedGuestIds.length === 0 ? (
           <Empty description="No guests selected yet" />
         ) : (
           <List
             itemLayout="horizontal"
-            dataSource={selectedGuests}
-            style={{ maxHeight: 300, overflowY: "auto" }}
+            dataSource={selectedGuestIds.map((id) =>
+              guests.find((g) => g.id === id)
+            )}
+            style={{ maxHeight: 500, overflowY: "auto", overflowX: "hidden" }}
             renderItem={(guest) => (
-              <List.Item
-                actions={[
-                  primaryGuest !== guest.id ? (
-                    <Button type="link" onClick={() => setAsPrimary(guest.id)}>
-                      Set as primary
-                    </Button>
-                  ) : null,
-                  <Button
-                    type="text"
-                    danger
-                    icon={<DeleteOutlined />}
-                    onClick={() => removeGuest(guest.id)}
-                  />,
-                ]}
-              >
-                <List.Item.Meta
-                  avatar={
-                    <Badge dot={primaryGuest === guest.id} color="green">
-                      <Avatar icon={<UserOutlined />} />
-                    </Badge>
-                  }
-                  title={
-                    <Flex align="center" gap={8}>
-                      {guest.fullName}
-                      {primaryGuest === guest.id && (
-                        <Tag color="green">Primary</Tag>
-                      )}
+              <>
+                <List.Item
+                  actions={[
+                    primaryGuest !== guest.id ? (
+                      <Button
+                        type="link"
+                        onClick={() => setAsPrimary(guest.id)}
+                      >
+                        Set as primary
+                      </Button>
+                    ) : null,
+                    <Button
+                      type="text"
+                      icon={<PlusCircleOutlined />}
+                      onClick={() => toggleChildSection(guest.id)}
+                    >
+                      {expandedChildSections[guest.id]
+                        ? "Hide children"
+                        : "Add children"}
+                    </Button>,
+                    <Button
+                      type="text"
+                      danger
+                      icon={<DeleteOutlined />}
+                      onClick={() => removeGuest(guest.id)}
+                    />,
+                  ]}
+                >
+                  <List.Item.Meta
+                    avatar={
+                      <Badge dot={primaryGuest === guest.id} color="green">
+                        <Avatar icon={<UserOutlined />} />
+                      </Badge>
+                    }
+                    title={
+                      <Flex align="center" gap={8}>
+                        {guest.fullName}
+                        {primaryGuest === guest.id && (
+                          <Tag color="green">Primary</Tag>
+                        )}
+                      </Flex>
+                    }
+                    description={
+                      <Space direction="vertical" size={0}>
+                        <Text type="secondary">{guest.email}</Text>
+                      </Space>
+                    }
+                  />
+                </List.Item>
+
+                {expandedChildSections[guest.id] && (
+                  <div
+                    style={{ marginLeft: 48, marginBottom: 12, marginTop: 8 }}
+                  >
+                    <Flex align="center" justify="space-between">
+                      <Space>
+                        <TeamOutlined />
+                        <Text type="secondary">Children</Text>
+                      </Space>
+                      <Select
+                        placeholder="Select existing child"
+                        options={childrenOptions(guest.id)}
+                        onSelect={(value) => handleChildSelect(value, guest.id)}
+                        allowClear
+                        showSearch
+                        style={{ width: 250 }}
+                        suffixIcon={
+                          <Tooltip title="Add child">
+                            <Button
+                              size="small"
+                              type="dashed"
+                              icon={<UserAddOutlined />}
+                              onClick={() => openAddChildModal(guest.id)}
+                            />
+                          </Tooltip>
+                        }
+                      />
                     </Flex>
-                  }
-                  description={
-                    <Space direction="vertical" size={0}>
-                      <Text type="secondary">{guest.email}</Text>
-                      <Text type="secondary">{guest.mobileNo}</Text>
-                    </Space>
-                  }
-                />
-              </List.Item>
+
+                    {selectedChildIds.filter(
+                      (child) => child.parentId === guest.id
+                    ).length > 0 ? (
+                      <List
+                        size="small"
+                        dataSource={selectedChildIds
+                          .filter((child) => child.parentId === guest.id)
+                          .map(({ id }) => children.find((c) => c.id === id))}
+                        renderItem={(child) => (
+                          <List.Item
+                            actions={[
+                              <Button
+                                type="text"
+                                danger
+                                size="small"
+                                icon={<DeleteOutlined />}
+                                onClick={() => removeChild(child.id)}
+                              />,
+                            ]}
+                          >
+                            <List.Item.Meta
+                              avatar={
+                                <Avatar size="small" icon={<UserOutlined />} />
+                              }
+                              title={child.fullName}
+                            />
+                          </List.Item>
+                        )}
+                        style={{ marginTop: 8 }}
+                      />
+                    ) : (
+                      <Text
+                        type="secondary"
+                        italic
+                        style={{ display: "block", marginTop: 8 }}
+                      >
+                        No children added
+                      </Text>
+                    )}
+                  </div>
+                )}
+
+                {selectedGuestIds.indexOf(guest.id) <
+                  selectedGuestIds.length - 1 && (
+                  <Divider style={{ margin: "8px 0" }} />
+                )}
+              </>
             )}
           />
         )}
@@ -283,16 +490,34 @@ const RoomCheckInInfoForm = ({
         </Space>
       </Flex>
 
-      {/* Profile Form Modal for adding new guests */}
       <ProfileFormModal
         open={isProfileModalOpen}
         module="Guest"
         closeFormModal={() => setIsProfileModalOpen(false)}
         isEditing={false}
         selectedObject={null}
-        addItem={addGuestData}
-        additionalData={additionalData}
+        addItem={addGuest}
+        additionalData={{
+          genders,
+          idTypes,
+          civilStatus,
+          nationalities,
+          titles,
+        }}
       />
+
+      {isChildModalOpen && (
+        <ChildForm
+          open={isChildModalOpen}
+          closeFormModal={() => setIsChildModalOpen(false)}
+          isEditing={false}
+          selectedObject={null}
+          module="Child"
+          addItem={addChild}
+          additionalData={{ genders, nationalities, guests: mappedGuests }}
+          parentId={currentParentId}
+        />
+      )}
     </>
   );
 };

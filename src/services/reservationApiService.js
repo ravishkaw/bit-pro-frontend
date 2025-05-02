@@ -2,6 +2,7 @@ import { createApiService } from "./apiService";
 import axiosInstance from "./axiosInstance";
 
 const GUEST_BASE_URL = "/guests";
+const CHILD_BASE_URL = "/children";
 const ROOM_RESERVATION_BASE_URL = "/room-reservation";
 const EVENT_RESERVATION_BASE_URL = "/event-reservation";
 const ROOM_RESERVAION_AMENITY_URL = "/room-reservation-amenities";
@@ -13,6 +14,25 @@ const ROOM_RESERVATION_SOURCE_URL = "/room-reservation-sources";
 
 // Generic API service for guests
 export const guestService = createApiService(GUEST_BASE_URL);
+
+// Get all guests without pagination and sorting
+export const getAllGuests = async () => {
+  const response = await axiosInstance.get(`${GUEST_BASE_URL}/get-all`);
+  return response.data;
+};
+
+// Generic API service for children
+export const childService = createApiService(CHILD_BASE_URL);
+
+// Get all children without pagination and sorting
+export const getAllChildren = async () => {
+  const response = await axiosInstance.get(`${CHILD_BASE_URL}/get-all`);
+  return response.data;
+};
+
+export const roomReservationService = createApiService(
+  ROOM_RESERVATION_BASE_URL
+);
 
 // Generic API service for room reservations
 export const getReservationsToAStatus = async (params) => {
@@ -28,10 +48,6 @@ export const getReservationsToAStatus = async (params) => {
   });
   return response.data;
 };
-
-export const roomReservationService = createApiService(
-  ROOM_RESERVATION_BASE_URL
-);
 
 export const checkRoomReservationPricing = async (params) => {
   const requestData = {
@@ -59,6 +75,14 @@ export const eventReservationService = createApiService(
 export const roomReservationAmenityService = createApiService(
   ROOM_RESERVAION_AMENITY_URL
 );
+
+// Get all room reservation amenities without pagination and sorting
+export const getAllRoomReservationAmenities = async () => {
+  const response = await axiosInstance.get(
+    `${ROOM_RESERVAION_AMENITY_URL}/get-all`
+  );
+  return response.data;
+};
 
 // Generic API service for room reservation amenities
 export const roomReservationAmenityCategoryService = createApiService(

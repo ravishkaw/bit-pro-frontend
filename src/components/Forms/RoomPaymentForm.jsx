@@ -22,13 +22,15 @@ const RoomPaymentForm = ({
   form,
   setCurrent,
   prev,
-  next,
+  additionalData,
   confirmLoading,
   pricingLoading,
   pricingInformation,
 }) => {
   const [paidAmount, setPaidAmount] = useState(0);
-  const [remainingAmount, setRemainingAmount] = useState(0);  
+  const [remainingAmount, setRemainingAmount] = useState(0);
+
+  const { reservationStatus, paymentMethods, paymentStatuses } = additionalData;
 
   useEffect(() => {
     if (pricingInformation && paidAmount) {
@@ -53,7 +55,7 @@ const RoomPaymentForm = ({
           <Title level={4}>Payment Summary</Title>
 
           <Row gutter={[16, 16]}>
-            <Col span={12}>
+            <Col span={8}>
               <Title level={5}>Booking Details</Title>
               <Paragraph>
                 <Text strong>Check-in Date:</Text>{" "}
@@ -72,25 +74,25 @@ const RoomPaymentForm = ({
               </Paragraph>
             </Col>
 
-            <Col span={12}>
+            <Col span={8}>
               <Title level={5}>Price Breakdown</Title>
               <Paragraph>
                 <Text strong>Base Price:</Text>{" "}
-                {pricingInformation.basePrice.toLocaleString("en-LK", {
+                {pricingInformation?.basePrice?.toLocaleString("en-LK", {
                   style: "currency",
                   currency: "LKR",
                 })}
               </Paragraph>
               <Paragraph>
                 <Text strong>Discount:</Text>{" "}
-                {pricingInformation.discount.toLocaleString("en-LK", {
+                {pricingInformation?.discount?.toLocaleString("en-LK", {
                   style: "currency",
                   currency: "LKR",
                 })}
               </Paragraph>
               <Paragraph>
                 <Text strong>Taxes:</Text>{" "}
-                {pricingInformation.totalTaxes.toLocaleString("en-LK", {
+                {pricingInformation?.totalTaxes?.toLocaleString("en-LK", {
                   style: "currency",
                   currency: "LKR",
                 })}
@@ -100,7 +102,7 @@ const RoomPaymentForm = ({
                 pricingInformation.amenities.length > 0 && (
                   <>
                     <Title level={5}>Additional Amenities</Title>
-                    {pricingInformation.amenities.map((amenity, index) => (
+                    {pricingInformation?.amenities.map((amenity, index) => (
                       <Paragraph key={index}>
                         <Text strong>Amenity {amenity.amenityId}:</Text>{" "}
                         Quantity: {amenity.quantity}
@@ -109,15 +111,11 @@ const RoomPaymentForm = ({
                   </>
                 )}
             </Col>
-          </Row>
 
-          <Divider />
-
-          <Row gutter={[16, 16]}>
             <Col span={8}>
               <Statistic
                 title="Total Price"
-                value={pricingInformation.totalPrice}
+                value={pricingInformation?.totalPrice}
                 precision={2}
                 formatter={(value) =>
                   value.toLocaleString("en-LK", {
@@ -127,9 +125,39 @@ const RoomPaymentForm = ({
                 }
                 valueStyle={{ color: "#3f8600", fontWeight: "bold" }}
               />
+              <Statistic
+                title="Paid Amount"
+                value={paidAmount}
+                precision={2}
+                formatter={(value) =>
+                  value?.toLocaleString("en-LK", {
+                    style: "currency",
+                    currency: "LKR",
+                  })
+                }
+                valueStyle={{ color: "#1677ff" }}
+              />
+              <Statistic
+                title="Remaining Balance"
+                value={remainingAmount}
+                precision={2}
+                formatter={(value) =>
+                  value?.toLocaleString("en-LK", {
+                    style: "currency",
+                    currency: "LKR",
+                  })
+                }
+                valueStyle={{
+                  color: remainingAmount > 0 ? "#cf1322" : "#3f8600",
+                }}
+              />
             </Col>
+          </Row>
 
-            <Col span={16}>
+          <Divider />
+
+          <Row gutter={[16, 16]}>
+            <Col span={8}>
               <Form.Item
                 label="Payment Amount"
                 name="paidAmount"
@@ -149,39 +177,47 @@ const RoomPaymentForm = ({
                   style={{ width: "100%" }}
                 />
               </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label="Payment Method"
+                name="paymentMethodId"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select the payment method",
+                  },
+                ]}
+              >
+                <Select
+                  placeholder="Select payment method"
+                  showSearch
+                  options={paymentMethods}
+                  optionFilterProp="label"
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+            </Col>
 
-              <Row gutter={[16, 0]}>
-                <Col span={12}>
-                  <Statistic
-                    title="Paid Amount"
-                    value={paidAmount}
-                    precision={2}
-                    formatter={(value) =>
-                      value.toLocaleString("en-LK", {
-                        style: "currency",
-                        currency: "LKR",
-                      })
-                    }
-                    valueStyle={{ color: "#1677ff" }}
-                  />
-                </Col>
-                <Col span={12}>
-                  <Statistic
-                    title="Remaining Balance"
-                    value={remainingAmount}
-                    precision={2}
-                    formatter={(value) =>
-                      value.toLocaleString("en-LK", {
-                        style: "currency",
-                        currency: "LKR",
-                      })
-                    }
-                    valueStyle={{
-                      color: remainingAmount > 0 ? "#cf1322" : "#3f8600",
-                    }}
-                  />
-                </Col>
-              </Row>
+            <Col span={8}>
+              <Form.Item
+                label="Reservation Status"
+                name="roomReservationStatusId"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select the reservation status",
+                  },
+                ]}
+              >
+                <Select
+                  placeholder="Select reservation status"
+                  showSearch
+                  options={reservationStatus}
+                  optionFilterProp="label"
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
             </Col>
           </Row>
         </Card>

@@ -22,9 +22,17 @@ import {
   CalendarOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
+import FormInputTooltip from "./FormInputTooltip";
 
 // Form for room facility availability check
-const CheckRoomForm = ({ form, fetchRooms, isEditing, setCurrent, next }) => {
+const CheckRoomForm = ({
+  form,
+  fetchRooms,
+  isEditing,
+  setCurrent,
+  next,
+  setFormData,
+}) => {
   const [searching, setSearching] = useState(false);
   const [availableRooms, setAvailableRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -97,6 +105,7 @@ const CheckRoomForm = ({ form, fetchRooms, isEditing, setCurrent, next }) => {
     setSelectedRoom(null);
     setCapacity({ adults: 1, children: 0, infants: 0 });
     setError(null);
+    setFormData({});
     setSearching(false);
   };
 
@@ -125,10 +134,15 @@ const CheckRoomForm = ({ form, fetchRooms, isEditing, setCurrent, next }) => {
           <Form.Item
             name="reservationDateRange"
             label={
-              <Space>
-                <CalendarOutlined />
-                <span>Check-in & Check-out Dates</span>
-              </Space>
+              <FormInputTooltip
+                label={
+                  <Space>
+                    <CalendarOutlined />
+                    <span>Check-in & Check-out Dates</span>
+                  </Space>
+                }
+                title={"Select your check-in and check-out dates"}
+              />
             }
             rules={[
               {
@@ -136,6 +150,7 @@ const CheckRoomForm = ({ form, fetchRooms, isEditing, setCurrent, next }) => {
                 message: "Please select your reservation dates!",
               },
             ]}
+            hasFeedback
           >
             <DatePicker.RangePicker
               style={{ width: "100%" }}
@@ -147,14 +162,20 @@ const CheckRoomForm = ({ form, fetchRooms, isEditing, setCurrent, next }) => {
         </Col>
         <Col xs={8} md={3}>
           <Form.Item
-            name="adults"
-            label="Adults"
+            name="adultNo"
+            label={
+              <FormInputTooltip
+                label="Adults"
+                title="Select the number of adults"
+              />
+            }
             rules={[
               {
                 required: true,
                 message: "Please select your reservation dates!",
               },
             ]}
+            hasFeedback
           >
             <InputNumber
               min={1}
@@ -166,14 +187,20 @@ const CheckRoomForm = ({ form, fetchRooms, isEditing, setCurrent, next }) => {
         </Col>
         <Col xs={8} md={3}>
           <Form.Item
-            name="children"
-            label="Children"
+            name="childNo"
+            label={
+              <FormInputTooltip
+                label="Children"
+                title="Select the number of children"
+              />
+            }
             rules={[
               {
                 required: true,
                 message: "Please select your reservation dates!",
               },
             ]}
+            hasFeedback
           >
             <InputNumber
               min={0}
@@ -185,14 +212,20 @@ const CheckRoomForm = ({ form, fetchRooms, isEditing, setCurrent, next }) => {
         </Col>
         <Col xs={8} md={3}>
           <Form.Item
-            name="infants"
-            label="Infants"
+            name="infantNo"
+            label={
+              <FormInputTooltip
+                label="Infants"
+                title="Select the number of infants"
+              />
+            }
             rules={[
               {
                 required: true,
                 message: "Please select your reservation dates!",
               },
             ]}
+            hasFeedback
           >
             <InputNumber
               min={0}
@@ -222,7 +255,12 @@ const CheckRoomForm = ({ form, fetchRooms, isEditing, setCurrent, next }) => {
       <Spin spinning={searching}>
         <Row justify="end">
           <Col>
-            <Form.Item name="roomId" label="Selected Room" layout="horizontal">
+            <Form.Item
+              name="roomId"
+              label="Selected Room"
+              layout="horizontal"
+              hasFeedback
+            >
               <Select suffixIcon={null} disabled />
             </Form.Item>
           </Col>

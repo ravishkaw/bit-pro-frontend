@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
-import { Button, Flex, Form, Modal, Space, Steps, message } from "antd";
+import { Form, Modal, Steps, message } from "antd";
 import {
-  ContactsOutlined,
   DollarCircleOutlined,
   GiftOutlined,
   HomeOutlined,
-  IdcardOutlined,
   ScheduleOutlined,
-  UserOutlined,
 } from "@ant-design/icons";
 
 import CheckRoomForm from "../Forms/CheckRoomForm";
@@ -25,7 +22,6 @@ const RoomReservationFormModal = ({
   showUpdateConfirmModal,
   additionalData,
   fetchRooms,
-  guestHookData,
   amenities,
   roomPackages,
   checkRoomReservationPricing,
@@ -36,11 +32,25 @@ const RoomReservationFormModal = ({
   const [initialFormData, setInitialFormData] = useState({});
   const [pricingLoading, setPricingLoading] = useState(false);
   const [pricingInformation, setPricingInformation] = useState({});
+  const [selectedPackage, setSelectedPackage] = useState(null);
+  const [selectedAmenities, setSelectedAmenities] = useState([]);
 
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
 
-  const { reservationTypes, reservationSources } = additionalData;
+  // sets formdata based on form modal state
+  useEffect(() => {
+    if (open && isEditing && selectedObject) {
+      setFormData(selectedObject);
+      setInitialFormData(selectedObject);
+      form.setFieldsValue(selectedObject);
+      triggerFormFieldsValidation(form);
+    } else if (open) {
+      form.resetFields();
+      setFormData({});
+      setInitialFormData({});
+    }
+  }, [open, isEditing, selectedObject, form]);
 
   // Next button of the step form
   const next = async () => {
@@ -66,7 +76,54 @@ const RoomReservationFormModal = ({
     triggerFormFieldsValidation(form); // trigger validation
   };
 
-  const onFinish = () => {};
+  const onFinish = async () => {
+    const values = form.getFieldsValue(true);
+    const newData = { ...formData, ...values };
+    setFormData(newData);
+    
+    // Prepare the data for submission
+    const reservationData = {
+      ...newData,
+      childIds: newData?.childIds.map((c) => c.id),
+      roomId: newData.roomId.value,
+      reservedCheckInDate: newData.reservationDateRange[0].format("YYYY-MM-DD"),
+      reservedCheckOutDate:
+        newData.reservationDateRange[1].format("YYYY-MM-DD"),
+      amenities: selectedAmenities.map((amenity) => ({
+        amenityId: amenity.id,
+        quantity: amenity.quantity,
+      })),
+      roomPackageId: selectedPackage,
+      billingPayloadDTO: [
+        {
+          basePrice: pricingInformation?.basePrice || 0.0,
+          totalTaxes: pricingInformation?.totalTaxes || 0.0,
+          totalPrice: pricingInformation?.totalPrice || 0.0,
+          discount: pricingInformation?.discount || 0.0,
+          paidAmount: newData.paidAmount,
+          paymentMethodId: newData.paymentMethodId,
+        },
+      ],
+    };
+
+    delete reservationData.reservationDateRange;
+
+    if (isEditing) {
+      // Get the changed values and pass it into confirmation modal
+      const updatedValues = getChangedFieldValues(
+        initialFormData,
+        reservationData
+      );
+      showUpdateConfirmModal(updatedValues, selectedObject.id, reservationData);
+    } else {
+      setConfirmLoading(true);
+      await addItem(reservationData);
+      form.resetFields();
+      setFormData({});
+      setConfirmLoading(false);
+      closeFormModal();
+    }
+  };
 
   // After close modal operations
   const afterModalClose = () => {
@@ -74,6 +131,48 @@ const RoomReservationFormModal = ({
     setFormData({});
     form.resetFields();
     setInitialFormData({});
+    setSelectedAmenities([]);
+    setSelectedPackage(null);
+  };
+
+  // pricing calculation
+  const checkPricing = async () => {
+    setPricingLoading(true);
+    try {
+      // Get the form values properly
+      const roomId = form.getFieldValue("roomId").value;
+      const checkInDate = form.getFieldValue("reservationDateRange")[0];
+      const checkOutDate = form.getFieldValue("reservationDateRange")[1];
+
+      // Ensure we have valid data before proceeding
+      if (!roomId || !checkInDate || !checkOutDate || !selectedPackage) {
+        console.error("Missing required reservation details");
+        setPricingLoading(false);
+        return;
+      }
+
+      const formattedCheckInDate =
+        checkInDate?.format?.("YYYY-MM-DD") || checkInDate;
+      const formattedCheckOutDate =
+        checkOutDate?.format?.("YYYY-MM-DD") || checkOutDate;
+
+      const resp = await checkRoomReservationPricing({
+        roomId: roomId,
+        checkInDate: formattedCheckInDate,
+        checkOutDate: formattedCheckOutDate,
+        amenities: selectedAmenities.map((amenity) => ({
+          amenityId: amenity.id,
+          quantity: amenity.quantity,
+        })),
+        roomPackageId: selectedPackage,
+      });
+
+      setPricingInformation(resp);
+      setPricingLoading(false);
+    } catch (error) {
+      setPricingLoading(false);
+      console.error("Error checking pricing:", error);
+    }
   };
 
   // Steps of the step form
@@ -87,6 +186,8 @@ const RoomReservationFormModal = ({
           isEditing={isEditing}
           setCurrent={setCurrent}
           next={next}
+          setFormData={setFormData}
+          formData={formData}
         />
       ),
       icon: <HomeOutlined />,
@@ -96,13 +197,13 @@ const RoomReservationFormModal = ({
       content: (
         <RoomCheckInInfoForm
           form={form}
-          guestHookData={guestHookData}
-          reservationTypes={reservationTypes}
-          reservationSources={reservationSources}
           isEditing={isEditing}
           setCurrent={setCurrent}
+          additionalData={additionalData}
           next={next}
           prev={prev}
+          setFormData={setFormData}
+          formData={formData}
         />
       ),
       icon: <ScheduleOutlined />,
@@ -118,9 +219,13 @@ const RoomReservationFormModal = ({
           setCurrent={setCurrent}
           next={next}
           prev={prev}
-          checkRoomReservationPricing={checkRoomReservationPricing}
-          setPricingLoading={setPricingLoading}
-          setPricingInformation={setPricingInformation}
+          checkPricing={checkPricing}
+          selectedPackage={selectedPackage}
+          setSelectedPackage={setSelectedPackage}
+          selectedAmenities={selectedAmenities}
+          setSelectedAmenities={setSelectedAmenities}
+          formData={formData}
+          setFormData={setFormData}
         />
       ),
       icon: <GiftOutlined />,
@@ -136,6 +241,9 @@ const RoomReservationFormModal = ({
           prev={prev}
           pricingLoading={pricingLoading}
           pricingInformation={pricingInformation}
+          additionalData={additionalData}
+          formData={formData}
+          setFormData={setFormData}
         />
       ),
       icon: <DollarCircleOutlined />,
@@ -160,7 +268,7 @@ const RoomReservationFormModal = ({
           layout="vertical"
           labelWrap
           onFinish={onFinish}
-          initialValues={{ adults: 1, children: 0, infants: 0 }}
+          initialValues={{ adultNo: 1, childNo: 0, infantNo: 0, paidAmount: 0 }}
         >
           <Steps
             type="navigation"

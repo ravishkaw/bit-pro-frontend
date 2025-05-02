@@ -7,6 +7,7 @@ import { useThemeContext } from "../../../contexts/ThemeContext";
 
 import usePageChange from "../../../hooks/common/usePageChange";
 import useRoomReservation from "../../../hooks/reservation/useRoomReservation";
+import useModalStates from "../../../hooks/common/useModalStates";
 
 import RoomReservationCalendar from "../../../components/Calendar/RoomReservationCalendar";
 import { RoomReservationColumnItems } from "../../../components/Table/RoomReservationColumnItems";
@@ -14,10 +15,8 @@ import RoomReservationFormModal from "../../../components/Modals/RoomReservation
 import SearchAddHeader from "../../../components/DataDisplay/SearchAddHeader";
 import SkeletonCards from "../../../components/Cards/SkeletonCards";
 import MobileCardView from "../../../components/DataDisplay/MobileCardView";
-import useGuests from "../../../hooks/profile/useGuests";
-import useRoomPackages from "../../../hooks/packages/useRoomPackages";
-import useRoomReservationAmenities from "../../../hooks/reservation/useRoomReservationAmenities";
 
+// Room reservation page
 const RoomReservation = () => {
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [modalState, setModalState] = useState({
@@ -48,15 +47,14 @@ const RoomReservation = () => {
     addItem,
     updateItem,
     deleteItem,
-    restoreItem,
     loading,
     paginationDetails,
     setPaginationDetails,
   } = useRoomReservation();
 
-  const guestHookData = useGuests();
-  const { data: roomPackages } = useRoomPackages();
-  const { data: amenities } = useRoomReservationAmenities();
+  const { showUpdateConfirmModal, opendeleteRestoreModal } = useModalStates();
+
+  const { amenities, roomPackages } = additionalData;
 
   const openFormModal = (isEditing, selectedReservation = null) => {
     setModalState({
@@ -122,6 +120,30 @@ const RoomReservation = () => {
     },
   ];
 
+  // handle edit action
+  const handleEdit = async (id) => {
+    const reservation = await loadOneItem(id);
+    openFormModal(true, reservation);
+  };
+
+  // handle view action
+  const handleView = (record) => {
+    setModalState({
+      open: true,
+      isEditing: false,
+      selectedReservation: record,
+    });
+  };
+
+  // Generate table columns dynamically
+  const columns = RoomReservationColumnItems(
+    modulePrivileges,
+    handleEdit,
+    loadOneItem,
+    handleView,
+    opendeleteRestoreModal
+  );
+
   if (!isMobile) {
     return (
       <>
@@ -149,7 +171,7 @@ const RoomReservation = () => {
           <Table
             rowKey={rowKey}
             dataSource={reservationData}
-            columns={RoomReservationColumnItems()}
+            columns={columns}
             loading={loading}
             pagination={{
               ...paginationDetails,
@@ -168,10 +190,10 @@ const RoomReservation = () => {
           addItem={addItem}
           additionalData={additionalData}
           fetchRooms={fetchRooms}
-          guestHookData={guestHookData}
           amenities={amenities}
           roomPackages={roomPackages}
           checkRoomReservationPricing={checkRoomReservationPricing}
+          showUpdateConfirmModal={showUpdateConfirmModal}
         />
 
         <RoomReservationCalendar

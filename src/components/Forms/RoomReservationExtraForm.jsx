@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Form,
   Select,
@@ -14,7 +13,7 @@ import {
   Input,
 } from "antd";
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Text } = Typography;
 const { Option } = Select;
 
 const RoomReservationExtraForm = ({
@@ -25,13 +24,12 @@ const RoomReservationExtraForm = ({
   prev,
   amenities,
   roomPackages,
-  checkRoomReservationPricing,
-  setPricingLoading,
-  setPricingInformation,
+  checkPricing,
+  selectedPackage,
+  setSelectedPackage,
+  selectedAmenities,
+  setSelectedAmenities,
 }) => {
-  const [selectedPackage, setSelectedPackage] = useState(null);
-  const [selectedAmenities, setSelectedAmenities] = useState([]);
-
   // Handle package selection
   const handlePackageChange = (value) => {
     setSelectedPackage(value);
@@ -65,46 +63,6 @@ const RoomReservationExtraForm = ({
     });
   };
 
-  // check pricing
-  const checkPricing = async () => {
-    setPricingLoading(true);
-    try {
-      // Get the form values properly
-      const roomId = form.getFieldValue("roomId").value;
-      const checkInDate = form.getFieldValue("reservationDateRange")[0];
-      const checkOutDate = form.getFieldValue("reservationDateRange")[1];
-
-      // Ensure we have valid data before proceeding
-      if (!roomId || !checkInDate || !checkOutDate || !selectedPackage) {
-        console.error("Missing required reservation details");
-        setPricingLoading(false);
-        return;
-      }
-
-      const formattedCheckInDate =
-        checkInDate?.format?.("YYYY-MM-DD") || checkInDate;
-      const formattedCheckOutDate =
-        checkOutDate?.format?.("YYYY-MM-DD") || checkOutDate;
-
-      const resp = await checkRoomReservationPricing({
-        roomId: roomId,
-        checkInDate: formattedCheckInDate,
-        checkOutDate: formattedCheckOutDate,
-        amenities: selectedAmenities.map((amenity) => ({
-          amenityId: amenity.id,
-          quantity: amenity.quantity,
-        })),
-        roomPackageId: selectedPackage,
-      });
-
-      setPricingInformation(resp);
-      setPricingLoading(false);
-    } catch (error) {
-      setPricingLoading(false);
-      console.error("Error checking pricing:", error);
-    }
-  };
-
   // Handle next
   const handleNext = async () => {
     form.setFieldsValue({
@@ -133,10 +91,7 @@ const RoomReservationExtraForm = ({
           name="packageId"
           rules={[{ required: true, message: "Please select a package" }]}
         >
-          <Select
-            placeholder="Select a package"
-            onChange={handlePackageChange}
-          >
+          <Select placeholder="Select a package" onChange={handlePackageChange}>
             {roomPackages.map((pkg) => (
               <Option key={pkg.id} value={pkg.id}>
                 {pkg.name} -{" "}
