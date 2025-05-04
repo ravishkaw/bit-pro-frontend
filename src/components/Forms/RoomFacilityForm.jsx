@@ -23,7 +23,7 @@ const RoomFacilityForm = ({
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [form] = Form.useForm();
 
-  const { noteValidation } = formValidations;
+  const { alphanumericWithSpacesValidation, noteValidation } = formValidations;
 
   // Handle edit populate the wanted fields
   useEffect(() => {
@@ -84,8 +84,11 @@ const RoomFacilityForm = ({
       >
         <Form.Item
           name="name"
-          label={<FormInputTooltip label="Name" title="Enter amenity name" />}
-          rules={[{ required: true, message: "Please enter an amenity name" }]}
+          label={<FormInputTooltip label="Name" title="Enter facility name" />}
+          rules={[
+            ...alphanumericWithSpacesValidation,
+            { required: true, message: "Please enter an facility name" },
+          ]}
           hasFeedback
         >
           <Input placeholder="e.g., Wi-Fi, Mini Bar, Room Service" />
@@ -117,11 +120,12 @@ const RoomFacilityForm = ({
           hasFeedback
         >
           <InputNumber
-            addonBefore="$"
             placeholder="0.00"
             min={0}
             precision={2}
             style={{ width: "100%" }}
+            prefix="Rs."
+            keyboard
           />
         </Form.Item>
 

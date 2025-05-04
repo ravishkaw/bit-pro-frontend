@@ -1,5 +1,13 @@
 // Custom validations for form inputs
 export const formValidations = {
+  // Allows letters, numbers, and spaces
+  alphanumericWithSpacesValidation: [
+    {
+      pattern: /^[A-Za-z0-9\s]+$/,
+      message: "Only letters, numbers, and spaces are allowed",
+    },
+  ],
+  
   // First name format validation
   firstNameValidation: [
     { required: true, message: "First name is required" },

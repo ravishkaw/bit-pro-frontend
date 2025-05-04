@@ -108,6 +108,7 @@ const useCrudHandler = ({
 
   return {
     data,
+    loadData,
     loadOneItem,
     addItem,
     updateItem,

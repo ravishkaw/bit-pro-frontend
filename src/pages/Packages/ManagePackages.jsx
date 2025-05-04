@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Tabs, Pagination } from "antd";
 
 import { useAuth } from "../../contexts/AuthContext";
@@ -20,8 +20,8 @@ const ManagePackages = () => {
 
   // Separate data hooks for each package type
   const roomPackagesHookData = useRoomPackages();
-  const eventPackagesHookData = useRoomPackages(); // * Until event package make
-  // const eventPackagesHookData = useEventPackages();
+  // const eventPackagesHookData = useRoomPackages(); // * Until event package make
+  const eventPackagesHookData = useEventPackages();
 
   // Create independent modal state instances for each package type
   const roomModalStates = useModalStates();
@@ -32,6 +32,12 @@ const ManagePackages = () => {
     selectedTab === "Room Package"
       ? roomPackagesHookData
       : eventPackagesHookData;
+
+  useEffect(() => {
+    if (hookData.loadData) {
+      hookData.loadData();
+    }
+  }, [selectedTab]);
 
   const currentModalStates =
     selectedTab === "Room Package" ? roomModalStates : eventModalStates;

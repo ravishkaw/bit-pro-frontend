@@ -34,7 +34,8 @@ const ChildForm = ({
     ? guests.filter((guest) => guest.value == parentId)
     : guests;
 
-  const { fullNameValidation } = formValidations;
+  const { fullNameValidation, genderValidation, nationalityValidation } =
+    formValidations;
 
   // Handle edit - populate the fields
   useEffect(() => {
@@ -166,7 +167,7 @@ const ChildForm = ({
             />
           }
           hasFeedback
-          rules={[{ required: true, message: "Please select nationality" }]}
+          rules={nationalityValidation}
         >
           <Select
             showSearch
@@ -184,7 +185,7 @@ const ChildForm = ({
             <FormInputTooltip label="Gender" title="Select child's gender" />
           }
           hasFeedback
-          rules={[{ required: true, message: "Please select gender" }]}
+          rules={genderValidation}
         >
           <Select placeholder="Select gender" options={genders} />
         </Form.Item>

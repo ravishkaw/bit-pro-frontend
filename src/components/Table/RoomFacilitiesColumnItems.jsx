@@ -30,6 +30,13 @@ export const RoomFacilitiesColumnItems = (
     title: "Price",
     dataIndex: "price",
     sorter: true,
+    render: (_, record) => {
+      const price = record.price || 0;
+      return `${price.toLocaleString("en-LK", {
+        style: "currency",
+        currency: "LKR",
+      })}`;
+    },
   },
   {
     title: "Status",

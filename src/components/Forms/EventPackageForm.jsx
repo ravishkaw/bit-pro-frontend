@@ -1,20 +1,26 @@
 import { useEffect, useState } from "react";
 import {
   Button,
-  DatePicker,
   Form,
   Input,
   InputNumber,
+  List,
   Modal,
-  Select,
-  Space,
+  Typography,
+  Switch,
 } from "antd";
+
 import {
   getChangedFieldValues,
   triggerFormFieldsValidation,
 } from "../../utils/form";
+
 import FormInputTooltip from "./FormInputTooltip";
 import FormOnFinishButtons from "./FormOnFinishButtons";
+import { useThemeContext } from "../../contexts/ThemeContext";
+import { formValidations } from "./validations";
+
+const { Text } = Typography;
 
 const EventPackageForm = ({
   additionalData,
@@ -29,33 +35,87 @@ const EventPackageForm = ({
   const [initialFormData, setInitialFormData] = useState({});
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [form] = Form.useForm();
+  const [selectedAmenities, setSelectedAmenities] = useState([]);
+
+  const { isDarkMode } = useThemeContext();
+  const { amenities } = additionalData;
+  const { alphanumericWithSpacesValidation, noteValidation } = formValidations;
 
   // Set initial values when editing
   useEffect(() => {
     if (open && isEditing && selectedObject) {
-      form.setFieldsValue(selectedObject);
-      setInitialFormData(selectedObject);
+      const updatedData = {
+        ...selectedObject,
+        statusName: selectedObject?.statusName == "Active" ? true : false,
+      };
+      form.setFieldsValue(updatedData);
+      setInitialFormData(updatedData);
       triggerFormFieldsValidation(form);
     } else if (open) {
       form.resetFields();
     }
   }, [open, isEditing, selectedObject, form]);
 
-  const onFinish = async () => {
-    const formData = form.getFieldsValue();
+  useEffect(() => {
+    if (open && isEditing && selectedObject && selectedObject.amenities) {
+      setSelectedAmenities(selectedObject.amenities);
+    } else if (open && !isEditing) {
+      setSelectedAmenities([]);
+    }
+  }, [open, isEditing, selectedObject]);
 
+  // Handle amenity quantity change
+  const handleAmenityQuantityChange = (amenityId, newQty) => {
+    const newQuantity = Math.max(0, Math.min(10, newQty || 0));
+
+    setSelectedAmenities((prevAmenities) => {
+      // If quantity is 0, remove from selection
+      if (newQuantity === 0) {
+        return prevAmenities.filter(
+          (amenity) => amenity.amenityId !== amenityId
+        );
+      }
+
+      // If already selected, update quantity
+      const existingIndex = prevAmenities.findIndex(
+        (amenity) => amenity.amenityId === amenityId
+      );
+      if (existingIndex >= 0) {
+        const updatedAmenities = [...prevAmenities];
+        updatedAmenities[existingIndex] = {
+          ...updatedAmenities[existingIndex],
+          quantity: newQuantity,
+        };
+        return updatedAmenities;
+      }
+
+      // Add new selection
+      return [
+        ...prevAmenities,
+        { amenityId: amenityId, quantity: newQuantity },
+      ];
+    });
+  };
+
+  const onFinish = async () => {
+    form.setFieldsValue({
+      amenities: selectedAmenities,
+    });
+
+    const formdata = form.getFieldsValue();
+
+    // Format and update formdata
     const updatedData = {
-      ...formData,
-      usedQuantity: isEditing ? formData.usedQuantity : 0,
+      ...formdata,
+      statusName: formdata.statusName ? "Active" : "Inactive",
     };
 
     if (isEditing) {
       // get changed values
-      const updatedValues = getChangedFieldValues(
-        initialFormData,
-        updatedData,
-        { module }
-      );
+      const updatedValues = getChangedFieldValues(initialFormData, formdata, {
+        module,
+        amenities,
+      });
       showUpdateConfirmModal(updatedValues, selectedObject.id, updatedData);
     } else {
       setConfirmLoading(true);
@@ -85,73 +145,168 @@ const EventPackageForm = ({
         initialValues={{ usedQuantity: 0 }}
       >
         <Form.Item
-          name="itemTypeId"
+          name="name"
           label={
             <FormInputTooltip
-              label="Event"
-              title="Select the category of the item"
+              label="Package Name"
+              title="Enter the name of the package"
             />
           }
           rules={[
-            { required: true, message: "Please select the item category" },
+            ...alphanumericWithSpacesValidation,
+            { required: true, message: "Please enter package name" },
           ]}
           hasFeedback
         >
-          <Select
-            placeholder="Select item category"
-            showSearch
-            optionFilterProp="label"
-          />
+          <Input placeholder="E.g., Full Board, Half Board" />
         </Form.Item>
 
         <Form.Item
-          name="itemName"
+          name="description"
           label={
             <FormInputTooltip
-              label="Item Name"
-              title="Enter the name of the item"
+              label="Description"
+              title="Enter the description of the package"
             />
           }
-          rules={[{ required: true, message: "Please enter item name" }]}
+          rules={[
+            ...noteValidation,
+            { required: true, message: "Please enter description" },
+          ]}
           hasFeedback
         >
-          <Input placeholder="E.g., Kettle, Broom" />
+          <Input.TextArea placeholder="E.g., Package with room and lunch" />
         </Form.Item>
 
-        <Form.Item
-          name="quantity"
+        {/* <Form.Item
+          name="price"
           label={
             <FormInputTooltip
-              label="Quantity"
-              title="Full quantity of the item"
+              label="Price"
+              title="Enter the price of the package"
             />
           }
-          rules={[{ required: true, message: "Please Enter the quantity" }]}
+          rules={[{ required: true, message: "Please enter price" }]}
           hasFeedback
         >
           <InputNumber
-            placeholder="E.g., 200"
+            placeholder="0.00"
+            min={0}
+            precision={2}
             style={{ width: "100%" }}
-            min="0"
-            max="100000"
-            step="1"
+            prefix="Rs."
             keyboard
           />
+        </Form.Item> */}
+
+        <Form.Item label="Add Optional Amenities">
+          <div
+            style={{
+              border: `1px solid ${isDarkMode ? "#464963" : "#e5e6e8"}`,
+              padding: "0 16px",
+              borderRadius: 8,
+            }}
+          >
+            <List
+              itemLayout="horizontal"
+              dataSource={amenities}
+              renderItem={(amenity) => {
+                const selectedAmenity = selectedAmenities.find(
+                  (a) => a.amenityId === amenity.id
+                );
+                const quantity = selectedAmenity ? selectedAmenity.quantity : 0;
+
+                return (
+                  <List.Item key={amenity.id}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        width: "100%",
+                      }}
+                    >
+                      <div style={{ flex: 2 }}>
+                        <Text>{amenity.name}</Text>
+                      </div>
+
+                      <div
+                        style={{
+                          flex: 2,
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Button
+                          type="default"
+                          size="small"
+                          onClick={() =>
+                            handleAmenityQuantityChange(
+                              amenity.id,
+                              quantity - 1
+                            )
+                          }
+                          disabled={quantity <= 0}
+                        >
+                          -
+                        </Button>
+                        <InputNumber
+                          size="small"
+                          min={0}
+                          max={10}
+                          value={quantity}
+                          onChange={(value) =>
+                            handleAmenityQuantityChange(amenity.id, value)
+                          }
+                          style={{
+                            width: 30,
+                            margin: "0 4px",
+                            textAlign: "center",
+                          }}
+                        />
+                        <Button
+                          type="default"
+                          size="small"
+                          onClick={() =>
+                            handleAmenityQuantityChange(
+                              amenity.id,
+                              quantity + 1
+                            )
+                          }
+                          disabled={quantity >= 10}
+                        >
+                          +
+                        </Button>
+                      </div>
+                      <div style={{ flex: 1, marginLeft: 4 }}>
+                        <Text type="secondary">Max: 10</Text>
+                      </div>
+                    </div>
+                  </List.Item>
+                );
+              }}
+            />
+          </div>
         </Form.Item>
 
-      
+        <Form.Item name="amenities" noStyle hidden>
+          <Input hidden />
+        </Form.Item>
+
         <Form.Item
-          name="statusId"
+          name="statusName"
           label={
-            <FormInputTooltip label="Item Status" title="Status of the Item" />
+            <FormInputTooltip
+              label="Status"
+              title="Set the status of the package"
+            />
           }
-          rules={[{ required: true, message: "Please select status" }]}
           hasFeedback
+          required
         >
-          <Select
-            placeholder="Select item category"
-            showSearch
-            optionFilterProp="label"
+          <Switch
+            checkedChildren="Active"
+            unCheckedChildren="Inactive"
+            defaultChecked={false}
           />
         </Form.Item>
 

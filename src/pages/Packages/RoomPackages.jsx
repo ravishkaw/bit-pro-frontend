@@ -12,6 +12,7 @@ const RoomPackages = ({ modulePrivileges, hookData, modalStates }) => {
   // Destructure functions and states from custom hooks
   const {
     data,
+    additionalData,
     loadOneItem,
     addItem,
     updateItem,
@@ -41,8 +42,8 @@ const RoomPackages = ({ modulePrivileges, hookData, modalStates }) => {
         <Col span={24}>
           <Row gutter={[16, 16]}>
             {loading
-              ? Array.from({ length: 3 }).map((_, index) => (
-                  <Col md={8} sm={12} xs={24} key={index}>
+              ? Array.from({ length: 4 }).map((_, index) => (
+                  <Col lg={6} md={8} sm={12} xs={24} key={index}>
                     <Skeleton active />
                   </Col>
                 ))
@@ -69,6 +70,7 @@ const RoomPackages = ({ modulePrivileges, hookData, modalStates }) => {
       {/* Add/ edit form modal */}
       <RoomPackageForm
         module={roomPackageModule}
+        additionalData={additionalData}
         isEditing={isEditing}
         open={open}
         closeFormModal={closeFormModal}

@@ -120,13 +120,12 @@ const PersonalInfo = ({
 
   // Handle ID type change
   const handleIdTypes = (e) => {
-    if (!isSriLankan) {
-      return;
-    }
     setIdType(e.target.value);
     form.resetFields(["idNumber"]); // Clear ID number if ID type changes
-    form.resetFields(["dob"]);
-    form.resetFields(["genderId"]);
+    if (isSriLankan) {
+      form.resetFields(["dob"]);
+      form.resetFields(["genderId"]);
+    }
   };
 
   // Get ID number validation based on ID type

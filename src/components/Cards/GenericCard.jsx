@@ -1,6 +1,6 @@
-import { Card, Col, Row, Tag } from "antd";
-
+import { Card, Col, Row } from "antd";
 import CardActions from "./CardActions";
+import { getEntityDisplayValue } from "./getEntityDisplayValue";
 
 // Card for pages
 const GenericCard = ({
@@ -29,87 +29,11 @@ const GenericCard = ({
     showView
   );
 
-  // Tag colors
-  const tagColors = {
-    Active: "green",
-    Resigned: "red",
-    "On Leave": "orange",
-    Deleted: "gray",
-    Inactive: "red",
-    Granted: "green",
-    "Not Granted": "red",
-    "In Stock": "green",
-    "Out of Stock": "red",
-    "Low Stock": "orange",
-    Reserved: "yellow",
-    Damaged: "grey",
-    Disposed: "geekblue",
-  };
-
   return (
     <Card actions={actions} style={{ marginBottom: 16 }}>
       {newColumns.map((column, index) => {
-        // set data into value
-        let value = data[column.dataIndex];
-
-        if (column.dataIndex === "employeeId")
-          value = data[column.dataIndex].fullName;
-
-        if (column.dataIndex === "status") {
-          const statusValue =
-            data[column.dataIndex] == "Deleted" ||
-            (data[column.dataIndex] && data[column.dataIndex].name == "Deleted")
-              ? "Inactive"
-              : "Active";
-          value = <Tag color={tagColors[statusValue]}>{statusValue}</Tag>;
-        }
-
-        if (
-          column.dataIndex === "designation" ||
-          column.dataIndex === "employeeStatus" ||
-          column.dataIndex === "module" ||
-          column.dataIndex === "role"
-        ) {
-          // ! bugs
-          // value = data[column.dataIndex].label; // designation :{id:1, name:"admin"}
-
-          // Apply tag colors to employeeStatus
-          if (column.dataIndex === "employeeStatus" && tagColors[value]) {
-            value = <Tag color={tagColors[value]}>{value}</Tag>;
-          }
-        }
-
-        if (
-          column.dataIndex === "selectOp" ||
-          column.dataIndex === "insertOp" ||
-          column.dataIndex === "updateOp" ||
-          column.dataIndex === "deleteOp"
-        ) {
-          const opStatus =
-            data[column.dataIndex] == 0 ? "Not Granted" : "Granted";
-          value = <Tag color={tagColors[opStatus]}>{opStatus}</Tag>;
-        }
-
-        if (column.dataIndex === "roomType") {
-          value = data[column.dataIndex].name;
-        }
-
-        if (column.dataIndex === "statusName") {
-          value = data[column.dataIndex];
-
-          // Apply tag colors to various statusNames
-          if (column.dataIndex === "statusName" && tagColors[value]) {
-            value = <Tag color={tagColors[value]}>{value}</Tag>;
-          }
-        }
-
-        if (column.dataIndex === "inventory") {
-          value = data[column.dataIndex].itemName;
-        }
-
-        if (column.dataIndex === "room") {
-          value = data[column.dataIndex].roomNumber;
-        }
+        // Get formatted display value
+        const value = getEntityDisplayValue(column.dataIndex, data);
 
         return (
           <div key={index}>
@@ -117,7 +41,7 @@ const GenericCard = ({
               <Col span={10}>
                 <strong>{column.title}:</strong>
               </Col>
-              <Col>{value || "N/A"}</Col>
+              <Col>{value}</Col>
             </Row>
           </div>
         );

@@ -49,6 +49,8 @@ const ManageRooms = () => {
     deleteItem,
     restoreItem,
     loadReferenceData,
+    applyFilters,
+    filters,
   } = useRooms();
 
   const {
@@ -74,15 +76,23 @@ const ManageRooms = () => {
 
   // To update reference data when facility data changes
   useEffect(() => {
-    if (roomFacilityhookData.data) {
-      loadReferenceData();
-    }
+    const timer = setTimeout(() => {
+      if (roomFacilityhookData.data) {
+        loadReferenceData();
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
   }, [roomFacilityhookData.data]);
 
   const mappedRoomTypes = mapToSelectOptions(roomTypes);
 
   const openModal = () => setFacilityModalOpen(true);
   const closeModal = () => setFacilityModalOpen(false);
+
+  const handleFilterChange = (newFilters) => {
+    applyFilters(newFilters);
+  };
 
   return (
     <>
@@ -96,6 +106,8 @@ const ManageRooms = () => {
         roomStatus={roomStatus}
         modulePrivileges={modulePrivileges}
         openFormModal={openFormModal}
+        onFilter={handleFilterChange}
+        filters={filters}
       />
       <Row>
         <Col span={24}>

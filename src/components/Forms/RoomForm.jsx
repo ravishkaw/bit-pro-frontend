@@ -6,10 +6,8 @@ import {
   Input,
   InputNumber,
   Modal,
-  Radio,
   Row,
   Select,
-  message,
 } from "antd";
 
 import FormInputTooltip from "./FormInputTooltip";
@@ -23,6 +21,7 @@ import {
   getChangedFieldValues,
   triggerFormFieldsValidation,
 } from "../../utils/form";
+import { formValidations } from "./validations";
 
 const RoomForm = ({
   open,
@@ -39,6 +38,8 @@ const RoomForm = ({
 
   const [form] = Form.useForm();
   const { isDarkMode } = useThemeContext();
+
+  const { noteValidation } = formValidations;
 
   const { roomTypes, roomStatus, roomFacilities } = additionalData;
 
@@ -69,7 +70,12 @@ const RoomForm = ({
 
     if (isEditing) {
       // get changed values
-      const updatedValues = getChangedFieldValues(initialFormData, formData);
+      const updatedValues = getChangedFieldValues(initialFormData, formData, {
+        module,
+        mappedRoomTypes,
+        mappedRoomFacilities,
+        roomStatus,
+      });
       showUpdateConfirmModal(updatedValues, selectedObject.id, formData);
     } else {
       setConfirmLoading(true);
@@ -294,6 +300,7 @@ const RoomForm = ({
                   title="Brief introduction of the room"
                 />
               }
+              rules={noteValidation}
             >
               <Input.TextArea placeholder="E.g., High luxury room" rows={1} />
             </Form.Item>

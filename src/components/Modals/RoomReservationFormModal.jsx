@@ -80,7 +80,7 @@ const RoomReservationFormModal = ({
     const values = form.getFieldsValue(true);
     const newData = { ...formData, ...values };
     setFormData(newData);
-    
+
     // Prepare the data for submission
     const reservationData = {
       ...newData,
@@ -152,9 +152,9 @@ const RoomReservationFormModal = ({
       }
 
       const formattedCheckInDate =
-        checkInDate?.format?.("YYYY-MM-DD") || checkInDate;
+        checkInDate?.format?.("YYYY-MM-DD") + "T14:00:00" || checkInDate;
       const formattedCheckOutDate =
-        checkOutDate?.format?.("YYYY-MM-DD") || checkOutDate;
+        checkOutDate?.format?.("YYYY-MM-DD") + "T10:00:00" || checkOutDate;
 
       const resp = await checkRoomReservationPricing({
         roomId: roomId,

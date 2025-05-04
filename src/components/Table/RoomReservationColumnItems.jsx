@@ -1,22 +1,65 @@
-import { render } from "react-dom";
-import TableActions from "./TableActions";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  EyeOutlined,
+  ScheduleOutlined,
+} from "@ant-design/icons";
+import { Button, Space, Tag } from "antd";
+
+const statusColors = {
+  Paid: "green",
+  "Partially Paid": "orange",
+  Pending: "red",
+};
+
+const confirmedActions = (record) => {
+  return (
+    <Space size="small">
+      <Button icon={<EyeOutlined />} onClick={() => handleView(record)} />
+      <Button icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+      <Button
+        icon={<DeleteOutlined />}
+        onClick={() => loadOneItem(record.id)}
+      />
+    </Space>
+  );
+};
+
+const currentActions = (record) => {
+  return (
+    <Space size="small">
+      <Button
+        size="small"
+        icon={<EditOutlined />}
+        onClick={() => handleEdit(record)}
+      >
+        Update
+      </Button>
+      <Button
+        size="small"
+        icon={<ScheduleOutlined />}
+        onClick={() => loadOneItem(record.id)}
+      >
+        Check Out
+      </Button>
+    </Space>
+  );
+};
 
 // Create table columns with permission-based edit/delete actions
 export const RoomReservationColumnItems = (
   modulePrivileges,
   handleEdit,
   loadOneItem,
-  handleView,
-  opendeleteRestoreModal
+  handleView
 ) => [
   {
     title: "Primary Guest",
     dataIndex: "primaryGuestFullName",
-    sorter: true,
     fixed: "left",
   },
   {
-    title: "Total Guest(s)",
+    title: "Total Guests",
     dataIndex: "totalGuests",
     render: (_, record) => {
       const adults = record.adultNo || 0;
@@ -24,28 +67,34 @@ export const RoomReservationColumnItems = (
       const infants = record.infantNo || 0;
       return adults + children + infants;
     },
+    align: "center",
   },
   {
-    title: "Room Number",
+    title: "Room",
     dataIndex: "roomNumber",
-    sorter: true,
+    align: "center",
   },
   {
     title: "Check-In",
-    dataIndex: "checkInDate",
+    dataIndex: "reservedCheckInDate",
+    render: (_, record) => {
+      const date = record.checkInDate || record.reservedCheckInDate;
+      return date ? date.substring(0, 10) : "";
+    },
     sorter: true,
-    render: (_, record) => record.checkInDate || record.reservedCheckInDate,
   },
   {
     title: "Check-Out",
-    dataIndex: "checkOutDate",
+    dataIndex: "reservedCheckOutDate",
+    render: (_, record) => {
+      const date = record.checkOutDate || record.reservedCheckOutDate;
+      return date ? date.substring(0, 10) : "";
+    },
     sorter: true,
-    render: (_, record) => record.checkOutDate || record.reservedCheckOutDate,
   },
   {
     title: "Total Price",
     dataIndex: "totalPrice",
-    sorter: true,
     render: (_, record) => {
       const totalPrice = record.totalPrice || 0;
       return `${totalPrice.toLocaleString("en-LK", {
@@ -57,22 +106,24 @@ export const RoomReservationColumnItems = (
   {
     title: "Payment Status",
     dataIndex: "paymentStatusName",
-    sorter: true,
+    align: "center",
+    render: (_, record) => {
+      const status = record.paymentStatusName;
+      return <Tag color={statusColors[status]}>{status}</Tag>;
+    },
   },
   {
     title: "Actions",
     key: "operation",
     fixed: "right",
     align: "center",
-    render: (_, record) => (
-      <TableActions
-        modulePrivilege={modulePrivileges}
-        apiFunction={loadOneItem}
-        record={record}
-        handleEdit={handleEdit}
-        opendeleteRestoreModal={opendeleteRestoreModal}
-        isDeleted={record?.statusName === "Deleted"}
-      />
-    ),
+    render: (_, record) => {
+      if (record?.roomReservationStatusName === "CONFIRMED") {
+        return confirmedActions(record);
+      }
+      if (record?.roomReservationStatusName === "CHECKED-IN") {
+        return currentActions(record);
+      }
+    },
   },
 ];

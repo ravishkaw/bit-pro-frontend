@@ -17,7 +17,7 @@ export const RoomTypeColumns = (
   opendeleteRestoreModal
 ) => [
   {
-    title: "Name",
+    title: "Room Type",
     dataIndex: "name",
     sorter: true,
     fixed: "left",

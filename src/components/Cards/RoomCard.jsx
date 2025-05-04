@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { Col, Card, Image, Tag, Typography, Flex } from "antd";
+import { Col, Card, Tag, Typography, Flex } from "antd";
 import { TeamOutlined } from "@ant-design/icons";
 
 import CardActions from "./CardActions";
@@ -81,7 +80,10 @@ const RoomCard = ({
                   color="blue"
                   style={{ padding: "2px 8px", fontWeight: "bold" }}
                 >
-                  ${room.price}
+                  {room?.price?.toLocaleString("en-LK", {
+                    style: "currency",
+                    currency: "LKR",
+                  })}
                 </Tag>
               </Flex>
 

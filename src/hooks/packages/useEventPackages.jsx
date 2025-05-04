@@ -11,6 +11,7 @@ const useEventPackages = () => {
   // Use base hook for event package operations
   const {
     data,
+    loadData,
     loadOneItem,
     addItem,
     updateItem,
@@ -24,6 +25,7 @@ const useEventPackages = () => {
   // Return states and functions for external use
   return {
     data,
+    loadData,
     loadOneItem,
     addItem,
     updateItem,

@@ -1,4 +1,14 @@
-import { Col, Card, Tag, Typography, Flex, Divider, List, Avatar } from "antd";
+import {
+  Col,
+  Card,
+  Tag,
+  Typography,
+  Flex,
+  Divider,
+  List,
+  Avatar,
+  Space,
+} from "antd";
 import { CheckCircleOutlined } from "@ant-design/icons";
 
 import CardActions from "./CardActions";
@@ -23,10 +33,10 @@ const RoomPackageCard = ({
     loadOneItem,
     roomPackage,
     (showView = false)
-  );  
+  );
 
   return (
-    <Col md={8} sm={12} xs={24}>
+    <Col lg={6} md={8} sm={12} xs={24}>
       <Card
         hoverable
         style={{
@@ -56,8 +66,8 @@ const RoomPackageCard = ({
               <Text style={{ textAlign: "center", margin: "12px 0" }}>
                 {roomPackage?.description}
               </Text>
-              <Flex gap="small" justify="center" align="center">
-                Price :{" "}
+              <Space>
+                Price :
                 <Tag
                   color="blue"
                   style={{
@@ -66,25 +76,29 @@ const RoomPackageCard = ({
                     fontSize: "14px",
                   }}
                 >
-                  ${roomPackage?.price}
+                  {roomPackage?.price.toLocaleString("en-LK", {
+                    style: "currency",
+                    currency: "LKR",
+                  })}
                 </Tag>
-                Status :{" "}
+              </Space>
+              <Space>
+                Status :
                 <Tag
                   color={roomPackage?.statusName === "Active" ? "green" : "red"}
                   style={{ padding: "2px 10px", fontSize: "14px" }}
                 >
                   {roomPackage?.statusName}
                 </Tag>
-              </Flex>
+              </Space>
             </Flex>
-
             {roomPackage?.amenities?.length > 0 && (
               <>
                 <Divider orientation="center">Amenities</Divider>
                 <List
                   size="small"
                   dataSource={roomPackage?.amenities}
-                  style={{ width: "70%", margin: "0 auto" }}
+                  style={{ margin: "0 auto" }}
                   renderItem={(amenity) => (
                     <List.Item key={amenity.id || amenity.amenityName}>
                       <Flex align="center" gap="middle" justify="center">

@@ -10,6 +10,7 @@ import {
   triggerFormFieldsValidation,
 } from "../../utils/form";
 
+// Room reservation amenity form component
 const RoomReservationAmenityForm = ({
   additionalData,
   open,
@@ -25,7 +26,7 @@ const RoomReservationAmenityForm = ({
 
   const { amenityCategory } = additionalData;
 
-  const { noteValidation } = formValidations;
+  const { alphanumericWithSpacesValidation, noteValidation } = formValidations;
 
   // Set initial values when editing
   useEffect(() => {
@@ -80,7 +81,6 @@ const RoomReservationAmenityForm = ({
         wrapperCol={{ span: 14 }}
         labelAlign="left"
         onFinish={onFinish}
-        initialValues={{ price: 0 }}
       >
         <Form.Item
           name="categoryId"
@@ -110,7 +110,10 @@ const RoomReservationAmenityForm = ({
               title="Room Reservation Amenity name"
             />
           }
-          rules={[{ required: true, message: "Please enter amenity name" }]}
+          rules={[
+            ...alphanumericWithSpacesValidation,
+            { required: true, message: "Please enter amenity name" },
+          ]}
           hasFeedback
         >
           <Input placeholder="E.g., Sandwiches Breakfast" />
@@ -128,10 +131,12 @@ const RoomReservationAmenityForm = ({
           hasFeedback
         >
           <InputNumber
-            style={{ width: "100%" }}
+            placeholder="0.00"
             min={0}
-            max={10000}
-            step={0.01}
+            precision={2}
+            style={{ width: "100%" }}
+            prefix="Rs."
+            keyboard
           />
         </Form.Item>
 
@@ -143,7 +148,10 @@ const RoomReservationAmenityForm = ({
               title="Brief description of the amenity"
             />
           }
-          rules={noteValidation}
+          rules={[
+            ...noteValidation,
+            { required: true, message: "Please enter description" },
+          ]}
           hasFeedback
         >
           <Input.TextArea placeholder="Brief description" />

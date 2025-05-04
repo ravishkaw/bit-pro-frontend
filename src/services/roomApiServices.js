@@ -11,6 +11,37 @@ const ROOM_FACILITIES = "/room-facilities";
 // Generic API service for rooms
 export const roomService = createApiService(ROOM_BASE_URL);
 
+// Fetch rooms with filters
+export const fetchFilteredRooms = async ({
+  roomTypeId,
+  statusId,
+  minPrice,
+  maxPrice,
+  adults,
+  children,
+  infants,
+  searchQuery,
+}) => {
+  const params = {};
+
+  // Only add parameters that are not null or undefined
+  if (roomTypeId !== null && roomTypeId !== undefined)
+    params.roomTypeId = roomTypeId;
+  if (statusId !== null && statusId !== undefined) params.statusId = statusId;
+  if (minPrice !== null && minPrice !== undefined) params.minPrice = minPrice;
+  if (maxPrice !== null && maxPrice !== undefined) params.maxPrice = maxPrice;
+  if (adults !== null && adults !== undefined) params.adults = adults;
+  if (children !== null && children !== undefined) params.children = children;
+  if (infants !== null && infants !== undefined) params.infants = infants;
+  if (searchQuery !== null && searchQuery !== undefined && searchQuery !== "")
+    params.searchQuery = searchQuery;
+
+  const response = await axiosInstance.get(`${ROOM_BASE_URL}/filter`, {
+    params,
+  });
+  return response.data;
+};
+
 // Generic API service for room status
 export const roomStatusService = createApiService(ROOM_STATUS_BASE_URL);
 
@@ -49,14 +80,6 @@ export const fetchAvailableRooms = async (
 // Fetch all rooms types without pagination
 export const fetchAllRoomTypes = async () => {
   const response = await axiosInstance.get(`${ROOM_TYPE_BASE_URL}/get-all`);
-  return response.data;
-};
-
-// Fetch all rooms related to a type
-export const fetchAllRoomsToType = async (roomTypeId) => {
-  const response = await axiosInstance.get(`${ROOM_BASE_URL}/filter-by-type`, {
-    params: { roomTypeId },
-  });
   return response.data;
 };
 

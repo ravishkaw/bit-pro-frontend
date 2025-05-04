@@ -8,6 +8,7 @@ import {
   getChangedFieldValues,
   triggerFormFieldsValidation,
 } from "../../utils/form";
+import { formValidations } from "./validations";
 
 // Form of room type add or edit
 const RoomTypeForm = ({
@@ -25,6 +26,7 @@ const RoomTypeForm = ({
   const [form] = Form.useForm();
 
   const { bedTypes } = additionalData;
+  const { alphanumericWithSpacesValidation, noteValidation } = formValidations;
 
   // Set initial values when editing
   useEffect(() => {
@@ -54,6 +56,7 @@ const RoomTypeForm = ({
       // get changed values
       const updatedValues = getChangedFieldValues(initialFormData, formdata, {
         module,
+        bedTypes,
       });
       showUpdateConfirmModal(updatedValues, selectedObject.id, updatedData);
     } else {
@@ -82,7 +85,6 @@ const RoomTypeForm = ({
         labelAlign="left"
         labelWrap
         onFinish={onFinish}
-        initialValues={{ basePrice: 0 }}
       >
         <Form.Item
           name="name"
@@ -92,7 +94,10 @@ const RoomTypeForm = ({
               title="Enter the name of the room type"
             />
           }
-          rules={[{ required: true, message: "Please enter room type name" }]}
+          rules={[
+            ...alphanumericWithSpacesValidation,
+            { required: true, message: "Please enter room type name" },
+          ]}
           hasFeedback
         >
           <Input placeholder="E.g., Single, Double, Deluxe Suite" />
@@ -131,12 +136,11 @@ const RoomTypeForm = ({
           hasFeedback
         >
           <InputNumber
-            addonBefore="$"
-            placeholder="E.g., 200.00"
+            placeholder="0.00"
+            min={0}
+            precision={2}
             style={{ width: "100%" }}
-            min="0"
-            max="100000"
-            step="0.01"
+            prefix="Rs."
             keyboard
           />
         </Form.Item>
@@ -150,6 +154,7 @@ const RoomTypeForm = ({
             />
           }
           rules={[
+            ...noteValidation,
             { required: true, message: "Please enter short description" },
           ]}
           hasFeedback

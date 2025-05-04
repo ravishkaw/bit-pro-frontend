@@ -46,13 +46,12 @@ const RoomReservation = () => {
     loadOneItem,
     addItem,
     updateItem,
-    deleteItem,
     loading,
     paginationDetails,
     setPaginationDetails,
   } = useRoomReservation();
 
-  const { showUpdateConfirmModal, opendeleteRestoreModal } = useModalStates();
+  const { showUpdateConfirmModal } = useModalStates();
 
   const { amenities, roomPackages } = additionalData;
 
@@ -100,23 +99,27 @@ const RoomReservation = () => {
   const items = [
     {
       label: "Current",
-      key: "Checked-In",
+      key: "CHECKED-IN",
     },
     {
       label: "Upcoming",
-      key: "Confirmed",
+      key: "CONFIRMED",
     },
     {
       label: "Pending",
-      key: "Pending",
+      key: "PENDING",
     },
     {
       label: "Past",
-      key: "Checked-Out",
+      key: "CHECKED-OUT",
     },
     {
       label: "Cancelled",
-      key: "Cancelled",
+      key: "CANCELLED",
+    },
+    {
+      label: "No Show",
+      key: "NO-SHOW",
     },
   ];
 
@@ -140,8 +143,7 @@ const RoomReservation = () => {
     modulePrivileges,
     handleEdit,
     loadOneItem,
-    handleView,
-    opendeleteRestoreModal
+    handleView
   );
 
   if (!isMobile) {

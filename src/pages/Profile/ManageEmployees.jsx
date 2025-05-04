@@ -4,6 +4,7 @@ import GenericPage from "../GenericPage";
 import { employeeColumnItems } from "../../components/Table/EmployeeColumnItems";
 import ProfileFormModal from "../../components/Modals/ProfileFormModal";
 import ViewPerson from "../../components/DataDisplay/ViewPerson";
+import EmployeeStatistics from "../../components/Statistics/EmployeeStatistics";
 
 // Admin Manage Employees Page
 const ManageEmployee = () => {
@@ -14,15 +15,18 @@ const ManageEmployee = () => {
   const hookData = useEmployees();
 
   return (
-    <GenericPage
-      module={module}
-      rowKey={rowKey}
-      hookData={hookData}
-      columnItems={employeeColumnItems}
-      CustomForm={ProfileFormModal}
-      showView={true}
-      ViewObject={ViewPerson}
-    />
+    <>
+      <EmployeeStatistics employeeHookData={hookData} />
+      <GenericPage
+        module={module}
+        rowKey={rowKey}
+        hookData={hookData}
+        columnItems={employeeColumnItems}
+        CustomForm={ProfileFormModal}
+        showView={true}
+        ViewObject={ViewPerson}
+      />
+    </>
   );
 };
 
