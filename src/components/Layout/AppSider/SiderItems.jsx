@@ -12,6 +12,7 @@ import {
   IdcardOutlined,
   SettingOutlined,
   SafetyOutlined,
+  DollarCircleOutlined,
 } from "@ant-design/icons";
 
 export const siderItems = [
@@ -111,6 +112,20 @@ export const siderItems = [
         label: "Employees",
         icon: <IdcardOutlined />,
         privilege: "Employee",
+      },
+    ],
+  },
+  {
+    key: "billing",
+    label: "Billing",
+    type: "group",
+    icon: <DollarCircleOutlined />,
+    children: [
+      {
+        key: "/billings",
+        label: "Billings",
+        icon: <DollarCircleOutlined />,
+        privilege: "Billing",
       },
     ],
   },

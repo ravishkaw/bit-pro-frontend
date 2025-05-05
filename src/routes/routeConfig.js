@@ -12,6 +12,7 @@ import ManagePrivileges from "../pages/System/ManagePrivileges";
 import { ManageRooms, RoomInventory, RoomTypes } from "../pages/Rooms";
 import Inventory from "../pages/Inventory/Inventory";
 import ManagePackages from "../pages/Packages/ManagePackages";
+import ManageBillings from "../pages/Billing/ManageBillings";
 
 //Route Configuration
 export const protectedRoutes = [
@@ -90,5 +91,11 @@ export const protectedRoutes = [
     path: "/inventory",
     element: Inventory,
     module: "Inventory",
+  },
+  // Billing Routes
+  {
+    path: "/billings",
+    element: ManageBillings,
+    module: "Billing",
   },
 ];

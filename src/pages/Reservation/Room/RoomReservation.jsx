@@ -12,16 +12,22 @@ import useModalStates from "../../../hooks/common/useModalStates";
 import RoomReservationCalendar from "../../../components/Calendar/RoomReservationCalendar";
 import { RoomReservationColumnItems } from "../../../components/Table/RoomReservationColumnItems";
 import RoomReservationFormModal from "../../../components/Modals/RoomReservationFormModal";
+import RoomReservationUpdateModal from "../../../components/Modals/RoomReservationUpdateModal";
 import SearchAddHeader from "../../../components/DataDisplay/SearchAddHeader";
 import SkeletonCards from "../../../components/Cards/SkeletonCards";
 import MobileCardView from "../../../components/DataDisplay/MobileCardView";
+import ViewRoomReservation from "../../../components/DataDisplay/ViewRoomReservation";
+import UpdateConfirmationModal from "../../../components/Modals/UpdateConfirmationModal";
 
 // Room reservation page
 const RoomReservation = () => {
   const [calendarOpen, setCalendarOpen] = useState(false);
-  const [modalState, setModalState] = useState({
+  const [formModalState, setFormModalState] = useState({
     open: false,
-    isEditing: false,
+    selectedReservation: null,
+  });
+  const [updateModalState, setUpdateModalState] = useState({
+    open: false,
     selectedReservation: null,
   });
 
@@ -51,22 +57,45 @@ const RoomReservation = () => {
     setPaginationDetails,
   } = useRoomReservation();
 
-  const { showUpdateConfirmModal } = useModalStates();
+  const {
+    showUpdateConfirmModal,
+    handleView,
+    closeViewModal,
+    viewModal,
+    closeUpdateConfirmModal,
+    updateConfirmModal,
+  } = useModalStates();
 
   const { amenities, roomPackages } = additionalData;
 
-  const openFormModal = (isEditing, selectedReservation = null) => {
-    setModalState({
+  // Open create form modal
+  const openFormModal = () => {
+    setFormModalState({
       open: true,
-      isEditing: isEditing,
-      selectedReservation: selectedReservation,
+      selectedReservation: null,
     });
   };
 
+  // Close create form modal
   const closeFormModal = () => {
-    setModalState({
+    setFormModalState({
       open: false,
-      isEditing: false,
+      selectedReservation: null,
+    });
+  };
+
+  // Open update modal
+  const openUpdateModal = (selectedReservation) => {
+    setUpdateModalState({
+      open: true,
+      selectedReservation,
+    });
+  };
+
+  // Close update modal
+  const closeUpdateModal = () => {
+    setUpdateModalState({
+      open: false,
       selectedReservation: null,
     });
   };
@@ -126,16 +155,7 @@ const RoomReservation = () => {
   // handle edit action
   const handleEdit = async (id) => {
     const reservation = await loadOneItem(id);
-    openFormModal(true, reservation);
-  };
-
-  // handle view action
-  const handleView = (record) => {
-    setModalState({
-      open: true,
-      isEditing: false,
-      selectedReservation: record,
-    });
+    openUpdateModal(reservation);
   };
 
   // Generate table columns dynamically
@@ -184,11 +204,12 @@ const RoomReservation = () => {
           />
         </Card>
 
+        {/* Create reservation form modal */}
         <RoomReservationFormModal
-          open={modalState.open}
+          open={formModalState.open}
           closeFormModal={closeFormModal}
-          selectedObject={modalState.selectedReservation}
-          isEditing={modalState.isEditing}
+          selectedObject={formModalState.selectedReservation}
+          isEditing={false}
           addItem={addItem}
           additionalData={additionalData}
           fetchRooms={fetchRooms}
@@ -196,6 +217,35 @@ const RoomReservation = () => {
           roomPackages={roomPackages}
           checkRoomReservationPricing={checkRoomReservationPricing}
           showUpdateConfirmModal={showUpdateConfirmModal}
+        />
+
+        {/* Update reservation modal */}
+        <RoomReservationUpdateModal
+          open={updateModalState.open}
+          closeFormModal={closeUpdateModal}
+          selectedObject={updateModalState.selectedReservation}
+          additionalData={additionalData}
+          updateItem={updateItem}
+          loadReferenceData={additionalData.loadReferenceData}
+          showUpdateConfirmModal={showUpdateConfirmModal}
+          fetchRooms={fetchRooms}
+          checkRoomReservationPricing={checkRoomReservationPricing}
+        />
+
+        <ViewRoomReservation
+          module={module}
+          viewModal={viewModal}
+          modulePrivileges={modulePrivileges}
+          closeViewModal={closeViewModal}
+          handleEdit={handleEdit}
+          loadOneItem={loadOneItem}
+          additionalData={additionalData}
+        />
+        <UpdateConfirmationModal
+          updateFunction={updateItem}
+          updateConfirmModal={updateConfirmModal}
+          closeUpdateConfirmModal={closeUpdateConfirmModal}
+          closeModal={closeUpdateModal}
         />
 
         <RoomReservationCalendar
@@ -225,8 +275,9 @@ const RoomReservation = () => {
         // handleEdit={handleEdit}
         // opendeleteRestoreModal={opendeleteRestoreModal}
         loadOneItem={loadOneItem}
-        // showView={showView}
         handleCardPageChange={handleCardPageChange}
+         // showView={showView}
+        handleEdit={handleEdit}
       />
     </>
   );

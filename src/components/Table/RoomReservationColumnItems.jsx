@@ -12,11 +12,14 @@ const statusColors = {
   Pending: "red",
 };
 
-const confirmedActions = (record) => {
+const confirmedActions = (record, handleView, handleEdit, loadOneItem) => {
   return (
     <Space size="small">
-      <Button icon={<EyeOutlined />} onClick={() => handleView(record)} />
-      <Button icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+      <Button
+        icon={<EyeOutlined />}
+        onClick={() => handleView(loadOneItem, record.id)}
+      />
+      <Button icon={<EditOutlined />} onClick={() => handleEdit(record.id)} />
       <Button
         icon={<DeleteOutlined />}
         onClick={() => loadOneItem(record.id)}
@@ -25,13 +28,17 @@ const confirmedActions = (record) => {
   );
 };
 
-const currentActions = (record) => {
+const currentActions = (record, handleView, handleEdit, loadOneItem) => {
   return (
     <Space size="small">
       <Button
+        icon={<EyeOutlined />}
+        onClick={() => handleView(loadOneItem, record.id)}
+      />
+      <Button
         size="small"
         icon={<EditOutlined />}
-        onClick={() => handleEdit(record)}
+        onClick={() => handleEdit(record.id)}
       >
         Update
       </Button>
@@ -119,10 +126,10 @@ export const RoomReservationColumnItems = (
     align: "center",
     render: (_, record) => {
       if (record?.roomReservationStatusName === "CONFIRMED") {
-        return confirmedActions(record);
+        return confirmedActions(record, handleView, handleEdit, loadOneItem);
       }
       if (record?.roomReservationStatusName === "CHECKED-IN") {
-        return currentActions(record);
+        return currentActions(record, handleView, handleEdit, loadOneItem);
       }
     },
   },
