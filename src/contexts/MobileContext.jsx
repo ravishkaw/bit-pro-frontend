@@ -19,8 +19,14 @@ export const MobileProvider = ({ children }) => {
       if (isMobileView) {
         setCollapsed(false);
         setDrawerOpen(false);
+      } else if (window.innerWidth < 992) {
+        setCollapsed(true);
+      } else {
+        setCollapsed(false);
       }
     };
+
+    handleResize();
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
