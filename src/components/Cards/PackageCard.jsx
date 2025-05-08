@@ -16,7 +16,7 @@ import CardActions from "./CardActions";
 const { Text, Title } = Typography;
 
 const RoomPackageCard = ({
-  roomPackage,
+  packages,
   modulePrivileges,
   handleView,
   handleEdit,
@@ -31,7 +31,7 @@ const RoomPackageCard = ({
     opendeleteRestoreModal,
     modulePrivileges,
     loadOneItem,
-    roomPackage,
+    packages,
     (showView = false)
   );
 
@@ -58,16 +58,15 @@ const RoomPackageCard = ({
             level={3}
             style={{ margin: 0, textAlign: "center", color: "#1890ff" }}
           >
-            {roomPackage?.name}
+            {packages?.name}
           </Title>
 
           <div>
             <Flex vertical align="center" gap="small">
               <Text style={{ textAlign: "center", margin: "12px 0" }}>
-                {roomPackage?.description}
+                {packages?.description}
               </Text>
               <Space>
-                Price :
                 <Tag
                   color="blue"
                   style={{
@@ -76,28 +75,25 @@ const RoomPackageCard = ({
                     fontSize: "14px",
                   }}
                 >
-                  {roomPackage?.price.toLocaleString("en-LK", {
+                  {packages?.price.toLocaleString("en-LK", {
                     style: "currency",
                     currency: "LKR",
                   })}
                 </Tag>
-              </Space>
-              <Space>
-                Status :
                 <Tag
-                  color={roomPackage?.statusName === "Active" ? "green" : "red"}
+                  color={packages?.statusName === "Active" ? "green" : "red"}
                   style={{ padding: "2px 10px", fontSize: "14px" }}
                 >
-                  {roomPackage?.statusName}
+                  {packages?.statusName}
                 </Tag>
               </Space>
             </Flex>
-            {roomPackage?.amenities?.length > 0 && (
+            {packages?.amenities?.length > 0 && (
               <>
                 <Divider orientation="center">Amenities</Divider>
                 <List
                   size="small"
-                  dataSource={roomPackage?.amenities}
+                  dataSource={packages?.amenities}
                   style={{ margin: "0 auto" }}
                   renderItem={(amenity) => (
                     <List.Item key={amenity.id || amenity.amenityName}>
@@ -118,6 +114,7 @@ const RoomPackageCard = ({
                 />
               </>
             )}
+            {/* add event services here */}
           </div>
         </div>
       </Card>

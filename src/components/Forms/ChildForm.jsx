@@ -90,7 +90,6 @@ const ChildForm = ({
       width={600}
       onCancel={closeFormModal}
       footer={null}
-      centered
       destroyOnClose
       afterClose={() => form.resetFields()}
     >

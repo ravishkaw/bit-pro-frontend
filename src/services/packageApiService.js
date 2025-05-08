@@ -15,3 +15,11 @@ export const getAllRoomPackages = async () => {
 
 // Generic API service for event packages
 export const eventPackageService = createApiService(EVENT_PACKAGES_BASE_URL);
+
+// Get all event packages without pagination and sorting
+export const getAllEventPackages = async () => {
+  const response = await axiosInstance.get(
+    `${EVENT_PACKAGES_BASE_URL}/get-all`
+  );
+  return response.data;
+};

@@ -6,6 +6,7 @@ const CHILD_BASE_URL = "/children";
 const ROOM_RESERVATION_BASE_URL = "/room-reservation";
 const EVENT_RESERVATION_BASE_URL = "/event-reservation";
 const ROOM_RESERVAION_AMENITY_URL = "/room-reservation-amenities";
+const EVENT_RESERVATION_SERVICE_URL = "/event-services";
 const ROOM_RESERVAION_AMENITY_CATEGORIES_URL =
   "/room-reservation-amenity-categories";
 const ROOM_RESERVATION_STATUS_URL = "/room-reservation-status";
@@ -80,6 +81,19 @@ export const roomReservationAmenityService = createApiService(
 export const getAllRoomReservationAmenities = async () => {
   const response = await axiosInstance.get(
     `${ROOM_RESERVAION_AMENITY_URL}/get-all`
+  );
+  return response.data;
+};
+
+// Generic API service for event reservation services
+export const eventReservationServiceService = createApiService(
+  EVENT_RESERVATION_SERVICE_URL
+);
+
+// Get all event reservation services without pagination and sorting
+export const getAllEventReservationServices = async () => {
+  const response = await axiosInstance.get(
+    `${EVENT_RESERVATION_SERVICE_URL}/get-all`
   );
   return response.data;
 };

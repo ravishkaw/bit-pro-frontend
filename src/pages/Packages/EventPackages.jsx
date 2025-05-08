@@ -3,7 +3,7 @@ import { Col, Row, Skeleton, Empty, Pagination } from "antd";
 import DeleteRestoreConfirmationModal from "../../components/Modals/DeleteRestoreConfirmationModal";
 import UpdateConfirmationModal from "../../components/Modals/UpdateConfirmationModal";
 
-import RoomPackageCard from "../../components/Cards/RoomPackageCard";
+import PackageCard from "../../components/Cards/PackageCard";
 import EventPackageForm from "../../components/Forms/EventPackageForm";
 
 const EventPackages = ({ modulePrivileges, hookData, modalStates }) => {
@@ -12,6 +12,7 @@ const EventPackages = ({ modulePrivileges, hookData, modalStates }) => {
   // Destructure functions and states from custom hooks
   const {
     data,
+    additionalData,
     loadOneItem,
     addItem,
     updateItem,
@@ -23,8 +24,6 @@ const EventPackages = ({ modulePrivileges, hookData, modalStates }) => {
   const {
     formModalState,
     closeFormModal,
-    viewModal,
-    closeViewModal,
     deleteRestoreModal,
     opendeleteRestoreModal,
     closedeleteRestoreModal,
@@ -43,16 +42,16 @@ const EventPackages = ({ modulePrivileges, hookData, modalStates }) => {
         <Col span={24}>
           <Row gutter={[16, 16]}>
             {loading
-              ? Array.from({ length: 3 }).map((_, index) => (
-                  <Col md={8} sm={12} xs={24} key={index}>
+              ? Array.from({ length: 4 }).map((_, index) => (
+                  <Col lg={6} md={8} sm={12} xs={24} key={index}>
                     <Skeleton active />
                   </Col>
                 ))
               : (data?.length > 0 &&
                   data?.map((roomPackage) => (
-                    <RoomPackageCard
+                    <PackageCard
                       key={roomPackage.id}
-                      roomPackage={roomPackage}
+                      packages={roomPackage}
                       modulePrivileges={modulePrivileges}
                       handleView={handleView}
                       handleEdit={handleEdit}
@@ -61,7 +60,7 @@ const EventPackages = ({ modulePrivileges, hookData, modalStates }) => {
                     />
                   ))) || (
                   <Col span={24}>
-                    <Empty description="No Event Packages found" />
+                    <Empty description="No Room Packages found" />
                   </Col>
                 )}
           </Row>
@@ -71,6 +70,7 @@ const EventPackages = ({ modulePrivileges, hookData, modalStates }) => {
       {/* Add/ edit form modal */}
       <EventPackageForm
         module={roomPackageModule}
+        additionalData={additionalData}
         isEditing={isEditing}
         open={open}
         closeFormModal={closeFormModal}
@@ -81,18 +81,7 @@ const EventPackages = ({ modulePrivileges, hookData, modalStates }) => {
 
       {data && data.length > 0 && (
         <>
-          {/* Displays detailed information about a room */}
-          {/* <ViewRoom
-            module={roomPackageModule}
-            viewModal={viewModal}
-            modulePrivileges={modulePrivileges}
-            closeViewModal={closeViewModal}
-            handleEdit={handleEdit}
-            loadOneRoom={loadOneItem}
-            additionalData={additionalData}
-          /> */}
-
-          {/* Appears when deleting a room */}
+          {/* Appears when deleting a room package*/}
           <DeleteRestoreConfirmationModal
             module={roomPackageModule}
             deleteRestoreModal={deleteRestoreModal}

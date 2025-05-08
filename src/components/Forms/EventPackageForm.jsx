@@ -8,6 +8,7 @@ import {
   Modal,
   Typography,
   Switch,
+  Watermark,
 } from "antd";
 
 import {
@@ -38,7 +39,7 @@ const EventPackageForm = ({
   const [selectedAmenities, setSelectedAmenities] = useState([]);
 
   const { isDarkMode } = useThemeContext();
-  const { amenities } = additionalData;
+  const { eventServices } = additionalData;
   const { alphanumericWithSpacesValidation, noteValidation } = formValidations;
 
   // Set initial values when editing
@@ -57,8 +58,8 @@ const EventPackageForm = ({
   }, [open, isEditing, selectedObject, form]);
 
   useEffect(() => {
-    if (open && isEditing && selectedObject && selectedObject.amenities) {
-      setSelectedAmenities(selectedObject.amenities);
+    if (open && isEditing && selectedObject && selectedObject.eventServices) {
+      setSelectedAmenities(selectedObject.eventServices);
     } else if (open && !isEditing) {
       setSelectedAmenities([]);
     }
@@ -99,7 +100,7 @@ const EventPackageForm = ({
 
   const onFinish = async () => {
     form.setFieldsValue({
-      amenities: selectedAmenities,
+      eventServices: selectedAmenities,
     });
 
     const formdata = form.getFieldsValue();
@@ -114,7 +115,7 @@ const EventPackageForm = ({
       // get changed values
       const updatedValues = getChangedFieldValues(initialFormData, formdata, {
         module,
-        amenities,
+        eventServices,
       });
       showUpdateConfirmModal(updatedValues, selectedObject.id, updatedData);
     } else {
@@ -136,49 +137,51 @@ const EventPackageForm = ({
       destroyOnClose
       afterClose={() => form.resetFields()}
     >
-      <Form
-        form={form}
-        labelCol={{ span: 10 }}
-        wrapperCol={{ span: 14 }}
-        labelAlign="left"
-        onFinish={onFinish}
-        initialValues={{ usedQuantity: 0 }}
-      >
-        <Form.Item
-          name="name"
-          label={
-            <FormInputTooltip
-              label="Package Name"
-              title="Enter the name of the package"
-            />
-          }
-          rules={[
-            ...alphanumericWithSpacesValidation,
-            { required: true, message: "Please enter package name" },
-          ]}
-          hasFeedback
+      {" "}
+      <Watermark content="Still in development">
+        <Form
+          form={form}
+          labelCol={{ span: 10 }}
+          wrapperCol={{ span: 14 }}
+          labelAlign="left"
+          onFinish={onFinish}
+          initialValues={{ usedQuantity: 0 }}
         >
-          <Input placeholder="E.g., Full Board, Half Board" />
-        </Form.Item>
+          <Form.Item
+            name="name"
+            label={
+              <FormInputTooltip
+                label="Package Name"
+                title="Enter the name of the package"
+              />
+            }
+            rules={[
+              ...alphanumericWithSpacesValidation,
+              { required: true, message: "Please enter package name" },
+            ]}
+            hasFeedback
+          >
+            <Input placeholder="E.g., Full Board, Half Board" />
+          </Form.Item>
 
-        <Form.Item
-          name="description"
-          label={
-            <FormInputTooltip
-              label="Description"
-              title="Enter the description of the package"
-            />
-          }
-          rules={[
-            ...noteValidation,
-            { required: true, message: "Please enter description" },
-          ]}
-          hasFeedback
-        >
-          <Input.TextArea placeholder="E.g., Package with room and lunch" />
-        </Form.Item>
+          <Form.Item
+            name="description"
+            label={
+              <FormInputTooltip
+                label="Description"
+                title="Enter the description of the package"
+              />
+            }
+            rules={[
+              ...noteValidation,
+              { required: true, message: "Please enter description" },
+            ]}
+            hasFeedback
+          >
+            <Input.TextArea placeholder="E.g., Package with room and lunch" />
+          </Form.Item>
 
-        {/* <Form.Item
+          {/* <Form.Item
           name="price"
           label={
             <FormInputTooltip
@@ -199,123 +202,126 @@ const EventPackageForm = ({
           />
         </Form.Item> */}
 
-        <Form.Item label="Add Optional Amenities">
-          <div
-            style={{
-              border: `1px solid ${isDarkMode ? "#464963" : "#e5e6e8"}`,
-              padding: "0 16px",
-              borderRadius: 8,
-            }}
-          >
-            <List
-              itemLayout="horizontal"
-              dataSource={amenities}
-              renderItem={(amenity) => {
-                const selectedAmenity = selectedAmenities.find(
-                  (a) => a.amenityId === amenity.id
-                );
-                const quantity = selectedAmenity ? selectedAmenity.quantity : 0;
+          <Form.Item label="Add Optional eventServices">
+            <div
+              style={{
+                border: `1px solid ${isDarkMode ? "#464963" : "#e5e6e8"}`,
+                padding: "0 16px",
+                borderRadius: 8,
+              }}
+            >
+              <List
+                itemLayout="horizontal"
+                dataSource={eventServices}
+                renderItem={(amenity) => {
+                  const selectedAmenity = selectedAmenities.find(
+                    (a) => a.amenityId === amenity.id
+                  );
+                  const quantity = selectedAmenity
+                    ? selectedAmenity.quantity
+                    : 0;
 
-                return (
-                  <List.Item key={amenity.id}>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        width: "100%",
-                      }}
-                    >
-                      <div style={{ flex: 2 }}>
-                        <Text>{amenity.name}</Text>
-                      </div>
-
+                  return (
+                    <List.Item key={amenity.id}>
                       <div
                         style={{
-                          flex: 2,
                           display: "flex",
                           alignItems: "center",
+                          width: "100%",
                         }}
                       >
-                        <Button
-                          type="default"
-                          size="small"
-                          onClick={() =>
-                            handleAmenityQuantityChange(
-                              amenity.id,
-                              quantity - 1
-                            )
-                          }
-                          disabled={quantity <= 0}
-                        >
-                          -
-                        </Button>
-                        <InputNumber
-                          size="small"
-                          min={0}
-                          max={10}
-                          value={quantity}
-                          onChange={(value) =>
-                            handleAmenityQuantityChange(amenity.id, value)
-                          }
+                        <div style={{ flex: 2 }}>
+                          <Text>{amenity.name}</Text>
+                        </div>
+
+                        <div
                           style={{
-                            width: 30,
-                            margin: "0 4px",
-                            textAlign: "center",
+                            flex: 2,
+                            display: "flex",
+                            alignItems: "center",
                           }}
-                        />
-                        <Button
-                          type="default"
-                          size="small"
-                          onClick={() =>
-                            handleAmenityQuantityChange(
-                              amenity.id,
-                              quantity + 1
-                            )
-                          }
-                          disabled={quantity >= 10}
                         >
-                          +
-                        </Button>
+                          <Button
+                            type="default"
+                            size="small"
+                            onClick={() =>
+                              handleAmenityQuantityChange(
+                                amenity.id,
+                                quantity - 1
+                              )
+                            }
+                            disabled={quantity <= 0}
+                          >
+                            -
+                          </Button>
+                          <InputNumber
+                            size="small"
+                            min={0}
+                            max={10}
+                            value={quantity}
+                            onChange={(value) =>
+                              handleAmenityQuantityChange(amenity.id, value)
+                            }
+                            style={{
+                              width: 30,
+                              margin: "0 4px",
+                              textAlign: "center",
+                            }}
+                          />
+                          <Button
+                            type="default"
+                            size="small"
+                            onClick={() =>
+                              handleAmenityQuantityChange(
+                                amenity.id,
+                                quantity + 1
+                              )
+                            }
+                            disabled={quantity >= 10}
+                          >
+                            +
+                          </Button>
+                        </div>
+                        <div style={{ flex: 1, marginLeft: 4 }}>
+                          <Text type="secondary">Max: 10</Text>
+                        </div>
                       </div>
-                      <div style={{ flex: 1, marginLeft: 4 }}>
-                        <Text type="secondary">Max: 10</Text>
-                      </div>
-                    </div>
-                  </List.Item>
-                );
-              }}
-            />
-          </div>
-        </Form.Item>
+                    </List.Item>
+                  );
+                }}
+              />
+            </div>
+          </Form.Item>
 
-        <Form.Item name="amenities" noStyle hidden>
-          <Input hidden />
-        </Form.Item>
+          <Form.Item name="eventServices" noStyle hidden>
+            <Input hidden />
+          </Form.Item>
 
-        <Form.Item
-          name="statusName"
-          label={
-            <FormInputTooltip
-              label="Status"
-              title="Set the status of the package"
+          <Form.Item
+            name="statusName"
+            label={
+              <FormInputTooltip
+                label="Status"
+                title="Set the status of the package"
+              />
+            }
+            hasFeedback
+            required
+          >
+            <Switch
+              checkedChildren="Active"
+              unCheckedChildren="Inactive"
+              defaultChecked={false}
             />
-          }
-          hasFeedback
-          required
-        >
-          <Switch
-            checkedChildren="Active"
-            unCheckedChildren="Inactive"
-            defaultChecked={false}
+          </Form.Item>
+
+          <FormOnFinishButtons
+            closeFormModal={closeFormModal}
+            isEditing={isEditing}
+            confirmLoading={confirmLoading}
           />
-        </Form.Item>
-
-        <FormOnFinishButtons
-          closeFormModal={closeFormModal}
-          isEditing={isEditing}
-          confirmLoading={confirmLoading}
-        />
-      </Form>
+        </Form>
+      </Watermark>
     </Modal>
   );
 };

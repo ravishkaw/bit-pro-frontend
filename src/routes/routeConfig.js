@@ -4,6 +4,8 @@ import UserProfile from "../pages/Profile/UserProfile";
 import ManageEmployee from "../pages/Profile/ManageEmployees";
 import ManageGuests from "../pages/Profile/ManageGuests";
 import {
+  EventReservation,
+  EventReservationServices,
   RoomReservation,
   RoomReservationAmenities,
 } from "../pages/Reservation";
@@ -62,6 +64,16 @@ export const protectedRoutes = [
     path: "/room-reservation-amenities",
     element: RoomReservationAmenities,
     module: "Room Reservation Amenity",
+  },
+  {
+    path: "/event-reservations",
+    element: EventReservation,
+    module: "Event Reservation",
+  },
+  {
+    path: "/event-reservation-services",
+    element: EventReservationServices,
+    module: "Event Reservation Service",
   },
   // Room Routes
   {

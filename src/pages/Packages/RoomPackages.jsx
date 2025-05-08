@@ -3,7 +3,7 @@ import { Col, Row, Skeleton, Empty } from "antd";
 import DeleteRestoreConfirmationModal from "../../components/Modals/DeleteRestoreConfirmationModal";
 import UpdateConfirmationModal from "../../components/Modals/UpdateConfirmationModal";
 
-import RoomPackageCard from "../../components/Cards/RoomPackageCard";
+import PackageCard from "../../components/Cards/PackageCard";
 import RoomPackageForm from "../../components/Forms/RoomPackageForm";
 
 const RoomPackages = ({ modulePrivileges, hookData, modalStates }) => {
@@ -49,9 +49,9 @@ const RoomPackages = ({ modulePrivileges, hookData, modalStates }) => {
                 ))
               : (data?.length > 0 &&
                   data?.map((roomPackage) => (
-                    <RoomPackageCard
+                    <PackageCard
                       key={roomPackage.id}
-                      roomPackage={roomPackage}
+                      packages={roomPackage}
                       modulePrivileges={modulePrivileges}
                       handleView={handleView}
                       handleEdit={handleEdit}

@@ -3,3 +3,4 @@ export { default as RoomReservation } from "./Room/RoomReservation";
 export { default as RoomReservationAmenities } from "./Room/Amenities";
 
 export { default as EventReservation } from "./Event/EventReservation";
+export { default as EventReservationServices } from "./Event/EventServices";
