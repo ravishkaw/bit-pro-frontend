@@ -5,6 +5,8 @@ import {
   UndoOutlined,
 } from "@ant-design/icons";
 
+import { theme } from "antd";
+
 //define card actions based on privileges
 const CardActions = (
   handleView,
@@ -16,6 +18,7 @@ const CardActions = (
   showView
 ) => {
   const actions = [];
+  const { token } = theme.useToken();
 
   if (
     (data?.statusName === "Deleted" ||
@@ -24,7 +27,7 @@ const CardActions = (
   ) {
     actions.push(
       <UndoOutlined
-        style={{ color: "blue" }}
+        style={{ color: token.colorPrimary }}
         onClick={() => opendeleteRestoreModal(false, data)}
       />
     );
@@ -34,7 +37,7 @@ const CardActions = (
   if (privileges?.select_privilege && showView) {
     actions.push(
       <EyeOutlined
-        style={{ color: "blue" }}
+        style={{ color: token.colorInfo }}
         onClick={() => handleView(loadOneItem, data.id)}
       />
     );
@@ -42,7 +45,7 @@ const CardActions = (
   if (privileges?.update_privilege) {
     actions.push(
       <EditOutlined
-        style={{ color: "#fadb14" }}
+        style={{ color: token.colorPrimary }}
         onClick={() => handleEdit(loadOneItem, data.id)}
       />
     );
@@ -50,7 +53,7 @@ const CardActions = (
   if (privileges?.delete_privilege) {
     actions.push(
       <DeleteOutlined
-        style={{ color: "red" }}
+        style={{ color: token.colorError }}
         onClick={() => opendeleteRestoreModal(true, data)}
       />
     );

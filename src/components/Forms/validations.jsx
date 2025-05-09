@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 // Custom validations for form inputs
 export const formValidations = {
   // Allows letters, numbers, and spaces
@@ -7,7 +9,7 @@ export const formValidations = {
       message: "Only letters, numbers, and spaces are allowed",
     },
   ],
-  
+
   // First name format validation
   firstNameValidation: [
     { required: true, message: "First name is required" },
@@ -215,6 +217,45 @@ export const formValidations = {
         }
         if (password && value !== password) {
           return Promise.reject("The two passwords don't match");
+        }
+        return Promise.resolve();
+      },
+    }),
+  ],
+
+  // Dates validation
+  dateValidation: [
+    {
+      validator: (_, value) => {
+        // substract 1 minute to avoid current time issue
+        if (value && value.isBefore(dayjs().clone().subtract(1, "minute"))) {
+          return Promise.reject("Date cannot be in the past");
+        }
+        return Promise.resolve();
+      },
+    },
+  ],
+
+  // Time validation in scheduled start time
+  scheduledDateValidation: [
+    ({ getFieldValue }) => ({
+      validator: (_, value) => {
+        const scheduledStartTime = getFieldValue("scheduledStartTime");
+        if (scheduledStartTime && value.isBefore(scheduledStartTime)) {
+          return Promise.reject("End date must be after start date");
+        }
+        return Promise.resolve();
+      },
+    }),
+  ],
+
+  // Time validation in actual start time
+  actualDateValidation: [
+    ({ getFieldValue }) => ({
+      validator: (_, value) => {
+        const actualStartTime = getFieldValue("actualStartTime");
+        if (actualStartTime && value.isBefore(actualStartTime)) {
+          return Promise.reject("End date must be after start date");
         }
         return Promise.resolve();
       },

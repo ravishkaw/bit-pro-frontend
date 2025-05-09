@@ -7,8 +7,7 @@ const FormOnFinishButtons = ({ closeFormModal, isEditing, confirmLoading }) => {
       <Space>
         {/* <Button onClick={closeFormModal}>Cancel</Button> */}
         <Button
-          color={isEditing ? "yellow" : "green"}
-          variant="solid"
+          type="primary"
           htmlType="submit"
           loading={!isEditing && confirmLoading}
         >

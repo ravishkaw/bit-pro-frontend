@@ -1,44 +1,6 @@
 import { capitalize, formatText } from "./textUtils";
 import dayjs from "dayjs";
 
-// Get label from data array that formatted to select tag options
-const getLabel = (dataArray, value) =>
-  dataArray.find((data) => data.value === value)?.label || value;
-
-// Format the date
-const dateFormat = (value) => dayjs(value).format("YYYY-MM-DD");
-
-// Helper function to check if values are different
-const areValuesDifferent = (val1, val2, key) => {
-  // Special handling for amenities array
-  if (key === "amenities" && Array.isArray(val1) && Array.isArray(val2)) {
-    if (val1.length !== val2.length) return true;
-    // Sort by amenityId for stable comparison
-    const sorted1 = [...val1].sort((a, b) => a.amenityId - b.amenityId);
-    const sorted2 = [...val2].sort((a, b) => a.amenityId - b.amenityId);
-    for (let i = 0; i < sorted1.length; i++) {
-      if (
-        sorted1[i].amenityId !== sorted2[i].amenityId ||
-        sorted1[i].quantity !== sorted2[i].quantity
-      ) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  // compare arrays 
-  if (Array.isArray(val1) && Array.isArray(val2)) {
-    if (val1.length !== val2.length) return true;
-    const sortedVal1 = [...val1].sort().toString();
-    const sortedVal2 = [...val2].sort().toString();
-    return sortedVal1 !== sortedVal2;
-  }
-
-  // For other types, use string comparison
-  return JSON.stringify(val1) !== JSON.stringify(val2);
-};
-
 // Get changed form values for confirmation modal
 export const getChangedFieldValues = (
   initialData,
@@ -198,40 +160,31 @@ export const getChangedFieldValues = (
       else if (key === "amenities") {
         formattedKey = "Amenities";
         const mappedAmenities = additionalData?.amenities || [];
-
-        // Format initial amenities
-        if (Array.isArray(initialValue)) {
-          initialValue = initialValue
-            .map((item) => {
-              const amenity = mappedAmenities.find(
-                (a) => a.id === item.amenityId
-              );
-              return amenity
-                ? `${amenity.name} (${item.quantity})`
-                : `ID: ${item.amenityId} (${item.quantity})`;
-            })
-            .sort()
-            .join(", ");
-        } else {
-          initialValue = "None";
-        }
-
-        // Format updated amenities
-        if (Array.isArray(updatedValue)) {
-          updatedValue = updatedValue
-            .map((item) => {
-              const amenity = mappedAmenities.find(
-                (a) => a.id === item.amenityId
-              );
-              return amenity
-                ? `${amenity.name} (${item.quantity})`
-                : `ID: ${item.amenityId} (${item.quantity})`;
-            })
-            .sort()
-            .join(", ");
-        } else {
-          updatedValue = "None";
-        }
+        initialValue = formatItemsWithQuantities(
+          initialValue,
+          mappedAmenities,
+          "amenityId"
+        );
+        updatedValue = formatItemsWithQuantities(
+          updatedValue,
+          mappedAmenities,
+          "amenityId"
+        );
+      }
+      // Format event services
+      else if (key === "eventServices") {
+        formattedKey = "Event Services";
+        const mappedServices = additionalData?.eventServices || [];
+        initialValue = formatItemsWithQuantities(
+          initialValue,
+          mappedServices,
+          "eventServiceId"
+        );
+        updatedValue = formatItemsWithQuantities(
+          updatedValue,
+          mappedServices,
+          "eventServiceId"
+        );
       }
       // Format adult no  key
       else if (key === "adultNo") {
@@ -275,6 +228,69 @@ export const getChangedFieldValues = (
         formattedKey
       )} changed from "${initialValue}" to "${updatedValue}"`;
     });
+};
+
+// Get label from data array that formatted to select tag options
+const getLabel = (dataArray, value) =>
+  dataArray.find((data) => data.value === value)?.label || value;
+
+// Format the date
+const dateFormat = (value) => dayjs(value).format("YYYY-MM-DD");
+
+// Helper function to compare arrays with items that have quantities
+const compareArraysWithQuantities = (arr1, arr2, idField) => {
+  if (arr1.length !== arr2.length) return true;
+
+  // Sort by ID field 
+  const sorted1 = [...arr1].sort((a, b) => a[idField] - b[idField]);
+  const sorted2 = [...arr2].sort((a, b) => a[idField] - b[idField]);
+
+  for (let i = 0; i < sorted1.length; i++) {
+    if (
+      sorted1[i][idField] !== sorted2[i][idField] ||
+      sorted1[i].quantity !== sorted2[i].quantity
+    ) {
+      return true;
+    }
+  }
+  return false;
+};
+
+// Helper function to check if values are different
+const areValuesDifferent = (val1, val2, key) => {
+  if (key === "amenities" && Array.isArray(val1) && Array.isArray(val2)) {
+    return compareArraysWithQuantities(val1, val2, "amenityId");
+  }
+
+  if (key === "eventServices" && Array.isArray(val1) && Array.isArray(val2)) {
+    return compareArraysWithQuantities(val1, val2, "eventServiceId");
+  }
+
+  // compare regular arrays
+  if (Array.isArray(val1) && Array.isArray(val2)) {
+    if (val1.length !== val2.length) return true;
+    const sortedVal1 = [...val1].sort().toString();
+    const sortedVal2 = [...val2].sort().toString();
+    return sortedVal1 !== sortedVal2;
+  }
+
+  // Others, string comparison
+  return JSON.stringify(val1) !== JSON.stringify(val2);
+};
+
+// Helper function to format arrays of items with quantities
+const formatItemsWithQuantities = (items, mappedItems, idField) => {
+  if (!Array.isArray(items)) return "None";
+
+  return items
+    .map((item) => {
+      const mappedItem = mappedItems.find((m) => m.id === item[idField]);
+      return mappedItem
+        ? `${mappedItem.name} (${item.quantity})`
+        : `ID: ${item[idField]} (${item.quantity})`;
+    })
+    .sort()
+    .join(", ");
 };
 
 // Trigger form validation

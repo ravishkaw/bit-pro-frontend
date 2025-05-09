@@ -61,6 +61,12 @@ export const fetchEmployeesWithoutUserAccounts = async () => {
   return response.data;
 };
 
+// Fetch all employees without pagination
+export const fetchAllEmployees = async () => {
+  const response = await axiosInstance.get(`${EMPLOYEE_BASE_URL}/get-all`);
+  return response.data;
+};
+
 // get modules without privileges for specific role
 export const fetchModuleWithoutPrivileges = async (roleId) => {
   const response = await axiosInstance.get(

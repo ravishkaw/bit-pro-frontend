@@ -7,6 +7,11 @@ const ROOM_TYPE_BASE_URL = "/room-types";
 const BED_TYPE_BASE_URL = "/bed-types";
 const ROOM_PRICING_RULE_BASE_URL = "/pricing-rules";
 const ROOM_FACILITIES = "/room-facilities";
+const ROOM_PREVENTIVE_MAINTENANCE = "/preventive-maintenance";
+const ROOM_PREVENTIVE_MAINTENANCE_STATUS = "/preventive-maintenance-status";
+const ROOM_TASKS = "/tasks"; // housekpeeping and maintenance tasks
+const ROOM_TASK_STATUS = "/task-status";
+const ROOM_TASK_TYPE = "/task-types";
 
 // Generic API service for rooms
 export const roomService = createApiService(ROOM_BASE_URL);
@@ -56,6 +61,25 @@ export const pricingRuleService = createApiService(ROOM_PRICING_RULE_BASE_URL);
 
 // Generic API service for room facilities
 export const roomFacilitiesService = createApiService(ROOM_FACILITIES);
+
+// Generic API service for room preventive maintenance
+export const preventiveMaintenanceService = createApiService(
+  ROOM_PREVENTIVE_MAINTENANCE
+);
+
+// Generic API service for room preventive maintenance status
+export const preventiveMaintenanceStatusService = createApiService(
+  ROOM_PREVENTIVE_MAINTENANCE_STATUS
+);
+
+// Generic API service for room tasks (housekeeping and maintenance)
+export const roomTasksService = createApiService(ROOM_TASKS);
+
+// Generic API service for room task status
+export const roomTaskStatusService = createApiService(ROOM_TASK_STATUS);
+
+// Generic API service for room task types
+export const roomTaskTypeService = createApiService(ROOM_TASK_TYPE);
 
 // Fetch all rooms available rooms
 export const fetchAvailableRooms = async (

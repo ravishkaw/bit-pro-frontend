@@ -212,12 +212,12 @@ const RoomFilter = ({
         position: "sticky",
         top: 64,
         zIndex: 1,
-        marginBottom: 16,
         background: !isDarkMode ? "#f5f5f5" : "#000",
         borderRadius: 0,
         boxShadow: "none",
         overflow: "auto",
       }}
+      styles={{ body: { padding: "16px" } }}
     >
       <Flex
         align="center"

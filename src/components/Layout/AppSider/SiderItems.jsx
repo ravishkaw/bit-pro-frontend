@@ -61,7 +61,7 @@ export const siderItems = [
       },
       {
         key: "/room-types",
-        label: "Room Categories",
+        label: "Room Types",
         icon: <ApartmentOutlined />,
         privilege: "Room Type",
       },

@@ -15,7 +15,7 @@ import CardActions from "./CardActions";
 
 const { Text, Title } = Typography;
 
-const RoomPackageCard = ({
+const PackageCard = ({
   packages,
   modulePrivileges,
   handleView,
@@ -66,7 +66,7 @@ const RoomPackageCard = ({
               <Text style={{ textAlign: "center", margin: "12px 0" }}>
                 {packages?.description}
               </Text>
-              <Space>
+              <Space wrap>
                 <Tag
                   color="blue"
                   style={{
@@ -88,33 +88,18 @@ const RoomPackageCard = ({
                 </Tag>
               </Space>
             </Flex>
-            {packages?.amenities?.length > 0 && (
-              <>
-                <Divider orientation="center">Amenities</Divider>
-                <List
-                  size="small"
-                  dataSource={packages?.amenities}
-                  style={{ margin: "0 auto" }}
-                  renderItem={(amenity) => (
-                    <List.Item key={amenity.id || amenity.amenityName}>
-                      <Flex align="center" gap="middle" justify="center">
-                        <Avatar
-                          size="small"
-                          icon={<CheckCircleOutlined />}
-                          style={{ backgroundColor: "#52c41a" }}
-                        />
-                        <Text>{amenity?.amenityName}</Text>
-                        {amenity?.quantity &&
-                          (amenity?.quantity == -1 ? null : (
-                            <Tag color="cyan">{amenity.quantity}</Tag>
-                          ))}
-                      </Flex>
-                    </List.Item>
-                  )}
-                />
-              </>
-            )}
-            {/* add event services here */}
+
+            <ItemsList
+              title="Amenities"
+              items={packages?.amenities}
+              nameField="amenityName"
+            />
+
+            <ItemsList
+              title="Event Services"
+              items={packages?.services}
+              nameField="serviceName"
+            />
           </div>
         </div>
       </Card>
@@ -122,4 +107,36 @@ const RoomPackageCard = ({
   );
 };
 
-export default RoomPackageCard;
+export default PackageCard;
+
+// display both amenities and event services
+const ItemsList = ({ title, items, nameField }) => {
+  if (!items?.length) return null;
+
+  return (
+    <>
+      <Divider orientation="center">{title}</Divider>
+      <List
+        size="small"
+        dataSource={items}
+        style={{ margin: "0 auto" }}
+        renderItem={(item) => (
+          <List.Item key={item.id || item[nameField]}>
+            <Flex align="center" gap="middle" justify="center">
+              <Avatar
+                size="small"
+                icon={<CheckCircleOutlined />}
+                style={{ backgroundColor: "#52c41a" }}
+              />
+              <Text>{item[nameField]}</Text>
+              {item?.quantity &&
+                (item?.quantity === -1 ? null : (
+                  <Tag color="cyan">{item.quantity}</Tag>
+                ))}
+            </Flex>
+          </List.Item>
+        )}
+      />
+    </>
+  );
+};

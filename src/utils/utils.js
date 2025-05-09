@@ -7,7 +7,7 @@ export const mapToSelectOptions = (data) =>
     label:
       capitalize(item.name) ||
       item.fullName ||
-      item.roomNumber ||
+      item.number ||
       item.itemName,
   }));
 

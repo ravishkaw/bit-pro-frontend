@@ -8,7 +8,6 @@ import {
   Modal,
   Typography,
   Switch,
-  Watermark,
 } from "antd";
 
 import {
@@ -35,8 +34,8 @@ const EventPackageForm = ({
 }) => {
   const [initialFormData, setInitialFormData] = useState({});
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [selectedServices, setSelectedServices] = useState([]);
   const [form] = Form.useForm();
-  const [selectedAmenities, setSelectedAmenities] = useState([]);
 
   const { isDarkMode } = useThemeContext();
   const { eventServices } = additionalData;
@@ -59,48 +58,48 @@ const EventPackageForm = ({
 
   useEffect(() => {
     if (open && isEditing && selectedObject && selectedObject.eventServices) {
-      setSelectedAmenities(selectedObject.eventServices);
+      setSelectedServices(selectedObject.eventServices);
     } else if (open && !isEditing) {
-      setSelectedAmenities([]);
+      setSelectedServices([]);
     }
   }, [open, isEditing, selectedObject]);
 
-  // Handle amenity quantity change
-  const handleAmenityQuantityChange = (amenityId, newQty) => {
-    const newQuantity = Math.max(0, Math.min(10, newQty || 0));
+  // Handle service quantity change
+  const handleServicesQuantityChange = (eventServiceId, newQty) => {
+    const newQuantity = Math.max(0, newQty || 0);
 
-    setSelectedAmenities((prevAmenities) => {
+    setSelectedServices((prevServices) => {
       // If quantity is 0, remove from selection
       if (newQuantity === 0) {
-        return prevAmenities.filter(
-          (amenity) => amenity.amenityId !== amenityId
+        return prevServices.filter(
+          (service) => service.eventServiceId !== eventServiceId
         );
       }
 
       // If already selected, update quantity
-      const existingIndex = prevAmenities.findIndex(
-        (amenity) => amenity.amenityId === amenityId
+      const existingIndex = prevServices.findIndex(
+        (service) => service.eventServiceId === eventServiceId
       );
       if (existingIndex >= 0) {
-        const updatedAmenities = [...prevAmenities];
-        updatedAmenities[existingIndex] = {
-          ...updatedAmenities[existingIndex],
+        const updatedServices = [...prevServices];
+        updatedServices[existingIndex] = {
+          ...updatedServices[existingIndex],
           quantity: newQuantity,
         };
-        return updatedAmenities;
+        return updatedServices;
       }
 
       // Add new selection
       return [
-        ...prevAmenities,
-        { amenityId: amenityId, quantity: newQuantity },
+        ...prevServices,
+        { eventServiceId: eventServiceId, quantity: newQuantity },
       ];
     });
   };
 
   const onFinish = async () => {
     form.setFieldsValue({
-      eventServices: selectedAmenities,
+      eventServices: selectedServices,
     });
 
     const formdata = form.getFieldsValue();
@@ -137,191 +136,159 @@ const EventPackageForm = ({
       destroyOnClose
       afterClose={() => form.resetFields()}
     >
-      {" "}
-      <Watermark content="Still in development">
-        <Form
-          form={form}
-          labelCol={{ span: 10 }}
-          wrapperCol={{ span: 14 }}
-          labelAlign="left"
-          onFinish={onFinish}
-          initialValues={{ usedQuantity: 0 }}
-        >
-          <Form.Item
-            name="name"
-            label={
-              <FormInputTooltip
-                label="Package Name"
-                title="Enter the name of the package"
-              />
-            }
-            rules={[
-              ...alphanumericWithSpacesValidation,
-              { required: true, message: "Please enter package name" },
-            ]}
-            hasFeedback
-          >
-            <Input placeholder="E.g., Full Board, Half Board" />
-          </Form.Item>
-
-          <Form.Item
-            name="description"
-            label={
-              <FormInputTooltip
-                label="Description"
-                title="Enter the description of the package"
-              />
-            }
-            rules={[
-              ...noteValidation,
-              { required: true, message: "Please enter description" },
-            ]}
-            hasFeedback
-          >
-            <Input.TextArea placeholder="E.g., Package with room and lunch" />
-          </Form.Item>
-
-          {/* <Form.Item
-          name="price"
+      <Form
+        form={form}
+        labelCol={{ span: 10 }}
+        wrapperCol={{ span: 14 }}
+        labelAlign="left"
+        onFinish={onFinish}
+        initialValues={{ usedQuantity: 0 }}
+      >
+        <Form.Item
+          name="name"
           label={
             <FormInputTooltip
-              label="Price"
-              title="Enter the price of the package"
+              label="Package Name"
+              title="Enter the name of the package"
             />
           }
-          rules={[{ required: true, message: "Please enter price" }]}
+          rules={[
+            ...alphanumericWithSpacesValidation,
+            { required: true, message: "Please enter package name" },
+          ]}
           hasFeedback
         >
-          <InputNumber
-            placeholder="0.00"
-            min={0}
-            precision={2}
-            style={{ width: "100%" }}
-            prefix="Rs."
-            keyboard
-          />
-        </Form.Item> */}
+          <Input placeholder="E.g., Full Board, Half Board" />
+        </Form.Item>
 
-          <Form.Item label="Add Optional eventServices">
-            <div
-              style={{
-                border: `1px solid ${isDarkMode ? "#464963" : "#e5e6e8"}`,
-                padding: "0 16px",
-                borderRadius: 8,
-              }}
-            >
-              <List
-                itemLayout="horizontal"
-                dataSource={eventServices}
-                renderItem={(amenity) => {
-                  const selectedAmenity = selectedAmenities.find(
-                    (a) => a.amenityId === amenity.id
-                  );
-                  const quantity = selectedAmenity
-                    ? selectedAmenity.quantity
-                    : 0;
+        <Form.Item
+          name="description"
+          label={
+            <FormInputTooltip
+              label="Description"
+              title="Enter the description of the package"
+            />
+          }
+          rules={[
+            ...noteValidation,
+            { required: true, message: "Please enter description" },
+          ]}
+          hasFeedback
+        >
+          <Input.TextArea placeholder="E.g., Package with room and lunch" />
+        </Form.Item>
 
-                  return (
-                    <List.Item key={amenity.id}>
+        <Form.Item label="Add Optional Services">
+          <div
+            style={{
+              border: `1px solid ${isDarkMode ? "#464963" : "#e5e6e8"}`,
+              padding: "0 16px",
+              borderRadius: 8,
+            }}
+          >
+            <List
+              itemLayout="horizontal"
+              dataSource={eventServices}
+              renderItem={(service) => {
+                const selectedService = selectedServices.find(
+                  (a) => a.eventServiceId === service.id
+                );
+                const quantity = selectedService ? selectedService.quantity : 0;
+
+                return (
+                  <List.Item key={service.id}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        width: "100%",
+                      }}
+                    >
+                      <div style={{ flex: 2 }}>
+                        <Text>{service.name}</Text>
+                      </div>
+
                       <div
                         style={{
+                          flex: 2,
                           display: "flex",
                           alignItems: "center",
-                          width: "100%",
                         }}
                       >
-                        <div style={{ flex: 2 }}>
-                          <Text>{amenity.name}</Text>
-                        </div>
-
-                        <div
-                          style={{
-                            flex: 2,
-                            display: "flex",
-                            alignItems: "center",
-                          }}
+                        <Button
+                          type="default"
+                          size="small"
+                          onClick={() =>
+                            handleServicesQuantityChange(
+                              service.id,
+                              quantity - 1
+                            )
+                          }
+                          disabled={quantity <= 0}
                         >
-                          <Button
-                            type="default"
-                            size="small"
-                            onClick={() =>
-                              handleAmenityQuantityChange(
-                                amenity.id,
-                                quantity - 1
-                              )
-                            }
-                            disabled={quantity <= 0}
-                          >
-                            -
-                          </Button>
-                          <InputNumber
-                            size="small"
-                            min={0}
-                            max={10}
-                            value={quantity}
-                            onChange={(value) =>
-                              handleAmenityQuantityChange(amenity.id, value)
-                            }
-                            style={{
-                              width: 30,
-                              margin: "0 4px",
-                              textAlign: "center",
-                            }}
-                          />
-                          <Button
-                            type="default"
-                            size="small"
-                            onClick={() =>
-                              handleAmenityQuantityChange(
-                                amenity.id,
-                                quantity + 1
-                              )
-                            }
-                            disabled={quantity >= 10}
-                          >
-                            +
-                          </Button>
-                        </div>
-                        <div style={{ flex: 1, marginLeft: 4 }}>
-                          <Text type="secondary">Max: 10</Text>
-                        </div>
+                          -
+                        </Button>
+                        <InputNumber
+                          size="small"
+                          min={0}
+                          value={quantity}
+                          onChange={(value) =>
+                            handleServicesQuantityChange(service.id, value)
+                          }
+                          style={{
+                            margin: "0 4px",
+                            textAlign: "center",
+                          }}
+                        />
+                        <Button
+                          type="default"
+                          size="small"
+                          onClick={() =>
+                            handleServicesQuantityChange(
+                              service.id,
+                              quantity + 1
+                            )
+                          }
+                        >
+                          +
+                        </Button>
                       </div>
-                    </List.Item>
-                  );
-                }}
-              />
-            </div>
-          </Form.Item>
-
-          <Form.Item name="eventServices" noStyle hidden>
-            <Input hidden />
-          </Form.Item>
-
-          <Form.Item
-            name="statusName"
-            label={
-              <FormInputTooltip
-                label="Status"
-                title="Set the status of the package"
-              />
-            }
-            hasFeedback
-            required
-          >
-            <Switch
-              checkedChildren="Active"
-              unCheckedChildren="Inactive"
-              defaultChecked={false}
+                    </div>
+                  </List.Item>
+                );
+              }}
             />
-          </Form.Item>
+          </div>
+        </Form.Item>
 
-          <FormOnFinishButtons
-            closeFormModal={closeFormModal}
-            isEditing={isEditing}
-            confirmLoading={confirmLoading}
+        <Form.Item name="eventServices" noStyle hidden>
+          <Input hidden />
+        </Form.Item>
+
+        <Form.Item
+          name="statusName"
+          label={
+            <FormInputTooltip
+              label="Status"
+              title="Set the status of the package"
+            />
+          }
+          hasFeedback
+          required
+        >
+          <Switch
+            checkedChildren="Active"
+            unCheckedChildren="Inactive"
+            defaultChecked={false}
           />
-        </Form>
-      </Watermark>
+        </Form.Item>
+
+        <FormOnFinishButtons
+          closeFormModal={closeFormModal}
+          isEditing={isEditing}
+          confirmLoading={confirmLoading}
+        />
+      </Form>
     </Modal>
   );
 };

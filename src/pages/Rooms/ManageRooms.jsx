@@ -7,13 +7,17 @@ import { useThemeContext } from "../../contexts/ThemeContext";
 import useRooms from "../../hooks/room/useRooms";
 import useRoomFacilities from "../../hooks/room/useRoomFacilities";
 import useModalStates from "../../hooks/common/useModalStates";
+import useMaintenance from "../../hooks/room/useMaintenance";
+import useRoomTasks from "../../hooks/room/useRoomTasks";
 
 import GenericPage from "../GenericPage";
 import RoomCard from "../../components/Cards/RoomCard";
 import RoomFilter from "../../components/Cards/RoomFilter";
 import ViewRoom from "../../components/DataDisplay/ViewRoom";
-import { RoomFacilitiesColumnItems } from "../../components/Table/RoomFacilitiesColumnItems";
 import RoomStatistics from "../../components/Statistics/RoomStatistics";
+
+import { RoomFacilitiesColumnItems } from "../../components/Table/RoomFacilitiesColumnItems";
+import { TaskColumnItems } from "../../components/Table/TaskColumnItems";
 
 import DeleteRestoreConfirmationModal from "../../components/Modals/DeleteRestoreConfirmationModal";
 import UpdateConfirmationModal from "../../components/Modals/UpdateConfirmationModal";
@@ -22,13 +26,18 @@ import RoomForm from "../../components/Forms/RoomForm";
 import RoomFacilityForm from "../../components/Forms/RoomFacilityForm";
 
 import { mapToSelectOptions } from "../../utils/utils";
+import TaskForm from "../../components/Forms/TaskForm";
 
 const ManageRooms = () => {
   let roomModule = "Room"; // Define the module for rooms
   let roomFacilityModule = "Room Facility"; // Define the module for room facilities
+  let roomTaskModule = "Task"; // Define the module for room tasks
+  let roomMaintenanceModule = "Room Preventive Maintenance"; // Define the module for room maintenance
   const rowKey = "id"; // define row key for table
 
   const [facilityModalOpen, setFacilityModalOpen] = useState(false);
+  const [maintenanceModalOpen, setMaintenanceModalOpen] = useState(false);
+  const [housekeepingModalOpen, setHousekeepingModalOpen] = useState(false);
 
   // Find the module related to "Room" in the privileges
   const { privileges } = useAuth();
@@ -70,6 +79,8 @@ const ManageRooms = () => {
   } = useModalStates();
 
   const roomFacilityhookData = useRoomFacilities();
+  const roomPreventiveMaintenancehookData = useMaintenance();
+  const roomTasksHookData = useRoomTasks();
 
   const { open, isEditing, selectedObject } = formModalState; // Extract modal state details
   const { roomTypes, roomStatus } = additionalData;
@@ -87,8 +98,14 @@ const ManageRooms = () => {
 
   const mappedRoomTypes = mapToSelectOptions(roomTypes);
 
-  const openModal = () => setFacilityModalOpen(true);
-  const closeModal = () => setFacilityModalOpen(false);
+  const openFacilityModal = () => setFacilityModalOpen(true);
+  const closeFacilityModal = () => setFacilityModalOpen(false);
+
+  const openMaintenanceModal = () => setMaintenanceModalOpen(true);
+  const closeMaintenanceModal = () => setMaintenanceModalOpen(false);
+
+  const openHousekeepingModal = () => setHousekeepingModalOpen(true);
+  const closeHousekeepingModal = () => setHousekeepingModalOpen(false);
 
   const handleFilterChange = (newFilters) => {
     applyFilters(newFilters);
@@ -99,7 +116,9 @@ const ManageRooms = () => {
       <RoomStatistics
         rooms={rooms}
         roomFacilityhookData={roomFacilityhookData}
-        openModal={openModal}
+        openModal={openFacilityModal}
+        openMaintenanceModal={openMaintenanceModal}
+        openHousekeepingModal={openHousekeepingModal}
       />
       <RoomFilter
         mappedRoomTypes={mappedRoomTypes}
@@ -186,8 +205,8 @@ const ManageRooms = () => {
       <Modal
         title="Room Facilities"
         open={facilityModalOpen}
-        onCancel={closeModal}
-        width={850}
+        onCancel={closeFacilityModal}
+        width={950}
         footer={null}
         styles={{
           header: { background: !isDarkMode ? "#f5f5f5" : "#1f1f1f" },
@@ -200,6 +219,42 @@ const ManageRooms = () => {
           rowKey={rowKey}
           columnItems={RoomFacilitiesColumnItems}
           CustomForm={RoomFacilityForm}
+        />
+      </Modal>
+
+      {/* Modal for Maintenance */}
+      <Modal
+        title="Preventive Maintenance"
+        open={maintenanceModalOpen}
+        onCancel={closeMaintenanceModal}
+        width={950}
+        footer={null}
+        styles={{
+          header: { background: !isDarkMode ? "#f5f5f5" : "#1f1f1f" },
+          content: { background: !isDarkMode ? "#f5f5f5" : "#1f1f1f" },
+        }}
+      >
+        <p>Maintenance management.</p>
+      </Modal>
+
+      {/* Modal for Housekeeping */}
+      <Modal
+        title="Housekeeping Management"
+        open={housekeepingModalOpen}
+        onCancel={closeHousekeepingModal}
+        width={950}
+        footer={null}
+        styles={{
+          header: { background: !isDarkMode ? "#f5f5f5" : "#1f1f1f" },
+          content: { background: !isDarkMode ? "#f5f5f5" : "#1f1f1f" },
+        }}
+      >
+        <GenericPage
+          module={roomTaskModule}
+          hookData={roomTasksHookData}
+          rowKey={rowKey}
+          columnItems={TaskColumnItems}
+          CustomForm={(props) => <TaskForm {...props} rooms={rooms} />}
         />
       </Modal>
     </>

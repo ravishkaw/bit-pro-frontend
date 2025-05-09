@@ -9,12 +9,18 @@ export const getEntityDisplayMessage = (entity) => {
   if (entity.username) return entity.username;
 
   // Room
-  if (entity.roomNumber) return `Room ${entity.roomNumber}`;
+  if (entity.number) return `Room ${entity.number}`;
 
   // Privilege
-  if (entity.moduleId?.name && entity.roleId?.name) {
-    return `${entity.moduleId.name} privilege of ${entity.roleId.name}`;
+  if (entity.module?.name && entity.role?.name) {
+    return `${entity.module.name} privilege of ${entity.role.name}`;
   }
+
+  // Inventory Item
+  if (entity.itemName) return entity.itemName;
+
+  // Packages & services and etc. (many entities using name)
+  if (entity.name) return entity.name;
 
   // Fallback
   return "this item";

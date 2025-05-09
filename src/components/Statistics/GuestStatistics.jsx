@@ -30,7 +30,7 @@ const GuestStatistics = ({ childHookData, openModal, guestHookData }) => {
   }, [guestHookData, childHookData]);
 
   return (
-    <Row gutter={[16, 16]} style={{ marginBottom: 12 }}>
+    <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
       {/* Total Guests Card */}
       <Col lg={12} md={12} xs={24}>
         <Card
@@ -38,7 +38,7 @@ const GuestStatistics = ({ childHookData, openModal, guestHookData }) => {
           style={{
             height: "100%",
             borderRadius: "8px",
-            borderLeft: "4px solid #1890ff",
+            borderLeft: "4px solid #666cff",
           }}
           styles={{ body: { padding: "16px" } }}
         >
@@ -50,19 +50,19 @@ const GuestStatistics = ({ childHookData, openModal, guestHookData }) => {
                 </span>
               }
               value={statistics.totalGuests}
-              valueStyle={{ color: "#1890ff", fontSize: "24px" }}
+              valueStyle={{ color: "#666cff", fontSize: "24px" }}
               prefix={<TeamOutlined style={{ fontSize: "20px" }} />}
             />
             <Flex vertical align="start" style={{ minWidth: "100px" }}>
               <div style={{ marginBottom: "4px" }}>
                 <Badge
-                  color="#faad14"
+                  color="#666cff"
                   text={`${statistics.adultGuests} Adults`}
                 />
               </div>
               <div>
                 <Badge
-                  color="#722ed1"
+                  color="#666cff"
                   text={`${statistics.childGuests} Children`}
                 />
               </div>
@@ -78,48 +78,41 @@ const GuestStatistics = ({ childHookData, openModal, guestHookData }) => {
           style={{
             height: "100%",
             borderRadius: "8px",
-            borderLeft: "4px solid #722ed1",
+            borderLeft: "4px solid #666cff",
           }}
           styles={{ body: { padding: "16px" } }}
         >
-          <Flex align="center" justify="space-between">
-            <Flex vertical>
-              <Statistic
-                title={
-                  <span style={{ fontSize: "15px", fontWeight: "600" }}>
-                    Children
-                  </span>
-                }
-                value={statistics.childGuests}
-                valueStyle={{
-                  color: "#722ed1",
-                  fontSize: "24px",
-                }}
-                prefix={
-                  <SmileOutlined
-                    style={{ fontSize: "20px", marginRight: "8px" }}
-                  />
-                }
-                suffix={
-                  <small style={{ fontSize: "12px", marginLeft: "16px" }}>
-                    {statistics.childrenPercentage}% of guests
-                  </small>
-                }
-              />
-            </Flex>
-
-            <Button
-              type="primary"
-              onClick={openModal}
-              style={{
-                background: "#722ed1",
-                borderColor: "#722ed1",
-              }}
-              icon={<SmileOutlined />}
-            >
-              Manage Children
-            </Button>
-          </Flex>
+          <Statistic
+            title={
+              <Flex justify="space-between">
+                <span style={{ fontSize: "15px", fontWeight: "600" }}>
+                  Children
+                </span>
+                <Button
+                  type="primary"
+                  onClick={openModal}
+                  style={{
+                    background: "#666cff",
+                    borderColor: "#666cff",
+                  }}
+                  icon={<SmileOutlined />}
+                >
+                  Manage
+                </Button>
+              </Flex>
+            }
+            value={statistics.childGuests}
+            valueStyle={{
+              color: "#666cff",
+              fontSize: "24px",
+            }}
+            prefix={<SmileOutlined style={{ marginRight: "8px" }} />}
+            suffix={
+              <small style={{ fontSize: "12px", marginLeft: "16px" }}>
+                {statistics.childrenPercentage}% of guests
+              </small>
+            }
+          />
         </Card>
       </Col>
     </Row>
