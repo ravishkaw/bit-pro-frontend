@@ -223,6 +223,34 @@ export const getChangedFieldValues = (
           updatedValue = updatedValue.slice(-7);
         }
       }
+      // task status
+      else if (key === "taskStatusId") {
+        formattedKey = "Task Status";
+        const taskStatus = additionalData?.taskStatus || [];
+        initialValue = getLabel(taskStatus, initialValue);
+        updatedValue = getLabel(taskStatus, updatedValue);
+      }
+      // task type
+      else if (key === "taskTypeId") {
+        formattedKey = "Task Type";
+        const taskType = additionalData?.taskTypes || [];
+        initialValue = getLabel(taskType, initialValue);
+        updatedValue = getLabel(taskType, updatedValue);
+      }
+      // task assigned to
+      else if (key === "assignedToId") {
+        formattedKey = "Assigned Employee";
+        const assignedTo = additionalData?.employees || [];
+        initialValue = getLabel(assignedTo, initialValue);
+        updatedValue = getLabel(assignedTo, updatedValue);
+      }
+      // task room
+      else if (key === "roomId") {
+        formattedKey = "Room";
+        const rooms = additionalData?.mappedRooms || [];
+        initialValue = getLabel(rooms, initialValue);
+        updatedValue = getLabel(rooms, updatedValue);
+      }
 
       return `${capitalize(
         formattedKey
@@ -241,7 +269,7 @@ const dateFormat = (value) => dayjs(value).format("YYYY-MM-DD");
 const compareArraysWithQuantities = (arr1, arr2, idField) => {
   if (arr1.length !== arr2.length) return true;
 
-  // Sort by ID field 
+  // Sort by ID field
   const sorted1 = [...arr1].sort((a, b) => a[idField] - b[idField]);
   const sorted2 = [...arr2].sort((a, b) => a[idField] - b[idField]);
 
