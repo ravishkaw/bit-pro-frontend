@@ -45,7 +45,6 @@ const CardActions = (
   if (privileges?.update_privilege) {
     actions.push(
       <EditOutlined
-        style={{ color: token.colorPrimary }}
         onClick={() => handleEdit(loadOneItem, data.id)}
       />
     );

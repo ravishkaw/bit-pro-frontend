@@ -15,6 +15,7 @@ import { ManageRooms, RoomInventory, RoomTypes } from "../pages/Rooms";
 import Inventory from "../pages/Inventory/Inventory";
 import ManagePackages from "../pages/Packages/ManagePackages";
 import ManageBillings from "../pages/Billing/ManageBillings";
+import EventVenue from "../pages/Events/EventVenue";
 
 //Route Configuration
 export const protectedRoutes = [
@@ -91,7 +92,12 @@ export const protectedRoutes = [
     element: RoomInventory,
     module: "Room Inventory",
   },
-
+  // Events Routes
+  {
+    path: "/event-venues",
+    element: EventVenue,
+    module: "Event Venue",
+  },
   // Package Routes
   {
     path: "/packages",

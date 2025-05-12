@@ -12,7 +12,7 @@ import useModalStates from "../../../hooks/common/useModalStates";
 import RoomReservationCalendar from "../../../components/Calendar/RoomReservationCalendar";
 import { RoomReservationColumnItems } from "../../../components/Table/RoomReservationColumnItems";
 import RoomReservationFormModal from "../../../components/Modals/RoomReservationFormModal";
-import RoomReservationUpdateModal from "../../../components/Modals/RoomReservationUpdateModal";
+import RoomReservationUpdateForm from "../../../components/Forms/RoomReservationUpdateForm";
 import SearchAddHeader from "../../../components/DataDisplay/SearchAddHeader";
 import SkeletonCards from "../../../components/Cards/SkeletonCards";
 import MobileCardView from "../../../components/DataDisplay/MobileCardView";
@@ -220,7 +220,7 @@ const RoomReservation = () => {
         />
 
         {/* Update reservation modal */}
-        <RoomReservationUpdateModal
+        <RoomReservationUpdateForm
           open={updateModalState.open}
           closeFormModal={closeUpdateModal}
           selectedObject={updateModalState.selectedReservation}
@@ -276,7 +276,7 @@ const RoomReservation = () => {
         // opendeleteRestoreModal={opendeleteRestoreModal}
         loadOneItem={loadOneItem}
         handleCardPageChange={handleCardPageChange}
-         // showView={showView}
+        // showView={showView}
         handleEdit={handleEdit}
       />
     </>

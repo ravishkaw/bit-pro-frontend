@@ -27,12 +27,13 @@ import RoomFacilityForm from "../../components/Forms/RoomFacilityForm";
 
 import { mapToSelectOptions } from "../../utils/utils";
 import TaskForm from "../../components/Forms/TaskForm";
+import { PreventiveMaintenanceColumnItems } from "../../components/Table/PreventiveMaintenanceColumnItems";
+import PreventiveMaintenanceForm from "../../components/Forms/PreventiveMaintenanceForm";
 
 const ManageRooms = () => {
   let roomModule = "Room"; // Define the module for rooms
   let roomFacilityModule = "Room Facility"; // Define the module for room facilities
-  let roomTaskModule = "Task"; // Define the module for room tasks
-  let roomMaintenanceModule = "Room Preventive Maintenance"; // Define the module for room maintenance
+  let roomTaskModule = "Task"; // Define the module for room tasks and preventive maintenance
   const rowKey = "id"; // define row key for table
 
   const [facilityModalOpen, setFacilityModalOpen] = useState(false);
@@ -60,6 +61,7 @@ const ManageRooms = () => {
     loadReferenceData,
     applyFilters,
     filters,
+    loadRooms,
   } = useRooms();
 
   const {
@@ -85,16 +87,25 @@ const ManageRooms = () => {
   const { open, isEditing, selectedObject } = formModalState; // Extract modal state details
   const { roomTypes, roomStatus } = additionalData;
 
-  // To update reference data when facility data changes
+  // Load reference data and rooms when the component mounts
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (roomFacilityhookData.data) {
+      if (
+        roomFacilityhookData.data ||
+        roomPreventiveMaintenancehookData.data ||
+        roomTasksHookData.data
+      ) {
         loadReferenceData();
+        loadRooms();
       }
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [roomFacilityhookData.data]);
+  }, [
+    roomFacilityhookData.data,
+    roomPreventiveMaintenancehookData.data,
+    roomTasksHookData.data,
+  ]);
 
   const mappedRoomTypes = mapToSelectOptions(roomTypes);
 
@@ -234,7 +245,15 @@ const ManageRooms = () => {
           content: { background: !isDarkMode ? "#f5f5f5" : "#1f1f1f" },
         }}
       >
-        <p>Maintenance management.</p>
+        <GenericPage
+          module={roomTaskModule}
+          hookData={roomPreventiveMaintenancehookData}
+          rowKey={rowKey}
+          columnItems={PreventiveMaintenanceColumnItems}
+          CustomForm={(props) => (
+            <PreventiveMaintenanceForm {...props} rooms={rooms} />
+          )}
+        />
       </Modal>
 
       {/* Modal for Housekeeping */}

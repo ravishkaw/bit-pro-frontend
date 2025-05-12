@@ -286,11 +286,11 @@ const CheckRoomForm = ({
                       <Flex justify="space-between" wrap>
                         Room {room.number}
                         <Tag color="processing">
+                          Total :{" "}
                           {room.price.toLocaleString("en-LK", {
                             style: "currency",
                             currency: "LKR",
                           })}
-                          /night
                         </Tag>
                       </Flex>
                     }

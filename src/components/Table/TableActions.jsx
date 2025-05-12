@@ -1,4 +1,4 @@
-import { Button, Space } from "antd";
+import { Button, Space, Tooltip } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -21,53 +21,51 @@ const TableActions = ({
       {isDeleted ? (
         // Show undo button if status is deleted and user has update privilege
         modulePrivilege?.update_privilege && (
-          <Button
-            size="small"
-            color="geekblue"
-            variant="outlined"
-            onClick={() => opendeleteRestoreModal(false, record)}
-          >
-            <UndoOutlined />
-          </Button>
+          <Tooltip title="Restore">
+            <Button
+              color="green"
+              variant="outlined"
+              onClick={() => opendeleteRestoreModal(false, record)}
+              icon={<UndoOutlined />}
+            />
+          </Tooltip>
         )
       ) : (
         // Show regular action buttons if status is not deleted
         <>
           {modulePrivilege?.select_privilege && showView && (
-            <Button
-              size="small"
-              color="blue"
-              variant="outlined"
-              onClick={() => {
-                handleView(apiFunction, record.id);
-              }}
-            >
-              <EyeOutlined />
-            </Button>
+            <Tooltip title="View Details">
+              <Button
+                color="blue"
+                variant="outlined"
+                onClick={() => {
+                  handleView(apiFunction, record.id);
+                }}
+                icon={<EyeOutlined />}
+              />
+            </Tooltip>
           )}
 
           {/* Show edit button if the user has update privilege */}
           {modulePrivilege?.update_privilege && (
-            <Button
-              size="small"
-              color="yellow"
-              variant="outlined"
-              onClick={() => handleEdit(apiFunction, record.id)}
-            >
-              <EditOutlined />
-            </Button>
+            <Tooltip title="Edit">
+              <Button
+                onClick={() => handleEdit(apiFunction, record.id)}
+                icon={<EditOutlined />}
+              />
+            </Tooltip>
           )}
 
           {/* Show delete button if the user has delete privilege */}
           {modulePrivilege?.delete_privilege && (
-            <Button
-              size="small"
-              variant="outlined"
-              danger
-              onClick={() => opendeleteRestoreModal(true, record)}
-            >
-              <DeleteOutlined />
-            </Button>
+            <Tooltip title="Delete">
+              <Button
+                variant="outlined"
+                danger
+                onClick={() => opendeleteRestoreModal(true, record)}
+                icon={<DeleteOutlined />}
+              />
+            </Tooltip>
           )}
         </>
       )}

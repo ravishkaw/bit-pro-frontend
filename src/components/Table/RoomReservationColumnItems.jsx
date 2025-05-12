@@ -3,8 +3,12 @@ import {
   EditOutlined,
   EyeOutlined,
   ScheduleOutlined,
+  CloseCircleOutlined,
+  CheckCircleOutlined,
+  ExclamationCircleOutlined,
+  InfoCircleOutlined,
 } from "@ant-design/icons";
-import { Button, Space, Tag } from "antd";
+import { Button, Space, Tag, Tooltip } from "antd";
 
 const statusColors = {
   Paid: "green",
@@ -15,15 +19,28 @@ const statusColors = {
 const confirmedActions = (record, handleView, handleEdit, loadOneItem) => {
   return (
     <Space size="small">
-      <Button
-        icon={<EyeOutlined />}
-        onClick={() => handleView(loadOneItem, record.id)}
-      />
-      <Button icon={<EditOutlined />} onClick={() => handleEdit(record.id)} />
-      <Button
-        icon={<DeleteOutlined />}
-        onClick={() => loadOneItem(record.id)}
-      />
+      <Tooltip title="View Details">
+        <Button
+          type="primary"
+          ghost
+          icon={<EyeOutlined />}
+          onClick={() => handleView(loadOneItem, record.id)}
+        />
+      </Tooltip>
+      <Tooltip title="Edit Reservation">
+        <Button
+          type="default"
+          icon={<EditOutlined />}
+          onClick={() => handleEdit(record.id)}
+        />
+      </Tooltip>
+      <Tooltip title="Check In">
+        <Button
+          type="primary"
+          icon={<CheckCircleOutlined />}
+          onClick={() => loadOneItem(record.id)}
+        />
+      </Tooltip>
     </Space>
   );
 };
@@ -31,24 +48,123 @@ const confirmedActions = (record, handleView, handleEdit, loadOneItem) => {
 const currentActions = (record, handleView, handleEdit, loadOneItem) => {
   return (
     <Space size="small">
-      <Button
-        icon={<EyeOutlined />}
-        onClick={() => handleView(loadOneItem, record.id)}
-      />
-      <Button
-        size="small"
-        icon={<EditOutlined />}
-        onClick={() => handleEdit(record.id)}
-      >
-        Update
-      </Button>
-      <Button
-        size="small"
-        icon={<ScheduleOutlined />}
-        onClick={() => loadOneItem(record.id)}
-      >
-        Check Out
-      </Button>
+      <Tooltip title="View Details">
+        <Button
+          type="primary"
+          ghost
+          icon={<EyeOutlined />}
+          onClick={() => handleView(loadOneItem, record.id)}
+        />
+      </Tooltip>
+      <Tooltip title="Edit Reservation">
+        <Button
+          type="default"
+          icon={<EditOutlined />}
+          onClick={() => handleEdit(record.id)}
+        />
+      </Tooltip>
+      <Tooltip title="Check Out">
+        <Button
+          type="primary"
+          icon={<ScheduleOutlined />}
+          onClick={() => loadOneItem(record.id)}
+        />
+      </Tooltip>
+    </Space>
+  );
+};
+
+const pendingActions = (record, handleView, handleEdit, loadOneItem) => {
+  return (
+    <Space size="small">
+      <Tooltip title="View Details">
+        <Button
+          type="primary"
+          ghost
+          icon={<EyeOutlined />}
+          onClick={() => handleView(loadOneItem, record.id)}
+        />
+      </Tooltip>
+      <Tooltip title="Edit Reservation">
+        <Button
+          type="default"
+          icon={<EditOutlined />}
+          onClick={() => handleEdit(record.id)}
+        />
+      </Tooltip>
+      <Tooltip title="Confirm Reservation">
+        <Button
+          type="primary"
+          icon={<CheckCircleOutlined />}
+          onClick={() => loadOneItem(record.id)}
+        />
+      </Tooltip>
+      <Tooltip title="Cancel Reservation">
+        <Button
+          danger
+          icon={<CloseCircleOutlined />}
+          onClick={() => loadOneItem(record.id)}
+        />
+      </Tooltip>
+    </Space>
+  );
+};
+
+const completedActions = (record, handleView, loadOneItem) => {
+  return (
+    <Space size="small">
+      <Tooltip title="View Details">
+        <Button
+          type="primary"
+          ghost
+          icon={<EyeOutlined />}
+          onClick={() => handleView(loadOneItem, record.id)}
+        />
+      </Tooltip>
+    </Space>
+  );
+};
+
+const cancelledActions = (record, handleView, loadOneItem) => {
+  return (
+    <Space size="small">
+      <Tooltip title="View Details">
+        <Button
+          type="primary"
+          ghost
+          icon={<EyeOutlined />}
+          onClick={() => handleView(loadOneItem, record.id)}
+        />
+      </Tooltip>
+      <Tooltip title="Reactivate">
+        <Button
+          type="default"
+          icon={<InfoCircleOutlined />}
+          onClick={() => loadOneItem(record.id)}
+        />
+      </Tooltip>
+    </Space>
+  );
+};
+
+const noShowActions = (record, handleView, loadOneItem) => {
+  return (
+    <Space size="small">
+      <Tooltip title="View Details">
+        <Button
+          type="primary"
+          ghost
+          icon={<EyeOutlined />}
+          onClick={() => handleView(loadOneItem, record.id)}
+        />
+      </Tooltip>
+      <Tooltip title="Mark As Checked-In">
+        <Button
+          type="default"
+          icon={<ExclamationCircleOutlined />}
+          onClick={() => loadOneItem(record.id)}
+        />
+      </Tooltip>
     </Space>
   );
 };
@@ -63,10 +179,9 @@ export const RoomReservationColumnItems = (
   {
     title: "Primary Guest",
     dataIndex: "primaryGuestFullName",
-    fixed: "left",
   },
   {
-    title: "Total Guests",
+    title: "Total",
     dataIndex: "totalGuests",
     render: (_, record) => {
       const adults = record.adultNo || 0;
@@ -82,25 +197,77 @@ export const RoomReservationColumnItems = (
     align: "center",
   },
   {
-    title: "Check-In",
+    title: (
+      <span style={{ whiteSpace: "normal" }}>
+        Reserved
+        <br />
+        Check-In
+      </span>
+    ),
     dataIndex: "reservedCheckInDate",
     render: (_, record) => {
-      const date = record.checkInDate || record.reservedCheckInDate;
-      return date ? date.substring(0, 10) : "";
+      const date = record.reservedCheckInDate;
+      return date ? date.substring(0, 10) : "N/A";
     },
     sorter: true,
+    align: "center",
   },
   {
-    title: "Check-Out",
+    title: (
+      <span style={{ whiteSpace: "normal" }}>
+        Reserved
+        <br />
+        Check-Out
+      </span>
+    ),
     dataIndex: "reservedCheckOutDate",
     render: (_, record) => {
-      const date = record.checkOutDate || record.reservedCheckOutDate;
-      return date ? date.substring(0, 10) : "";
+      const date = record.reservedCheckOutDate;
+      return date ? date.substring(0, 10) : "N/A";
     },
     sorter: true,
+    align: "center",
   },
   {
-    title: "Total Price",
+    title: (
+      <span style={{ whiteSpace: "normal" }}>
+        Actual
+        <br />
+        Check-In
+      </span>
+    ),
+    dataIndex: "actualCheckInDate",
+    render: (_, record) => {
+      const date = record.checkInDate;
+      return date ? date.substring(0, 10) : "N/A";
+    },
+    sorter: true,
+    align: "center",
+  },
+  {
+    title: (
+      <span style={{ whiteSpace: "normal" }}>
+        Actual
+        <br />
+        Check-Out
+      </span>
+    ),
+    dataIndex: "actualCheckOutDate",
+    render: (_, record) => {
+      const date = record.checkOutDate;
+      return date ? date.substring(0, 10) : "N/A";
+    },
+    sorter: true,
+    align: "center",
+  },
+  {
+    title: (
+      <span style={{ whiteSpace: "normal" }}>
+        Total
+        <br />
+        Price
+      </span>
+    ),
     dataIndex: "totalPrice",
     render: (_, record) => {
       const totalPrice = record.totalPrice || 0;
@@ -109,9 +276,16 @@ export const RoomReservationColumnItems = (
         currency: "LKR",
       })}`;
     },
+    align: "center",
   },
   {
-    title: "Payment Status",
+    title: (
+      <span style={{ whiteSpace: "normal" }}>
+        Payment
+        <br />
+        Status
+      </span>
+    ),
     dataIndex: "paymentStatusName",
     align: "center",
     render: (_, record) => {
@@ -125,11 +299,30 @@ export const RoomReservationColumnItems = (
     fixed: "right",
     align: "center",
     render: (_, record) => {
-      if (record?.roomReservationStatusName === "CONFIRMED") {
-        return confirmedActions(record, handleView, handleEdit, loadOneItem);
-      }
-      if (record?.roomReservationStatusName === "CHECKED-IN") {
-        return currentActions(record, handleView, handleEdit, loadOneItem);
+      const status = record?.roomReservationStatusName;
+
+      switch (status) {
+        case "CONFIRMED":
+          return confirmedActions(record, handleView, handleEdit, loadOneItem);
+        case "CHECKED-IN":
+          return currentActions(record, handleView, handleEdit, loadOneItem);
+        case "PENDING":
+          return pendingActions(record, handleView, handleEdit, loadOneItem);
+        case "CHECKED-OUT":
+          return completedActions(record, handleView, loadOneItem);
+        case "CANCELLED":
+          return cancelledActions(record, handleView, loadOneItem);
+        case "NO-SHOW":
+          return noShowActions(record, handleView, loadOneItem);
+        default:
+          return (
+            <Button
+              type="primary"
+              ghost
+              icon={<EyeOutlined />}
+              onClick={() => handleView(loadOneItem, record.id)}
+            />
+          );
       }
     },
   },

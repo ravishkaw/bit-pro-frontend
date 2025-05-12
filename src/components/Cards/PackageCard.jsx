@@ -36,7 +36,7 @@ const PackageCard = ({
   );
 
   return (
-    <Col lg={6} md={8} sm={12} xs={24}>
+    <Col xxl={4} lg={6} md={8} sm={12} xs={24}>
       <Card
         hoverable
         style={{

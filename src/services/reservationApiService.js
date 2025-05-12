@@ -1,17 +1,23 @@
 import { createApiService } from "./apiService";
 import axiosInstance from "./axiosInstance";
 
+// People
 const GUEST_BASE_URL = "/guests";
 const CHILD_BASE_URL = "/children";
+
+// rooms
 const ROOM_RESERVATION_BASE_URL = "/room-reservation";
-const EVENT_RESERVATION_BASE_URL = "/event-reservation";
 const ROOM_RESERVAION_AMENITY_URL = "/room-reservation-amenities";
-const EVENT_RESERVATION_SERVICE_URL = "/event-services";
 const ROOM_RESERVAION_AMENITY_CATEGORIES_URL =
   "/room-reservation-amenity-categories";
 const ROOM_RESERVATION_STATUS_URL = "/room-reservation-status";
 const ROOM_RESERVATION_TYPE_URL = "/room-reservation-types";
 const ROOM_RESERVATION_SOURCE_URL = "/room-reservation-sources";
+
+// events
+const EVENT_RESERVATION_BASE_URL = "/event-reservation";
+const EVENT_RESERVATION_SERVICE_URL = "/event-services";
+const EVENT_VENUE_URL = "/event-venues";
 
 // Generic API service for guests
 export const guestService = createApiService(GUEST_BASE_URL);
@@ -117,3 +123,6 @@ export const roomReservationTypeService = createApiService(
 export const roomReservationSourceService = createApiService(
   ROOM_RESERVATION_SOURCE_URL
 );
+
+// Generic API service for event venues
+export const eventVenueService = createApiService(EVENT_VENUE_URL);

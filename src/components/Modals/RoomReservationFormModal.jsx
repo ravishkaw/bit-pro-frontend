@@ -85,6 +85,10 @@ const RoomReservationFormModal = ({
     const reservationData = {
       ...newData,
       childIds: newData?.childIds.map((c) => c.id),
+      // Filter out the primary guest from the additional guests list
+      guestIds: newData?.guestIds?.filter(
+        (g) => g.id !== newData.primaryGuestId
+      ),
       roomId: newData.roomId.value,
       reservedCheckInDate: newData.reservationDateRange[0].format("YYYY-MM-DD"),
       reservedCheckOutDate:
@@ -96,11 +100,11 @@ const RoomReservationFormModal = ({
       roomPackageId: selectedPackage,
       billingPayloadDTO: [
         {
-          basePrice: pricingInformation?.basePrice || 0.0,
-          totalTaxes: pricingInformation?.totalTaxes || 0.0,
-          totalPrice: pricingInformation?.totalPrice || 0.0,
-          discount: pricingInformation?.discount || 0.0,
-          paidAmount: newData.paidAmount,
+          basePrice: Math.ceil(pricingInformation?.basePrice) || 0.0,
+          totalTaxes: Math.ceil(pricingInformation?.totalTaxes) || 0.0,
+          totalPrice: Math.ceil(pricingInformation?.totalPrice) || 0.0,
+          discount: Math.ceil(pricingInformation?.discount) || 0.0,
+          paidAmount: Math.ceil(newData.paidAmount),
           paymentMethodId: newData.paymentMethodId,
         },
       ],

@@ -4,7 +4,11 @@ import { UploadOutlined } from "@ant-design/icons";
 import { deleteImage, uploadImage } from "../../services/systemApiService";
 
 // Common image upload component
-const ImageUpload = ({ initialImage = null, onImageChange }) => {
+const ImageUpload = ({
+  initialImage = null,
+  onImageChange,
+  category = "default",
+}) => {
   const [fileName, setFileName] = useState(initialImage);
   const [fileList, setFileList] = useState(
     initialImage
@@ -26,11 +30,11 @@ const ImageUpload = ({ initialImage = null, onImageChange }) => {
     // check if there's a file and it's done uploading
     if (newFileList.length > 0 && newFileList[0].status === "done") {
       // Extract the image name from the response
-      const imageName = newFileList[0].response
+      const imagePath = newFileList[0].response
         ? newFileList[0].response
         : null;
-      onImageChange(imageName);
-      setFileName(imageName);
+      onImageChange(imagePath);
+      setFileName(imagePath);
     } else if (newFileList.length === 0) {
       onImageChange(null);
     }
@@ -49,7 +53,7 @@ const ImageUpload = ({ initialImage = null, onImageChange }) => {
   // upload to the server
   const uploadSelectedImage = async ({ file, onSuccess }) => {
     try {
-      const resp = await uploadImage(file);
+      const resp = await uploadImage(file, category);
       onSuccess(resp, file);
     } catch (error) {
       console.error("Upload failed:", error);
@@ -57,12 +61,13 @@ const ImageUpload = ({ initialImage = null, onImageChange }) => {
   };
 
   // delete image from the server
-  const removeSelectedImage = async (fileName) => {
+  const removeSelectedImage = async (imagePath) => {
     try {
-      // const resp = await deleteImage(fileName);
+      // if (imagePath) {
+      //   await deleteImage(imagePath, category);
+      // }
       setFileList([]);
       onImageChange(null);
-      // return resp;
       return true;
     } catch (error) {
       console.error("Upload failed:", error);

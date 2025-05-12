@@ -79,20 +79,24 @@ export const fetchModuleWithoutPrivileges = async (roleId) => {
 };
 
 // image upload
-export const uploadImage = async (image) => {
+export const uploadImage = async (image, category = "default") => {
   const formData = new FormData();
   formData.append("image", image);
 
-  const resp = await axiosInstance.post(`${IMAGE_BASE_URL}`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  const resp = await axiosInstance.post(
+    `${IMAGE_BASE_URL}/${category}`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
   return resp.data;
 };
 
 // image delete
-export const deleteImage = async (imageName) => {
-  const resp = await axiosInstance.delete(`${IMAGE_BASE_URL}/${imageName}`);
+export const deleteImage = async (imagePath) => {
+  const resp = await axiosInstance.delete(`${IMAGE_BASE_URL}/${imagePath}`);
   return resp.data;
 };

@@ -22,6 +22,7 @@ import {
   triggerFormFieldsValidation,
 } from "../../utils/form";
 import { formValidations } from "./validations";
+import { deleteImage } from "../../services/systemApiService";
 
 const RoomForm = ({
   open,
@@ -35,6 +36,7 @@ const RoomForm = ({
 }) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [initialFormData, setInitialFormData] = useState({});
+  const [uploadedImage, setUploadedImage] = useState(null);
 
   const [form] = Form.useForm();
   const { isDarkMode } = useThemeContext();
@@ -54,10 +56,12 @@ const RoomForm = ({
       triggerFormFieldsValidation(form);
     } else if (open) {
       form.resetFields();
+      setUploadedImage(null);
     }
   }, [open, isEditing, selectedObject, form]);
 
   const handleImageChange = (imageName) => {
+    setUploadedImage(imageName);
     form.setFieldsValue({
       photo: imageName,
     });
@@ -93,12 +97,19 @@ const RoomForm = ({
     width: "100%",
   };
 
+  const handleCancel = () => {
+    if (uploadedImage) {
+      deleteImage(uploadedImage);
+    }
+    closeFormModal();
+  };
+
   return (
     <Modal
       title={`${!isEditing ? "Add New" : "Update"} ${module}`}
       open={open}
       width={800}
-      onCancel={closeFormModal}
+      onCancel={handleCancel}
       footer={null}
       destroyOnClose
       afterClose={() => form.resetFields()}
@@ -242,6 +253,7 @@ const RoomForm = ({
               <ImageUpload
                 onImageChange={handleImageChange}
                 initialImage={isEditing && selectedObject?.photo}
+                category="rooms"
               />
             </Form.Item>
           </Col>

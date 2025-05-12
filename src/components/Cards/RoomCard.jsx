@@ -30,7 +30,7 @@ const RoomCard = ({
   );
 
   return (
-    <Col md={8} sm={12} xs={24}>
+    <Col xxl={4} md={8} sm={12} xs={24}>
       <Card
         hoverable
         cover={
@@ -54,6 +54,15 @@ const RoomCard = ({
         }
         style={{
           height: "100%",
+          display: "flex",
+          flexDirection: "column",
+        }}
+        styles={{
+          body: {
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+          },
         }}
         actions={actions}
       >

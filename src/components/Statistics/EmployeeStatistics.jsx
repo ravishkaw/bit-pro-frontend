@@ -72,7 +72,7 @@ const EmployeeStatistics = ({ employeeHookData }) => {
             }
             value={statistics.totalEmployees}
             valueStyle={{ color: "#666cff", fontSize: "24px" }}
-            prefix={<TeamOutlined style={{ fontSize: "20px" }} />}
+            prefix={<TeamOutlined />}
           />
         </Card>
       </Col>

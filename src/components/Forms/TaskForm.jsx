@@ -98,7 +98,6 @@ const TaskForm = ({
       const updatedValues = getChangedFieldValues(initialFormData, formdata, {
         module,
         taskTypes,
-        taskTypes,
         taskStatus,
         employees,
         mappedRooms,

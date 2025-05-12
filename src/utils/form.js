@@ -251,6 +251,13 @@ export const getChangedFieldValues = (
         initialValue = getLabel(rooms, initialValue);
         updatedValue = getLabel(rooms, updatedValue);
       }
+      // preventive maintenance status
+      else if (key === "maintenanceStatusId") {
+        formattedKey = "Maintenance Status";
+        const status = additionalData?.maintenanceStatus || [];
+        initialValue = getLabel(status, initialValue);
+        updatedValue = getLabel(status, updatedValue);
+      }
 
       return `${capitalize(
         formattedKey

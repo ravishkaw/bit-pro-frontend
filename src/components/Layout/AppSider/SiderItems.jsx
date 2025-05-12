@@ -1,7 +1,5 @@
 import {
-  DashboardOutlined,
   CalendarOutlined,
-  BookOutlined,
   GiftOutlined,
   HomeOutlined,
   DatabaseOutlined,
@@ -13,19 +11,24 @@ import {
   DollarCircleOutlined,
   BankOutlined,
   CoffeeOutlined,
-  FileProtectOutlined,
   KeyOutlined,
-  AuditOutlined,
   ToolOutlined,
   ContainerOutlined,
-  ApartmentOutlined,
+  CalendarFilled,
+  BuildOutlined,
+  TagsOutlined,
+  SecurityScanOutlined,
+  SolutionOutlined,
+  CreditCardOutlined,
+  PieChartOutlined,
+  ScheduleOutlined,
 } from "@ant-design/icons";
 
 export const siderItems = [
   {
     key: "/dashboard",
     label: "Dashboard",
-    icon: <DashboardOutlined />,
+    icon: <PieChartOutlined />,
   },
   {
     key: "reservations",
@@ -35,14 +38,14 @@ export const siderItems = [
     children: [
       {
         key: "/room-reservations",
-        label: "Room Bookings",
+        label: "Room Reservations",
         icon: <KeyOutlined />,
         privilege: "Room Reservation",
       },
       {
         key: "/event-reservations",
-        label: "Event Bookings",
-        icon: <BookOutlined />,
+        label: "Event Reservations",
+        icon: <ScheduleOutlined />,
         privilege: "Event Reservation",
       },
     ],
@@ -62,7 +65,7 @@ export const siderItems = [
       {
         key: "/room-types",
         label: "Room Types",
-        icon: <ApartmentOutlined />,
+        icon: <TagsOutlined />,
         privilege: "Room Type",
       },
       {
@@ -74,6 +77,20 @@ export const siderItems = [
     ],
   },
   {
+    key: "events",
+    label: "Event Management",
+    type: "group",
+    icon: <CalendarFilled />,
+    children: [
+      {
+        key: "/event-venues",
+        label: "Event Venues",
+        icon: <BuildOutlined />,
+        privilege: "Event Venue",
+      },
+    ],
+  },
+  {
     key: "packages",
     label: "Packages & Services",
     type: "group",
@@ -81,8 +98,8 @@ export const siderItems = [
     children: [
       {
         key: "/packages",
-        label: "Package Offerings",
-        icon: <GiftOutlined />,
+        label: "Packages",
+        icon: <ShopOutlined />,
         privilege: "Package",
       },
       {
@@ -103,12 +120,12 @@ export const siderItems = [
     key: "inventory",
     label: "Inventory",
     type: "group",
-    icon: <ShopOutlined />,
+    icon: <DatabaseOutlined />,
     children: [
       {
         key: "/inventory",
         label: "Stock Management",
-        icon: <DatabaseOutlined />,
+        icon: <ContainerOutlined />,
         privilege: "Inventory",
       },
     ],
@@ -121,8 +138,8 @@ export const siderItems = [
     children: [
       {
         key: "/guests",
-        label: "Guest Records",
-        icon: <UserOutlined />,
+        label: "Guest Management",
+        icon: <SolutionOutlined />,
         privilege: "Guest",
       },
       {
@@ -135,14 +152,14 @@ export const siderItems = [
   },
   {
     key: "billing",
-    label: "Finance",
+    label: "Financial Operations",
     type: "group",
     icon: <DollarCircleOutlined />,
     children: [
       {
         key: "/billings",
         label: "Billing & Payments",
-        icon: <AuditOutlined />,
+        icon: <CreditCardOutlined />,
         privilege: "Billing",
       },
     ],
@@ -162,7 +179,7 @@ export const siderItems = [
       {
         key: "/privileges",
         label: "Access Control",
-        icon: <FileProtectOutlined />,
+        icon: <SecurityScanOutlined />,
         privilege: "Privilege",
       },
     ],

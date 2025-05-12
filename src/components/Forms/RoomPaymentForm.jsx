@@ -78,24 +78,36 @@ const RoomPaymentForm = ({
               <Title level={5}>Price Breakdown</Title>
               <Paragraph>
                 <Text strong>Base Price:</Text>{" "}
-                {pricingInformation?.basePrice?.toLocaleString("en-LK", {
-                  style: "currency",
-                  currency: "LKR",
-                })}
+                {pricingInformation?.basePrice &&
+                  Math.ceil(pricingInformation.basePrice).toLocaleString(
+                    "en-LK",
+                    {
+                      style: "currency",
+                      currency: "LKR",
+                    }
+                  )}
               </Paragraph>
               <Paragraph>
                 <Text strong>Discount:</Text>{" "}
-                {pricingInformation?.discount?.toLocaleString("en-LK", {
-                  style: "currency",
-                  currency: "LKR",
-                })}
+                {pricingInformation?.discount &&
+                  Math.ceil(pricingInformation.discount).toLocaleString(
+                    "en-LK",
+                    {
+                      style: "currency",
+                      currency: "LKR",
+                    }
+                  )}
               </Paragraph>
               <Paragraph>
                 <Text strong>Taxes:</Text>{" "}
-                {pricingInformation?.totalTaxes?.toLocaleString("en-LK", {
-                  style: "currency",
-                  currency: "LKR",
-                })}
+                {pricingInformation?.totalTaxes &&
+                  Math.ceil(pricingInformation.totalTaxes).toLocaleString(
+                    "en-LK",
+                    {
+                      style: "currency",
+                      currency: "LKR",
+                    }
+                  )}
               </Paragraph>
 
               {pricingInformation.amenities &&
@@ -116,9 +128,9 @@ const RoomPaymentForm = ({
               <Statistic
                 title="Total Price"
                 value={pricingInformation?.totalPrice}
-                precision={2}
+                precision={0}
                 formatter={(value) =>
-                  value.toLocaleString("en-LK", {
+                  Math.ceil(value).toLocaleString("en-LK", {
                     style: "currency",
                     currency: "LKR",
                   })
@@ -128,9 +140,9 @@ const RoomPaymentForm = ({
               <Statistic
                 title="Paid Amount"
                 value={paidAmount}
-                precision={2}
+                precision={0}
                 formatter={(value) =>
-                  value?.toLocaleString("en-LK", {
+                  Math.ceil(value).toLocaleString("en-LK", {
                     style: "currency",
                     currency: "LKR",
                   })
@@ -140,9 +152,9 @@ const RoomPaymentForm = ({
               <Statistic
                 title="Remaining Balance"
                 value={remainingAmount}
-                precision={2}
+                precision={0}
                 formatter={(value) =>
-                  value?.toLocaleString("en-LK", {
+                  Math.ceil(value).toLocaleString("en-LK", {
                     style: "currency",
                     currency: "LKR",
                   })

@@ -33,9 +33,9 @@ const useRooms = () => {
     try {
       // Check if any filter params are active
       const hasActiveFilters = Object.values(filterParams).some(
-        value => value !== null && value !== undefined
+        (value) => value !== null && value !== undefined
       );
-      
+
       let data;
       if (hasActiveFilters) {
         // Use filtered endpoint if filters are applied
@@ -77,11 +77,11 @@ const useRooms = () => {
     }
   };
 
-  // Load data when component mounts
-  useEffect(() => {
-    loadRooms();
-    loadReferenceData();
-  }, []);
+  // // Load data when component mounts
+  // useEffect(() => {
+  //   loadRooms();
+  //   loadReferenceData();
+  // }, []);
 
   // fetch a single item
   const loadOneItem = async (id) => {
@@ -103,7 +103,7 @@ const useRooms = () => {
     } catch (err) {
       toast.error(err.response?.data?.message || err.message);
     } finally {
-      loadRooms(filters); 
+      loadRooms(filters);
       setLoading(false);
     }
   };
@@ -143,6 +143,7 @@ const useRooms = () => {
     loadReferenceData,
     applyFilters,
     filters,
+    loadRooms,
   };
 };
 

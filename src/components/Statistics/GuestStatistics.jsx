@@ -51,7 +51,7 @@ const GuestStatistics = ({ childHookData, openModal, guestHookData }) => {
               }
               value={statistics.totalGuests}
               valueStyle={{ color: "#666cff", fontSize: "24px" }}
-              prefix={<TeamOutlined style={{ fontSize: "20px" }} />}
+              prefix={<TeamOutlined />}
             />
             <Flex vertical align="start" style={{ minWidth: "100px" }}>
               <div style={{ marginBottom: "4px" }}>
@@ -84,15 +84,16 @@ const GuestStatistics = ({ childHookData, openModal, guestHookData }) => {
         >
           <Statistic
             title={
-              <Flex justify="space-between">
+              <Flex justify="space-between" wrap>
                 <span style={{ fontSize: "15px", fontWeight: "600" }}>
                   Children
                 </span>
                 <Button
                   type="primary"
+                  size="small"
                   onClick={openModal}
                   style={{
-                    background: "#666cff",
+                    backgroundColor: "#666cff",
                     borderColor: "#666cff",
                   }}
                   icon={<SmileOutlined />}
