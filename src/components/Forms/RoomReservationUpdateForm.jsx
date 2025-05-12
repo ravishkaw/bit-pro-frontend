@@ -33,6 +33,7 @@ import {
 } from "../../utils/form";
 import { formValidations } from "./validations";
 import { mapToSelectOptions } from "../../utils/utils";
+import { calculateRoomReservationPrice } from "../../utils/pricing";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -44,7 +45,6 @@ const RoomReservationUpdateForm = ({
   additionalData,
   showUpdateConfirmModal,
   fetchRooms,
-  checkRoomReservationPricing,
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -62,13 +62,14 @@ const RoomReservationUpdateForm = ({
     guests,
     children,
     reservationTypes,
-    reservationStatus,
     roomPackages,
     amenities,
     paymentMethods,
   } = additionalData;
 
   const mappedGuests = mapToSelectOptions(guests);
+  const mappedChildren = mapToSelectOptions(children);
+  const mappedRoomPackages = mapToSelectOptions(roomPackages);
 
   // Format dates for form
   const formatDateForForm = (dateString) => {
@@ -200,49 +201,29 @@ const RoomReservationUpdateForm = ({
 
   // Refresh pricing
   const refreshPricing = async () => {
-    setPricingLoading(true);
-    try {
-      const values = await form.validateFields([
-        "roomId",
-        "reservationDateRange",
-        "roomPackageId",
-      ]);
+    const roomId = form.getFieldValue("roomId");
+    const dateRange = form.getFieldValue("reservationDateRange");
+    const checkInDate = dateRange[0];
+    const checkOutDate = dateRange[1];
+    const selectedPackage = form.getFieldValue("roomPackageId");
 
-      // Extract values needed for pricing calculation
-      const roomId = values.roomId;
-      const checkInDate =
-        values.reservationDateRange[0].format("YYYY-MM-DD") + "T14:00:00";
-      const checkOutDate =
-        values.reservationDateRange[1].format("YYYY-MM-DD") + "T10:00:00";
-      const packageId = values.roomPackageId;
+    const resp = await calculateRoomReservationPrice(
+      roomId,
+      checkInDate,
+      checkOutDate,
+      selectedAmenities,
+      selectedPackage,
+      setPricingLoading,
+      setPricingInformation
+    );
 
-      // Format amenities for pricing request
-      const amenitiesForPricing = selectedAmenities.map((amenity) => ({
-        amenityId: amenity.id,
-        quantity: amenity.quantity,
-      }));
-
-      const pricingData = await checkRoomReservationPricing({
-        roomId: roomId,
-        checkInDate: checkInDate,
-        checkOutDate: checkOutDate,
-        roomPackageId: packageId,
-        amenities: amenitiesForPricing,
-      });
-
-      setPricingInformation(pricingData);
-      form.setFieldsValue({
-        basePrice: Math.ceil(pricingData.basePrice),
-        totalTax: Math.ceil(pricingData.totalTaxes),
-        discount: Math.ceil(pricingData.discount),
-        totalPrice: Math.ceil(pricingData.totalPrice),
-      });
-      setPriceCalculated(true);
-    } catch (error) {
-      console.error("Error calculating pricing:", error);
-    } finally {
-      setPricingLoading(false);
-    }
+    form.setFieldsValue({
+      basePrice: Math.ceil(resp.basePrice),
+      totalTax: Math.ceil(resp.totalTaxes),
+      discount: Math.ceil(resp.discount),
+      totalPrice: Math.ceil(resp.totalPrice),
+    });
+    setPriceCalculated(true);
   };
 
   // Handle form submission
@@ -258,10 +239,10 @@ const RoomReservationUpdateForm = ({
         reservedCheckOutDate:
           values.reservationDateRange[1].format("YYYY-MM-DD") + "T10:00:00",
         checkInDate: values.actualCheckInDate
-          ? values.actualCheckInDate.format("YYYY-MM-DD") + "T14:00:00"
+          ? values.actualCheckInDate.format("YYYY-MM-DDTHH:mm:ss")
           : null,
         checkOutDate: values.actualCheckOutDate
-          ? values.actualCheckOutDate.format("YYYY-MM-DD") + "T10:00:00"
+          ? values.actualCheckOutDate.format("YYYY-MM-DDTHH:mm:ss")
           : null,
         amenities: selectedAmenities.map((amenity) => ({
           amenityId: amenity.id,
@@ -282,7 +263,7 @@ const RoomReservationUpdateForm = ({
           },
         ],
         roomReservationSourceId: selectedObject.roomReservationSourceId,
-        childIds: values?.childIds.map((c) => c.value),
+        roomReservationStatusId: selectedObject.roomReservationStatusId,
       };
 
       // Remove extra fields
@@ -297,7 +278,12 @@ const RoomReservationUpdateForm = ({
 
       // Check what fields have changed
       const changedFields = getChangedFieldValues(initialValues, updateData, {
+        mappedGuests,
         amenities,
+        mappedRoomPackages,
+        reservationTypes,
+        mappedChildren,
+        paymentMethods,
       });
 
       // Show confirmation modal with changed fields
@@ -466,13 +452,8 @@ const RoomReservationUpdateForm = ({
                     <Select
                       placeholder="Select package"
                       onChange={() => setPriceCalculated(false)}
-                    >
-                      {roomPackages.map((pkg) => (
-                        <Option key={pkg.id} value={pkg.id}>
-                          {pkg.name} - {formatCurrency(pkg.price)}
-                        </Option>
-                      ))}
-                    </Select>
+                      options={mappedRoomPackages}
+                    />
                   </Form.Item>
                 </Col>
                 <Col span={8}>
@@ -581,7 +562,6 @@ const RoomReservationUpdateForm = ({
                       mode="multiple"
                       placeholder="Select children"
                       optionFilterProp="label"
-                      labelInValue
                       onChange={(values) => {
                         // Check if selected children exceed the child count
                         const childCount = form.getFieldValue("childNo") || 0;
@@ -642,26 +622,7 @@ const RoomReservationUpdateForm = ({
                   </Form.Item>
                 </Col>
 
-                <Col span={12}>
-                  <Form.Item
-                    label="Status"
-                    name="roomReservationStatusId"
-                    rules={[
-                      { required: true, message: "Please select status" },
-                    ]}
-                    hasFeedback
-                  >
-                    <Select placeholder="Select status">
-                      {reservationStatus.map((status) => (
-                        <Option key={status.value} value={status.value}>
-                          {status.label}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                </Col>
-
-                <Col span={12}>
+                <Col span={24}>
                   <Form.Item
                     label="Note"
                     name="note"

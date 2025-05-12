@@ -11,7 +11,9 @@ import CheckRoomForm from "../Forms/CheckRoomForm";
 import RoomCheckInInfoForm from "../Forms/RoomCheckInInfoForm";
 import RoomPaymentForm from "../Forms/RoomPaymentForm";
 import RoomReservationExtraForm from "../Forms/RoomReservationExtraForm";
+
 import { triggerFormFieldsValidation } from "../../utils/form";
+import { calculateRoomReservationPrice } from "../../utils/pricing";
 
 const RoomReservationFormModal = ({
   open,
@@ -24,7 +26,6 @@ const RoomReservationFormModal = ({
   fetchRooms,
   amenities,
   roomPackages,
-  checkRoomReservationPricing,
 }) => {
   const [current, setCurrent] = useState(0);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -51,6 +52,24 @@ const RoomReservationFormModal = ({
       setInitialFormData({});
     }
   }, [open, isEditing, selectedObject, form]);
+
+  // pricing calculation
+  const checkPricing = () => {
+    const roomId = form.getFieldValue("roomId").value;
+    const dateRange = form.getFieldValue("reservationDateRange");
+    const checkInDate = dateRange[0];
+    const checkOutDate = dateRange[1];
+
+    calculateRoomReservationPrice(
+      roomId,
+      checkInDate,
+      checkOutDate,
+      selectedAmenities,
+      selectedPackage,
+      setPricingLoading,
+      setPricingInformation
+    );
+  };
 
   // Next button of the step form
   const next = async () => {
@@ -137,46 +156,6 @@ const RoomReservationFormModal = ({
     setInitialFormData({});
     setSelectedAmenities([]);
     setSelectedPackage(null);
-  };
-
-  // pricing calculation
-  const checkPricing = async () => {
-    setPricingLoading(true);
-    try {
-      // Get the form values properly
-      const roomId = form.getFieldValue("roomId").value;
-      const checkInDate = form.getFieldValue("reservationDateRange")[0];
-      const checkOutDate = form.getFieldValue("reservationDateRange")[1];
-
-      // Ensure we have valid data before proceeding
-      if (!roomId || !checkInDate || !checkOutDate || !selectedPackage) {
-        console.error("Missing required reservation details");
-        setPricingLoading(false);
-        return;
-      }
-
-      const formattedCheckInDate =
-        checkInDate?.format?.("YYYY-MM-DD") + "T14:00:00" || checkInDate;
-      const formattedCheckOutDate =
-        checkOutDate?.format?.("YYYY-MM-DD") + "T10:00:00" || checkOutDate;
-
-      const resp = await checkRoomReservationPricing({
-        roomId: roomId,
-        checkInDate: formattedCheckInDate,
-        checkOutDate: formattedCheckOutDate,
-        amenities: selectedAmenities.map((amenity) => ({
-          amenityId: amenity.id,
-          quantity: amenity.quantity,
-        })),
-        roomPackageId: selectedPackage,
-      });
-
-      setPricingInformation(resp);
-      setPricingLoading(false);
-    } catch (error) {
-      setPricingLoading(false);
-      console.error("Error checking pricing:", error);
-    }
   };
 
   // Steps of the step form

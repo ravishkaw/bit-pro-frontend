@@ -371,7 +371,7 @@ const ViewRoomReservation = ({
                     column={{ xs: 1, sm: 1 }}
                     size="small"
                     colon={false}
-                    labelStyle={{ fontWeight: "500" }}
+                    styles={{ label: { fontWeight: "500" } }}
                   />
                   <Divider style={{ margin: "8px 0" }} />
                   <Flex justify="space-between">
@@ -413,16 +413,15 @@ const ViewRoomReservation = ({
                     />
                     <Statistic
                       title="Payment Date"
-                      value={new Date(billing?.billingDate).toLocaleString(
-                        "en-LK",
-                        {
-                          month: "short",
-                          day: "numeric",
-                          hour: "numeric",
-                          minute: "2-digit",
-                          hour12: true,
-                        }
-                      )}
+                      value={new Date(
+                        billing?.lastModifiedDatetime
+                      ).toLocaleString("en-LK", {
+                        month: "short",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "2-digit",
+                        hour12: true,
+                      })}
                       valueStyle={{ fontSize: 16 }}
                     />
                   </Flex>

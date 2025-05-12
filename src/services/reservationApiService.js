@@ -56,6 +56,7 @@ export const getReservationsToAStatus = async (params) => {
   return response.data;
 };
 
+// pricing calculation for room reservation
 export const checkRoomReservationPricing = async (params) => {
   const requestData = {
     roomId: params.roomId,
@@ -73,10 +74,22 @@ export const checkRoomReservationPricing = async (params) => {
   return response.data;
 };
 
-// Generic API service for event reservations
-export const eventReservationService = createApiService(
-  EVENT_RESERVATION_BASE_URL
-);
+// update room reservation status ( actions in table )
+export const updateRoomReservationStatus = async (id, actionType) => {
+  const response = await axiosInstance.put(
+    `${ROOM_RESERVATION_BASE_URL}/${id}/${actionType}`
+  );
+  return response.data;
+};
+
+// handle check out
+export const checkOutRoomReservation = async (id, values) => {
+  const response = await axiosInstance.put(
+    `${ROOM_RESERVATION_BASE_URL}/${id}/check-out`,
+    values
+  );
+  return response.data;
+};
 
 // Generic API service for room reservation amenities
 export const roomReservationAmenityService = createApiService(
@@ -87,19 +100,6 @@ export const roomReservationAmenityService = createApiService(
 export const getAllRoomReservationAmenities = async () => {
   const response = await axiosInstance.get(
     `${ROOM_RESERVAION_AMENITY_URL}/get-all`
-  );
-  return response.data;
-};
-
-// Generic API service for event reservation services
-export const eventReservationServiceService = createApiService(
-  EVENT_RESERVATION_SERVICE_URL
-);
-
-// Get all event reservation services without pagination and sorting
-export const getAllEventReservationServices = async () => {
-  const response = await axiosInstance.get(
-    `${EVENT_RESERVATION_SERVICE_URL}/get-all`
   );
   return response.data;
 };
@@ -124,5 +124,23 @@ export const roomReservationSourceService = createApiService(
   ROOM_RESERVATION_SOURCE_URL
 );
 
+// Generic API service for event reservations
+export const eventReservationService = createApiService(
+  EVENT_RESERVATION_BASE_URL
+);
+
 // Generic API service for event venues
 export const eventVenueService = createApiService(EVENT_VENUE_URL);
+
+// Generic API service for event reservation services
+export const eventReservationServiceService = createApiService(
+  EVENT_RESERVATION_SERVICE_URL
+);
+
+// Get all event reservation services without pagination and sorting
+export const getAllEventReservationServices = async () => {
+  const response = await axiosInstance.get(
+    `${EVENT_RESERVATION_SERVICE_URL}/get-all`
+  );
+  return response.data;
+};

@@ -1,3 +1,4 @@
+import { Watermark } from "antd";
 import RoomPricingRuleForm from "../../components/Forms/RoomPricingRuleForm";
 import { BillingColumnItems } from "../../components/Table/BillingColumnItems";
 import useBillings from "../../hooks/billing/useBillings";
@@ -11,13 +12,15 @@ const ManageBillings = () => {
   const hookData = useBillings();
 
   return (
-    <GenericPage
-      module={module}
-      rowKey={rowKey}
-      hookData={hookData}
-      columnItems={BillingColumnItems}
-      CustomForm={RoomPricingRuleForm}
-    />
+    <Watermark content="This is not finished yet">
+      <GenericPage
+        module={module}
+        rowKey={rowKey}
+        hookData={hookData}
+        columnItems={BillingColumnItems}
+        CustomForm={RoomPricingRuleForm}
+      />
+    </Watermark>
   );
 };
 

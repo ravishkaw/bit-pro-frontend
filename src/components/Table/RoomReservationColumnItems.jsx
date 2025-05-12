@@ -1,5 +1,4 @@
 import {
-  DeleteOutlined,
   EditOutlined,
   EyeOutlined,
   ScheduleOutlined,
@@ -16,7 +15,13 @@ const statusColors = {
   Pending: "red",
 };
 
-const confirmedActions = (record, handleView, handleEdit, loadOneItem) => {
+const confirmedActions = (
+  record,
+  handleView,
+  handleEdit,
+  loadOneItem,
+  openActionConfirmationModal
+) => {
   return (
     <Space size="small">
       <Tooltip title="View Details">
@@ -38,14 +43,20 @@ const confirmedActions = (record, handleView, handleEdit, loadOneItem) => {
         <Button
           type="primary"
           icon={<CheckCircleOutlined />}
-          onClick={() => loadOneItem(record.id)}
+          onClick={() => openActionConfirmationModal(record.id, "check-in")}
         />
       </Tooltip>
     </Space>
   );
 };
 
-const currentActions = (record, handleView, handleEdit, loadOneItem) => {
+const currentActions = (
+  record,
+  handleView,
+  handleEdit,
+  loadOneItem,
+  handleCheckOut
+) => {
   return (
     <Space size="small">
       <Tooltip title="View Details">
@@ -67,14 +78,20 @@ const currentActions = (record, handleView, handleEdit, loadOneItem) => {
         <Button
           type="primary"
           icon={<ScheduleOutlined />}
-          onClick={() => loadOneItem(record.id)}
+          onClick={() => handleCheckOut(record.id)}
         />
       </Tooltip>
     </Space>
   );
 };
 
-const pendingActions = (record, handleView, handleEdit, loadOneItem) => {
+const pendingActions = (
+  record,
+  handleView,
+  handleEdit,
+  loadOneItem,
+  openActionConfirmationModal
+) => {
   return (
     <Space size="small">
       <Tooltip title="View Details">
@@ -92,18 +109,18 @@ const pendingActions = (record, handleView, handleEdit, loadOneItem) => {
           onClick={() => handleEdit(record.id)}
         />
       </Tooltip>
-      <Tooltip title="Confirm Reservation">
+      <Tooltip title="confirm Reservation">
         <Button
           type="primary"
           icon={<CheckCircleOutlined />}
-          onClick={() => loadOneItem(record.id)}
+          onClick={() => openActionConfirmationModal(record.id, "confirm")}
         />
       </Tooltip>
       <Tooltip title="Cancel Reservation">
         <Button
           danger
           icon={<CloseCircleOutlined />}
-          onClick={() => loadOneItem(record.id)}
+          onClick={() => openActionConfirmationModal(record.id, "cancel")}
         />
       </Tooltip>
     </Space>
@@ -125,7 +142,12 @@ const completedActions = (record, handleView, loadOneItem) => {
   );
 };
 
-const cancelledActions = (record, handleView, loadOneItem) => {
+const cancelledActions = (
+  record,
+  handleView,
+  loadOneItem,
+  openActionConfirmationModal
+) => {
   return (
     <Space size="small">
       <Tooltip title="View Details">
@@ -140,14 +162,19 @@ const cancelledActions = (record, handleView, loadOneItem) => {
         <Button
           type="default"
           icon={<InfoCircleOutlined />}
-          onClick={() => loadOneItem(record.id)}
+          onClick={() => openActionConfirmationModal(record.id, "confirm")}
         />
       </Tooltip>
     </Space>
   );
 };
 
-const noShowActions = (record, handleView, loadOneItem) => {
+const noShowActions = (
+  record,
+  handleView,
+  loadOneItem,
+  openActionConfirmationModal
+) => {
   return (
     <Space size="small">
       <Tooltip title="View Details">
@@ -162,7 +189,7 @@ const noShowActions = (record, handleView, loadOneItem) => {
         <Button
           type="default"
           icon={<ExclamationCircleOutlined />}
-          onClick={() => loadOneItem(record.id)}
+          onClick={() => openActionConfirmationModal(record.id, "check-in")}
         />
       </Tooltip>
     </Space>
@@ -174,7 +201,9 @@ export const RoomReservationColumnItems = (
   modulePrivileges,
   handleEdit,
   loadOneItem,
-  handleView
+  handleView,
+  handleCheckOut,
+  openActionConfirmationModal
 ) => [
   {
     title: "Primary Guest",
@@ -303,17 +332,40 @@ export const RoomReservationColumnItems = (
 
       switch (status) {
         case "CONFIRMED":
-          return confirmedActions(record, handleView, handleEdit, loadOneItem);
+          return confirmedActions(
+            record,
+            handleView,
+            handleEdit,
+            loadOneItem,
+            openActionConfirmationModal
+          );
         case "CHECKED-IN":
-          return currentActions(record, handleView, handleEdit, loadOneItem);
+          return currentActions(
+            record,
+            handleView,
+            handleEdit,
+            loadOneItem,
+            handleCheckOut
+          );
         case "PENDING":
-          return pendingActions(record, handleView, handleEdit, loadOneItem);
+          return pendingActions(
+            record,
+            handleView,
+            handleEdit,
+            loadOneItem,
+            openActionConfirmationModal
+          );
         case "CHECKED-OUT":
           return completedActions(record, handleView, loadOneItem);
         case "CANCELLED":
-          return cancelledActions(record, handleView, loadOneItem);
+          return completedActions(record, handleView, loadOneItem);
         case "NO-SHOW":
-          return noShowActions(record, handleView, loadOneItem);
+          return noShowActions(
+            record,
+            handleView,
+            loadOneItem,
+            openActionConfirmationModal
+          );
         default:
           return (
             <Button

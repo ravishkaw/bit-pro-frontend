@@ -11,6 +11,7 @@ export const getChangedFieldValues = (
     .filter((key) =>
       areValuesDifferent(initialData[key], updatedData[key], key)
     )
+    .filter((key) => key != "billingPayloadDTO")
     .map((key) => {
       let formattedKey = formatText(key);
       let initialValue = initialData[key];
@@ -257,6 +258,100 @@ export const getChangedFieldValues = (
         const status = additionalData?.maintenanceStatus || [];
         initialValue = getLabel(status, initialValue);
         updatedValue = getLabel(status, updatedValue);
+      }
+      // Handle actual check-in date
+      else if (key === "checkInDate") {
+        formattedKey = "Actual Check-in Date";
+        initialValue = initialValue
+          ? dateFormat(initialValue)
+          : "Not checked in";
+        updatedValue = updatedValue
+          ? dateFormat(updatedValue)
+          : "Not checked in";
+      }
+      // Handle actual check-out date
+      else if (key === "checkOutDate") {
+        formattedKey = "Actual Check-out Date";
+        initialValue = initialValue
+          ? dateFormat(initialValue)
+          : "Not checked out";
+        updatedValue = updatedValue
+          ? dateFormat(updatedValue)
+          : "Not checked out";
+      }
+      // Handle reserved check-in date
+      else if (key === "reservedCheckInDate") {
+        formattedKey = "Reserved Check-in Date";
+        initialValue = dateFormat(initialValue);
+        updatedValue = dateFormat(updatedValue);
+      }
+      // Handle reserved check-out date
+      else if (key === "reservedCheckOutDate") {
+        formattedKey = "Reserved Check-out Date";
+        initialValue = dateFormat(initialValue);
+        updatedValue = dateFormat(updatedValue);
+      }
+      // Handle primary guest changes
+      else if (key === "primaryGuestId") {
+        formattedKey = "Primary Guest";
+        const guests = additionalData?.mappedGuests || [];
+        initialValue = getLabel(guests, initialValue);
+        updatedValue = getLabel(guests, updatedValue);
+      }
+      // Handle additional guests
+      else if (key === "guestIds") {
+        formattedKey = "Additional Guests";
+        const guests = additionalData?.mappedGuests || [];
+
+        const formatGuestIds = (ids) => {
+          if (!Array.isArray(ids) || ids.length === 0) return "None";
+          return ids
+            .map((id) => getLabel(guests, id))
+            .filter(Boolean)
+            .sort()
+            .join(", ");
+        };
+
+        initialValue = formatGuestIds(initialValue);
+        updatedValue = formatGuestIds(updatedValue);
+      }
+      // Handle child guest changes
+      else if (key === "childIds") {
+        formattedKey = "Child Guests";
+        const children = additionalData?.mappedChildren || [];
+
+        const formatChildIds = (ids) => {
+          if (!Array.isArray(ids) || ids.length === 0) return "None";
+          return ids
+            .map((id) => getLabel(children, id))
+            .filter(Boolean)
+            .sort()
+            .join(", ");
+        };
+
+        initialValue = formatChildIds(initialValue);
+        updatedValue = formatChildIds(updatedValue);
+      }
+      // Format room package
+      else if (key === "roomPackageId") {
+        formattedKey = "Room Package";
+        const packages = additionalData?.mappedRoomPackages || [];
+        initialValue = getLabel(packages, initialValue);
+        updatedValue = getLabel(packages, updatedValue);
+      }
+      // Room reservation type
+      else if (key === "reservationTypeId") {
+        formattedKey = "Reservation Type";
+        const types = additionalData?.reservationTypes || [];
+        initialValue = getLabel(types, initialValue);
+        updatedValue = getLabel(types, updatedValue);
+      }
+      // Format payment method
+      else if (key === "paymentMethodId") {
+        formattedKey = "Payment Method";
+        const paymentMethods = additionalData?.paymentMethods || [];
+        initialValue = getLabel(paymentMethods, initialValue);
+        updatedValue = getLabel(paymentMethods, updatedValue);
       }
 
       return `${capitalize(

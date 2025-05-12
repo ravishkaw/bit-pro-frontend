@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 import {
   getReservationsToAStatus,
@@ -6,23 +7,23 @@ import {
   roomReservationSourceService,
   roomReservationStatusService,
   roomReservationTypeService,
-  checkRoomReservationPricing,
   getAllGuests,
   getAllChildren,
   guestService,
   childService,
   getAllRoomReservationAmenities,
+  updateRoomReservationStatus,
+  checkOutRoomReservation,
 } from "../../services/reservationApiService";
-
-import { mapToSelectOptions } from "../../utils/utils";
-import usePagination from "../common/usePagination";
 import { fetchAvailableRooms } from "../../services/roomApiServices";
 import { getAllRoomPackages } from "../../services/packageApiService";
 import {
   paymentMethodService,
   paymentStatusService,
 } from "../../services/billingApiService";
-import { toast } from "react-toastify";
+
+import usePagination from "../common/usePagination";
+import { mapToSelectOptions } from "../../utils/utils";
 
 // Custom hook to manage room reservation operations
 const useRoomReservation = () => {
@@ -181,6 +182,35 @@ const useRoomReservation = () => {
     );
   };
 
+  const handleActionItem = async (id, actionType) => {
+    setLoading(true);
+    try {
+      await updateRoomReservationStatus(id, actionType);
+      toast.success(`Room Reservation ${actionType} successfully`);
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message);
+    } finally {
+      loadRoomReservationData();
+      loadReferenceData();
+      setLoading(false);
+    }
+  };
+
+  // const handle check out
+  const roomCheckout = async (id, values) => {
+    setLoading(true);
+    try {
+      await checkOutRoomReservation(id, values);
+      toast.success(`Room Reservation checked out successfully`);
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message);
+    } finally {
+      loadRoomReservationData();
+      loadReferenceData();
+      setLoading(false);
+    }
+  };
+
   // get available rooms for a stay between two dates with adults, children and infants
   const fetchRooms = async (
     checkInDate,
@@ -223,7 +253,8 @@ const useRoomReservation = () => {
     },
     selectedTab,
     setSelectedTab,
-    checkRoomReservationPricing,
+    handleActionItem,
+    roomCheckout,
     loadOneItem,
     addItem,
     updateItem,

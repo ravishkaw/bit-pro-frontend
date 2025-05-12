@@ -11,13 +11,17 @@ import useModalStates from "../../../hooks/common/useModalStates";
 
 import RoomReservationCalendar from "../../../components/Calendar/RoomReservationCalendar";
 import { RoomReservationColumnItems } from "../../../components/Table/RoomReservationColumnItems";
-import RoomReservationFormModal from "../../../components/Modals/RoomReservationFormModal";
 import RoomReservationUpdateForm from "../../../components/Forms/RoomReservationUpdateForm";
-import SearchAddHeader from "../../../components/DataDisplay/SearchAddHeader";
+
 import SkeletonCards from "../../../components/Cards/SkeletonCards";
+import SearchAddHeader from "../../../components/DataDisplay/SearchAddHeader";
 import MobileCardView from "../../../components/DataDisplay/MobileCardView";
 import ViewRoomReservation from "../../../components/DataDisplay/ViewRoomReservation";
+
+import RoomReservationFormModal from "../../../components/Modals/RoomReservationFormModal";
 import UpdateConfirmationModal from "../../../components/Modals/UpdateConfirmationModal";
+import RoomReservationActionModal from "../../../components/Modals/RoomReservationActionModal";
+import RoomReservationCheckOutModal from "../../../components/Modals/RoomReservationCheckOutModal";
 
 // Room reservation page
 const RoomReservation = () => {
@@ -27,6 +31,15 @@ const RoomReservation = () => {
     selectedReservation: null,
   });
   const [updateModalState, setUpdateModalState] = useState({
+    open: false,
+    selectedReservation: null,
+  });
+  const [actionModalState, setActionModalState] = useState({
+    open: false,
+    selectedReservation: null,
+    actionType: null,
+  });
+  const [checkoutModalState, setCheckoutModalState] = useState({
     open: false,
     selectedReservation: null,
   });
@@ -48,7 +61,8 @@ const RoomReservation = () => {
     additionalData,
     selectedTab,
     setSelectedTab,
-    checkRoomReservationPricing,
+    handleActionItem,
+    roomCheckout,
     loadOneItem,
     addItem,
     updateItem,
@@ -100,6 +114,40 @@ const RoomReservation = () => {
     });
   };
 
+  // Action confirmation modal
+  const openActionConfirmationModal = (selectedReservationId, actionType) => {
+    setActionModalState({
+      open: true,
+      selectedReservationId,
+      actionType,
+    });
+  };
+
+  // Close action confirmation modal
+  const closeActionConfirmationModal = () => {
+    setActionModalState({
+      open: false,
+      selectedReservationId: null,
+      actionType: null,
+    });
+  };
+
+  // Open checkout modal
+  const openCheckoutModal = (selectedReservation) => {
+    setCheckoutModalState({
+      open: true,
+      selectedReservation,
+    });
+  };
+
+  // close checkout modal
+  const closeCheckoutModal = () => {
+    setCheckoutModalState({
+      open: false,
+      selectedReservation: null,
+    });
+  };
+
   const openCalendar = () => setCalendarOpen(true);
   const closeCalendar = () => setCalendarOpen(false);
 
@@ -125,6 +173,29 @@ const RoomReservation = () => {
     });
   };
 
+  // handle edit action
+  const handleEdit = async (id) => {
+    const reservation = await loadOneItem(id);
+    openUpdateModal(reservation);
+  };
+
+  // handle checkout action
+  const handleCheckOut = async (id) => {
+    const reservation = await loadOneItem(id);
+    openCheckoutModal(reservation);
+  };
+
+  // Generate table columns dynamically
+  const columns = RoomReservationColumnItems(
+    modulePrivileges,
+    handleEdit,
+    loadOneItem,
+    handleView,
+    handleCheckOut,
+    openActionConfirmationModal
+  );
+
+  // Tab items
   const items = [
     {
       label: "Current",
@@ -151,20 +222,6 @@ const RoomReservation = () => {
       key: "NO-SHOW",
     },
   ];
-
-  // handle edit action
-  const handleEdit = async (id) => {
-    const reservation = await loadOneItem(id);
-    openUpdateModal(reservation);
-  };
-
-  // Generate table columns dynamically
-  const columns = RoomReservationColumnItems(
-    modulePrivileges,
-    handleEdit,
-    loadOneItem,
-    handleView
-  );
 
   if (!isMobile) {
     return (
@@ -198,6 +255,8 @@ const RoomReservation = () => {
             pagination={{
               ...paginationDetails,
               showTotal: paginationEntries,
+              pageSizeOptions: [5, 10, 20],
+              showSizeChanger: true,
             }}
             scroll={{ x: "max-content" }}
             onChange={handlePageChange}
@@ -215,7 +274,6 @@ const RoomReservation = () => {
           fetchRooms={fetchRooms}
           amenities={amenities}
           roomPackages={roomPackages}
-          checkRoomReservationPricing={checkRoomReservationPricing}
           showUpdateConfirmModal={showUpdateConfirmModal}
         />
 
@@ -229,9 +287,9 @@ const RoomReservation = () => {
           loadReferenceData={additionalData.loadReferenceData}
           showUpdateConfirmModal={showUpdateConfirmModal}
           fetchRooms={fetchRooms}
-          checkRoomReservationPricing={checkRoomReservationPricing}
         />
 
+        {/* View reservation modal */}
         <ViewRoomReservation
           module={module}
           viewModal={viewModal}
@@ -241,11 +299,28 @@ const RoomReservation = () => {
           loadOneItem={loadOneItem}
           additionalData={additionalData}
         />
+
+        {/* Update confirmation modal */}
         <UpdateConfirmationModal
           updateFunction={updateItem}
           updateConfirmModal={updateConfirmModal}
           closeUpdateConfirmModal={closeUpdateConfirmModal}
           closeModal={closeUpdateModal}
+        />
+
+        {/* Action confirmation modal */}
+        <RoomReservationActionModal
+          actionFunction={handleActionItem}
+          actionModalState={actionModalState}
+          closeModal={closeActionConfirmationModal}
+        />
+
+        {/* Checkout modal */}
+        <RoomReservationCheckOutModal
+          modalState={checkoutModalState}
+          closeModal={closeCheckoutModal}
+          additionalData={additionalData}
+          roomCheckout={roomCheckout}
         />
 
         <RoomReservationCalendar
