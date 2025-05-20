@@ -6,7 +6,7 @@ const useWebSocket = (userId) => {
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
 
-  const brokerURL = "ws://localhost:8080/ws";
+  const brokerURL = import.meta.env.VITE_BROKER_URL;  
 
   // Initialize connection
   useEffect(() => {
