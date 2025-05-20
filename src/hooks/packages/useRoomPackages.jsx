@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 
 import useCrudHandler from "../common/useCrudHandler";
 import { roomPackageService } from "../../services/packageApiService";
-import { getAllRoomReservationAmenities } from "../../services/reservationApiService";
+import { getAllRoomReservationAmenities } from "../../services/roomReservationApiService";
 
 // Custom hook to manage room package-related operations
 const useRoomPackages = () => {

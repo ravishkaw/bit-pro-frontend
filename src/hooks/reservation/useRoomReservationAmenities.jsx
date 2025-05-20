@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import {
   roomReservationAmenityService,
   roomReservationAmenityCategoryService,
-} from "../../services/reservationApiService";
+} from "../../services/roomReservationApiService";
 
 import useCrudHandler from "../common/useCrudHandler";
 

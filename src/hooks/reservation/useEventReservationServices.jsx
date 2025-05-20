@@ -1,4 +1,4 @@
-import { eventReservationServiceService } from "../../services/reservationApiService";
+import { eventReservationServiceService } from "../../services/eventReservationApiService";
 import useCrudHandler from "../common/useCrudHandler";
 
 const useEventReservationServices = () => {

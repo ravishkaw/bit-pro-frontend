@@ -1,4 +1,4 @@
-import { checkRoomReservationPricing } from "../services/reservationApiService";
+import { checkRoomReservationPricing } from "../services/roomReservationApiService";
 
 // calculate room reservation pricing
 export const calculateRoomReservationPrice = async (

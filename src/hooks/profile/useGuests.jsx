@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { guestService } from "../../services/reservationApiService";
+import { guestService } from "../../services/roomReservationApiService";
 import useCrudHandler from "../common/useCrudHandler";
 import useProfileData from "./useProfileData";
 

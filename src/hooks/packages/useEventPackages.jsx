@@ -2,7 +2,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 
 import { eventPackageService } from "../../services/packageApiService";
-import { getAllEventReservationServices } from "../../services/reservationApiService";
+import { getAllEventReservationServices } from "../../services/eventReservationApiService";
 
 import useCrudHandler from "../common/useCrudHandler";
 

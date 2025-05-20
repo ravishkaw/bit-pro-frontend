@@ -14,7 +14,7 @@ import {
   getAllRoomReservationAmenities,
   updateRoomReservationStatus,
   checkOutRoomReservation,
-} from "../../services/reservationApiService";
+} from "../../services/roomReservationApiService";
 import { fetchAvailableRooms } from "../../services/roomApiServices";
 import { getAllRoomPackages } from "../../services/packageApiService";
 import {
@@ -29,7 +29,7 @@ import { mapToSelectOptions } from "../../utils/utils";
 const useRoomReservation = () => {
   const [reservationData, setReservationData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedTab, setSelectedTab] = useState("Checked-In");
+  const [selectedTab, setSelectedTab] = useState("CHECKED-IN");
 
   const [guests, setGuests] = useState([]);
   const [children, setChildren] = useState([]);

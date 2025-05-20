@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import {
   childService,
   getAllGuests,
-} from "../../services/reservationApiService";
+} from "../../services/roomReservationApiService";
 
 import useCrudHandler from "../common/useCrudHandler";
 import useProfileData from "./useProfileData";

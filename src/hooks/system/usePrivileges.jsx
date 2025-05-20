@@ -67,13 +67,9 @@ const usePrivileges = () => {
     }
   };
 
-  // filter out admin privileges
-  const filteredPrivileges = () =>
-    data.filter((privileges) => privileges?.role?.name != "Admin");
-
   // Return all states and functions for external use
   return {
-    data: filteredPrivileges(),
+    data,
     additionalData: { roles, allModules, getModulesWithoutPrivileges },
     loading,
     paginationDetails,
