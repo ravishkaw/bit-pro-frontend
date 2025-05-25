@@ -1,8 +1,5 @@
 // Import page components
 import Dashboard from "../pages/Dashboard";
-import UserProfile from "../pages/Profile/UserProfile";
-import ManageEmployee from "../pages/Profile/ManageEmployees";
-import ManageGuests from "../pages/Profile/ManageGuests";
 import {
   EventReservation,
   EventReservationServices,
@@ -11,11 +8,24 @@ import {
 } from "../pages/Reservation";
 import ManageUsers from "../pages/System/ManageUsers";
 import ManagePrivileges from "../pages/System/ManagePrivileges";
-import { ManageRooms, RoomInventory, RoomTypes } from "../pages/Rooms";
+import {
+  ManageRooms,
+  RoomFacility,
+  RoomInventory,
+  RoomTypes,
+} from "../pages/Rooms";
 import Inventory from "../pages/Inventory/Inventory";
 import ManagePackages from "../pages/Packages/ManagePackages";
 import ManageBillings from "../pages/Billing/ManageBillings";
 import EventVenue from "../pages/Events/EventVenue";
+import ManageTasks from "../pages/Tasks/ManageTasks";
+import ManagePreventiveMaintenance from "../pages/Tasks/ManagePreventiveMaintenance";
+import {
+  ManageChildren,
+  ManageGuests,
+  ManageEmployees,
+  UserProfile,
+} from "../pages/Profile";
 
 //Route Configuration
 export const protectedRoutes = [
@@ -34,7 +44,7 @@ export const protectedRoutes = [
   // User Management Routes
   {
     path: "/employees",
-    element: ManageEmployee,
+    element: ManageEmployees,
     module: "Employee",
   },
   {
@@ -54,7 +64,11 @@ export const protectedRoutes = [
     element: ManageGuests,
     module: "Guest",
   },
-
+  {
+    path: "/children",
+    element: ManageChildren,
+    module: "Child",
+  },
   // Reservation Management Routes
   {
     path: "/room-reservations",
@@ -88,6 +102,11 @@ export const protectedRoutes = [
     module: "Room Type",
   },
   {
+    path: "/room-facilities",
+    element: RoomFacility,
+    module: "Room Facility",
+  },
+  {
     path: "/room-inventory",
     element: RoomInventory,
     module: "Room Inventory",
@@ -109,6 +128,17 @@ export const protectedRoutes = [
     path: "/inventory",
     element: Inventory,
     module: "Inventory",
+  },
+  // Task and maintenance Routes
+  {
+    path: "/tasks",
+    element: ManageTasks,
+    module: "Task",
+  },
+  {
+    path: "/preventive-maintenance",
+    element: ManagePreventiveMaintenance,
+    module: "Task",
   },
   // Billing Routes
   {

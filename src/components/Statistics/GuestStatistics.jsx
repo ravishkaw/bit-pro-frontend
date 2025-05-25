@@ -1,14 +1,17 @@
 import { Row, Col, Card, Flex, Statistic, Button, Badge } from "antd";
 import { TeamOutlined, SmileOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 
-const GuestStatistics = ({ childHookData, openModal, guestHookData }) => {
+const GuestStatistics = ({ childHookData, guestHookData }) => {
   const [statistics, setStatistics] = useState({
     totalGuests: 0,
     adultGuests: 0,
     childGuests: 0,
     childrenPercentage: 0,
   });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (guestHookData?.data) {
@@ -91,7 +94,9 @@ const GuestStatistics = ({ childHookData, openModal, guestHookData }) => {
                 <Button
                   type="primary"
                   size="small"
-                  onClick={openModal}
+                  onClick={() => {
+                    navigate("/children");
+                  }}
                   style={{
                     backgroundColor: "#666cff",
                     borderColor: "#666cff",

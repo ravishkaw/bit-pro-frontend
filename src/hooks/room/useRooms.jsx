@@ -77,11 +77,11 @@ const useRooms = () => {
     }
   };
 
-  // // Load data when component mounts
-  // useEffect(() => {
-  //   loadRooms();
-  //   loadReferenceData();
-  // }, []);
+  // Load data when component mounts
+  useEffect(() => {
+    loadRooms();
+    loadReferenceData();
+  }, []);
 
   // fetch a single item
   const loadOneItem = async (id) => {
@@ -140,10 +140,8 @@ const useRooms = () => {
     updateItem,
     deleteItem,
     restoreItem,
-    loadReferenceData,
     applyFilters,
     filters,
-    loadRooms,
   };
 };
 

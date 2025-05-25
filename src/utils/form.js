@@ -1,363 +1,294 @@
 import { capitalize, formatText } from "./textUtils";
 import dayjs from "dayjs";
 
+// Define formatters for different field types
+const fieldFormatters = {
+  // Date formatters
+  dob: {
+    label: "Date of Birth",
+    format: (value) => dateFormat(value),
+  },
+  checkInDate: {
+    label: "Actual Check-in Date",
+    format: (value) => (value ? dateFormat(value) : "Not checked in"),
+  },
+  checkOutDate: {
+    label: "Actual Check-out Date",
+    format: (value) => (value ? dateFormat(value) : "Not checked out"),
+  },
+  reservedCheckInDate: {
+    label: "Reserved Check-in Date",
+    format: (value) => dateFormat(value),
+  },
+  reservedCheckOutDate: {
+    label: "Reserved Check-out Date",
+    format: (value) => dateFormat(value),
+  },
+  dateRange: {
+    format: (value) =>
+      Array.isArray(value) ? value.map((v) => dateFormat(v)).join(" - ") : "",
+  },
+
+  // Status formatters
+  accountStatus: {
+    label: "Status",
+    format: (value) => (value ? "Active" : "Inactive"),
+  },
+  status: {
+    label: "Status",
+    format: (value) => (value ? "Active" : "Inactive"),
+  },
+  statusName: {
+    label: "Status",
+    format: (value) => (value ? "Active" : "Inactive"),
+  },
+
+  // ID/lookup based formatters
+  genderId: {
+    label: "Gender",
+    format: (value, data) => getLabel(data?.genders || [], value),
+  },
+  idTypeId: {
+    label: "ID Type",
+    format: (value, data) => getLabel(data?.idTypes || [], value),
+  },
+  nationalitiesName: {
+    label: "Nationalities",
+    format: (value, data) => getLabel(data?.nationalities || [], value),
+  },
+  civilStatusId: {
+    label: "Civil Status",
+    format: (value, data) => getLabel(data?.civilStatus || [], value),
+  },
+  titleId: {
+    label: "Title",
+    format: (value, data) => getLabel(data?.titles || [], value),
+  },
+  designationId: {
+    label: "Designation",
+    format: (value, data) => getLabel(data?.designations || [], value),
+  },
+  employeeStatusId: {
+    label: "Employee Status",
+    format: (value, data) => getLabel(data?.employeeStatus || [], value),
+  },
+  taskStatusId: {
+    label: "Task Status",
+    format: (value, data) => getLabel(data?.taskStatus || [], value),
+  },
+  taskTypeId: {
+    label: "Task Type",
+    format: (value, data) => getLabel(data?.taskTypes || [], value),
+  },
+  assignedToId: {
+    label: "Assigned Employee",
+    format: (value, data) => getLabel(data?.employees || [], value),
+  },
+  roomId: {
+    label: "Room",
+    format: (value, data) => getLabel(data?.mappedRooms || [], value),
+  },
+  maintenanceStatusId: {
+    label: "Maintenance Status",
+    format: (value, data) => getLabel(data?.maintenanceStatus || [], value),
+  },
+  primaryGuestId: {
+    label: "Primary Guest",
+    format: (value, data) => getLabel(data?.mappedGuests || [], value),
+  },
+  roomPackageId: {
+    label: "Room Package",
+    format: (value, data) => getLabel(data?.mappedRoomPackages || [], value),
+  },
+  reservationTypeId: {
+    label: "Reservation Type",
+    format: (value, data) => getLabel(data?.reservationTypes || [], value),
+  },
+  paymentMethodId: {
+    label: "Payment Method",
+    format: (value, data) => getLabel(data?.paymentMethods || [], value),
+  },
+  bedTypeId: {
+    label: "Bed Type",
+    format: (value, data) => getLabel(data?.bedTypes || [], value),
+  },
+  statusId: {
+    label: "Room Status",
+    format: (value, data) => getLabel(data?.roomStatus || [], value),
+  },
+
+  // Password fields
+  password: {
+    format: () => "*********",
+  },
+  retypePassword: {
+    format: () => "*********",
+  },
+
+  // Special fields
+  photo: {
+    label: "Photo",
+    format: (value) => {
+      if (value && value.base64) {
+        return value.base64.slice(-7);
+      } else if (typeof value === "string") {
+        return value.slice(-7);
+      }
+      return value;
+    },
+  },
+
+  // Field count labels
+  adultNo: { label: "Adults" },
+  childNo: { label: "Children" },
+  infantNo: { label: "Infants" },
+
+  // Complex array fields
+  roleId: {
+    label: "Roles",
+    format: (value, data) => {
+      const roles = data?.roles || [];
+      const roleIds = Array.isArray(value) ? value : [value].filter(Boolean);
+      return roleIds
+        .map((id) => getLabel(roles, id))
+        .sort()
+        .join(", ");
+    },
+  },
+  roomFacilityIds: {
+    label: "Room Facilities",
+    format: (value, data) => {
+      const facilities = data?.mappedRoomFacilities || [];
+      const facilityIds = Array.isArray(value)
+        ? value
+        : [value].filter(Boolean);
+      return facilityIds
+        .map((id) => getLabel(facilities, id))
+        .sort()
+        .join(", ");
+    },
+  },
+  guestIds: {
+    label: "Additional Guests",
+    format: (value, data) => {
+      const guests = data?.mappedGuests || [];
+      if (!Array.isArray(value) || value.length === 0) return "None";
+      return value
+        .map((id) => getLabel(guests, id))
+        .filter(Boolean)
+        .sort()
+        .join(", ");
+    },
+  },
+  childIds: {
+    label: "Child Guests",
+    format: (value, data) => {
+      const children = data?.mappedChildren || [];
+      if (!Array.isArray(value) || value.length === 0) return "None";
+      return value
+        .map((id) => getLabel(children, id))
+        .filter(Boolean)
+        .sort()
+        .join(", ");
+    },
+  },
+
+  // Items with quantities
+  amenities: {
+    label: "Amenities",
+    format: (value, data) =>
+      formatItemsWithQuantities(value, data?.amenities || [], "amenityId"),
+  },
+  eventServices: {
+    label: "Event Services",
+    format: (value, data) =>
+      formatItemsWithQuantities(
+        value,
+        data?.eventServices || [],
+        "eventServiceId"
+      ),
+  },
+
+  // Special cases
+  roomTypeId: {
+    label: "Room Type",
+    format: (value, data) =>
+      getLabel(data?.roomTypes || data?.mappedRoomTypes || [], value),
+  },
+};
+
+// Special case for room type name
+const specialCases = {
+  name: (additionalData) => {
+    if (additionalData.module === "Room Type") {
+      return {
+        label: "Room Type",
+        format: (value, data) =>
+          getLabel(data?.roomTypes || data?.mappedRoomTypes || [], value),
+      };
+    }
+    return null;
+  },
+};
+
 // Get changed form values for confirmation modal
 export const getChangedFieldValues = (
   initialData,
   updatedData,
   additionalData = {}
 ) => {
-  return Object.keys(updatedData)
+  const changes = Object.keys(updatedData)
     .filter((key) =>
       areValuesDifferent(initialData[key], updatedData[key], key)
     )
-    .filter((key) => key != "billingPayloadDTO")
+    .filter((key) => key !== "billingPayloadDTO")
     .map((key) => {
-      let formattedKey = formatText(key);
+      // Get formatter for this field
+      let formatter = fieldFormatters[key];
+
+      // Check special cases
+      if (!formatter && specialCases[key]) {
+        formatter = specialCases[key](additionalData);
+      }
+
+      let formattedKey = formatter?.label || formatText(key);
       let initialValue = initialData[key];
       let updatedValue = updatedData[key];
 
-      // Format dob
-      if (key === "dob") {
-        formattedKey = "Date of Birth";
-        initialValue = dateFormat(initialValue);
-        updatedValue = dateFormat(updatedValue);
-      }
-      // format status (false to inactive, true to active)
-      else if (
-        key === "accountStatus" ||
-        key === "status" ||
-        key === "statusName"
-      ) {
-        formattedKey = "Status";
-        initialValue = initialValue ? "Active" : "Inactive";
-        updatedValue = updatedValue ? "Active" : "Inactive";
-      }
-      // format gender
-      else if (key === "genderId") {
-        formattedKey = "Gender";
-        const gender = additionalData?.genders || [];
-        initialValue = getLabel(gender, initialValue);
-        updatedValue = getLabel(gender, updatedValue);
-      }
-      // format idType
-      else if (key === "idTypeId") {
-        formattedKey = "ID Type";
-        const idType = additionalData?.idTypes || [];
-        initialValue = getLabel(idType, initialValue);
-        updatedValue = getLabel(idType, updatedValue);
-      }
-      // format nationalities
-      else if (key === "nationalitiesName") {
-        formattedKey = "Nationalities";
-        const nationalities = additionalData?.nationalities || [];
-        initialValue = getLabel(nationalities, initialValue);
-        updatedValue = getLabel(nationalities, updatedValue);
-      }
-      // format civilStatus
-      else if (key === "civilStatusId") {
-        formattedKey = "Civil Status";
-        const civilStatus = additionalData?.civilStatus || [];
-        initialValue = getLabel(civilStatus, initialValue);
-        updatedValue = getLabel(civilStatus, updatedValue);
-      }
-      // format id type
-      else if (key === "titleId") {
-        formattedKey = "Title";
-        const titles = additionalData?.titles || [];
-        initialValue = getLabel(titles, initialValue);
-        updatedValue = getLabel(titles, updatedValue);
-      }
-      // format designation
-      else if (key === "designationId") {
-        formattedKey = "Designation";
-        const designations = additionalData?.designations || [];
-        initialValue = getLabel(designations, initialValue);
-        updatedValue = getLabel(designations, updatedValue);
-      }
-      // format employeeStatus
-      else if (key === "employeeStatusId") {
-        formattedKey = "Employee Status";
-        const employeeStatus = additionalData?.employeeStatus || [];
-        initialValue = getLabel(employeeStatus, initialValue);
-        updatedValue = getLabel(employeeStatus, updatedValue);
-      }
-      // remove passwords
-      else if (key === "password" || key === "retypePassword") {
-        initialValue = "*********";
-        updatedValue = "*********";
-      }
-      // format roles
-      else if (key === "roleId") {
-        formattedKey = "Roles";
-        const roles = additionalData?.roles || [];
-
-        const initialRoleIds = Array.isArray(initialValue)
-          ? initialValue
-          : [initialValue].filter(Boolean);
-        const updatedRoleIds = Array.isArray(updatedValue)
-          ? updatedValue
-          : [updatedValue].filter(Boolean);
-
-        initialValue = initialRoleIds
-          .map((id) => getLabel(roles, id))
-          .sort()
-          .join(", ");
-        updatedValue = updatedRoleIds
-          .map((id) => getLabel(roles, id))
-          .sort()
-          .join(", ");
-      }
-      // format date range
-      else if (key === "dateRange") {
-        // Handle null/undefined values
-        initialValue = Array.isArray(initialValue)
-          ? initialValue.map((value) => dateFormat(value)).join(" - ")
-          : "";
-        updatedValue = Array.isArray(updatedValue)
-          ? updatedValue.map((value) => dateFormat(value)).join(" - ")
-          : "";
-      }
-      // Format room type name
-      else if (
-        (key === "name" && additionalData.module === "Room Type") ||
-        key === "roomTypeId"
-      ) {
-        formattedKey = "Room Type";
-        const roomTypes =
-          additionalData?.roomTypes || additionalData?.mappedRoomTypes || [];
-        initialValue = getLabel(roomTypes, initialValue);
-        updatedValue = getLabel(roomTypes, updatedValue);
-      }
-      // Format bed type name
-      else if (key === "bedTypeId") {
-        formattedKey = "Bed Type";
-        const bedTypes = additionalData?.bedTypes || [];
-        initialValue = getLabel(bedTypes, initialValue);
-        updatedValue = getLabel(bedTypes, updatedValue);
-      }
-      // Format room facilities
-      else if (key === "roomFacilityIds") {
-        formattedKey = "Room Facilities";
-        const facilities = additionalData?.mappedRoomFacilities || [];
-
-        const initialFacilityIds = Array.isArray(initialValue)
-          ? initialValue
-          : [initialValue].filter(Boolean);
-        const updatedFacilityIds = Array.isArray(updatedValue)
-          ? updatedValue
-          : [updatedValue].filter(Boolean);
-
-        initialValue = initialFacilityIds
-          .map((id) => getLabel(facilities, id))
-          .sort()
-          .join(", ");
-        updatedValue = updatedFacilityIds
-          .map((id) => getLabel(facilities, id))
-          .sort()
-          .join(", ");
-      }
-      // Format amenities
-      else if (key === "amenities") {
-        formattedKey = "Amenities";
-        const mappedAmenities = additionalData?.amenities || [];
-        initialValue = formatItemsWithQuantities(
-          initialValue,
-          mappedAmenities,
-          "amenityId"
-        );
-        updatedValue = formatItemsWithQuantities(
-          updatedValue,
-          mappedAmenities,
-          "amenityId"
-        );
-      }
-      // Format event services
-      else if (key === "eventServices") {
-        formattedKey = "Event Services";
-        const mappedServices = additionalData?.eventServices || [];
-        initialValue = formatItemsWithQuantities(
-          initialValue,
-          mappedServices,
-          "eventServiceId"
-        );
-        updatedValue = formatItemsWithQuantities(
-          updatedValue,
-          mappedServices,
-          "eventServiceId"
-        );
-      }
-      // Format adult no  key
-      else if (key === "adultNo") {
-        formattedKey = "Adults";
-      }
-      // Format child no key
-      else if (key === "childNo") {
-        formattedKey = "Children";
-      }
-      // Format infant no key
-      else if (key === "infantNo") {
-        formattedKey = "Infants";
-      }
-      // Format room status
-      else if (key === "statusId") {
-        formattedKey = "Room Status";
-        const roomStatus = additionalData?.roomStatus || [];
-        initialValue = getLabel(roomStatus, initialValue);
-        updatedValue = getLabel(roomStatus, updatedValue);
-      }
-      // Format photo or image changes
-      else if (key === "photo") {
-        formattedKey = "Photo";
-        // If it's a base64 string, show just the last 7 characters
-        if (initialValue && initialValue.base64) {
-          const base64String = initialValue.base64 || "";
-          initialValue = base64String.slice(-7);
-        } else if (typeof initialValue === "string") {
-          initialValue = initialValue.slice(-7);
-        }
-
-        if (updatedValue && updatedValue.base64) {
-          const base64String = updatedValue.base64 || "";
-          updatedValue = base64String.slice(-7);
-        } else if (typeof updatedValue === "string") {
-          updatedValue = updatedValue.slice(-7);
-        }
-      }
-      // task status
-      else if (key === "taskStatusId") {
-        formattedKey = "Task Status";
-        const taskStatus = additionalData?.taskStatus || [];
-        initialValue = getLabel(taskStatus, initialValue);
-        updatedValue = getLabel(taskStatus, updatedValue);
-      }
-      // task type
-      else if (key === "taskTypeId") {
-        formattedKey = "Task Type";
-        const taskType = additionalData?.taskTypes || [];
-        initialValue = getLabel(taskType, initialValue);
-        updatedValue = getLabel(taskType, updatedValue);
-      }
-      // task assigned to
-      else if (key === "assignedToId") {
-        formattedKey = "Assigned Employee";
-        const assignedTo = additionalData?.employees || [];
-        initialValue = getLabel(assignedTo, initialValue);
-        updatedValue = getLabel(assignedTo, updatedValue);
-      }
-      // task room
-      else if (key === "roomId") {
-        formattedKey = "Room";
-        const rooms = additionalData?.mappedRooms || [];
-        initialValue = getLabel(rooms, initialValue);
-        updatedValue = getLabel(rooms, updatedValue);
-      }
-      // preventive maintenance status
-      else if (key === "maintenanceStatusId") {
-        formattedKey = "Maintenance Status";
-        const status = additionalData?.maintenanceStatus || [];
-        initialValue = getLabel(status, initialValue);
-        updatedValue = getLabel(status, updatedValue);
-      }
-      // Handle actual check-in date
-      else if (key === "checkInDate") {
-        formattedKey = "Actual Check-in Date";
-        initialValue = initialValue
-          ? dateFormat(initialValue)
-          : "Not checked in";
-        updatedValue = updatedValue
-          ? dateFormat(updatedValue)
-          : "Not checked in";
-      }
-      // Handle actual check-out date
-      else if (key === "checkOutDate") {
-        formattedKey = "Actual Check-out Date";
-        initialValue = initialValue
-          ? dateFormat(initialValue)
-          : "Not checked out";
-        updatedValue = updatedValue
-          ? dateFormat(updatedValue)
-          : "Not checked out";
-      }
-      // Handle reserved check-in date
-      else if (key === "reservedCheckInDate") {
-        formattedKey = "Reserved Check-in Date";
-        initialValue = dateFormat(initialValue);
-        updatedValue = dateFormat(updatedValue);
-      }
-      // Handle reserved check-out date
-      else if (key === "reservedCheckOutDate") {
-        formattedKey = "Reserved Check-out Date";
-        initialValue = dateFormat(initialValue);
-        updatedValue = dateFormat(updatedValue);
-      }
-      // Handle primary guest changes
-      else if (key === "primaryGuestId") {
-        formattedKey = "Primary Guest";
-        const guests = additionalData?.mappedGuests || [];
-        initialValue = getLabel(guests, initialValue);
-        updatedValue = getLabel(guests, updatedValue);
-      }
-      // Handle additional guests
-      else if (key === "guestIds") {
-        formattedKey = "Additional Guests";
-        const guests = additionalData?.mappedGuests || [];
-
-        const formatGuestIds = (ids) => {
-          if (!Array.isArray(ids) || ids.length === 0) return "None";
-          return ids
-            .map((id) => getLabel(guests, id))
-            .filter(Boolean)
-            .sort()
-            .join(", ");
-        };
-
-        initialValue = formatGuestIds(initialValue);
-        updatedValue = formatGuestIds(updatedValue);
-      }
-      // Handle child guest changes
-      else if (key === "childIds") {
-        formattedKey = "Child Guests";
-        const children = additionalData?.mappedChildren || [];
-
-        const formatChildIds = (ids) => {
-          if (!Array.isArray(ids) || ids.length === 0) return "None";
-          return ids
-            .map((id) => getLabel(children, id))
-            .filter(Boolean)
-            .sort()
-            .join(", ");
-        };
-
-        initialValue = formatChildIds(initialValue);
-        updatedValue = formatChildIds(updatedValue);
-      }
-      // Format room package
-      else if (key === "roomPackageId") {
-        formattedKey = "Room Package";
-        const packages = additionalData?.mappedRoomPackages || [];
-        initialValue = getLabel(packages, initialValue);
-        updatedValue = getLabel(packages, updatedValue);
-      }
-      // Room reservation type
-      else if (key === "reservationTypeId") {
-        formattedKey = "Reservation Type";
-        const types = additionalData?.reservationTypes || [];
-        initialValue = getLabel(types, initialValue);
-        updatedValue = getLabel(types, updatedValue);
-      }
-      // Format payment method
-      else if (key === "paymentMethodId") {
-        formattedKey = "Payment Method";
-        const paymentMethods = additionalData?.paymentMethods || [];
-        initialValue = getLabel(paymentMethods, initialValue);
-        updatedValue = getLabel(paymentMethods, updatedValue);
+      // Apply formatting if we have a formatter
+      if (formatter?.format) {
+        initialValue = formatter.format(initialValue, additionalData);
+        updatedValue = formatter.format(updatedValue, additionalData);
       }
 
-      return `${capitalize(
-        formattedKey
-      )} changed from "${initialValue}" to "${updatedValue}"`;
+      // Determine type of data for better display
+      const isQuantityArray =
+        (key === "amenities" || key === "eventServices") &&
+        (initialValue !== "None" || updatedValue !== "None");
+
+      const isListArray =
+        (typeof initialValue === "string" && initialValue.includes(", ")) ||
+        (typeof updatedValue === "string" && updatedValue.includes(", "));
+
+      return {
+        field: capitalize(formattedKey),
+        oldValue: initialValue,
+        newValue: updatedValue,
+        type: isQuantityArray ? "quantity" : isListArray ? "list" : "simple",
+        key,
+      };
     });
+
+  // For backward compatibility, also return the old string format
+  const formattedStrings = changes.map(
+    (change) =>
+      `${change.field} changed from "${change.oldValue}" to "${change.newValue}"`
+  );
+
+  return {
+    changes,
+    formatted: formattedStrings,
+  };
 };
 
 // Get label from data array that formatted to select tag options
@@ -369,6 +300,7 @@ const dateFormat = (value) => dayjs(value).format("YYYY-MM-DD");
 
 // Helper function to compare arrays with items that have quantities
 const compareArraysWithQuantities = (arr1, arr2, idField) => {
+  if (!arr1 || !arr2) return arr1 !== arr2;
   if (arr1.length !== arr2.length) return true;
 
   // Sort by ID field
@@ -410,7 +342,7 @@ const areValuesDifferent = (val1, val2, key) => {
 
 // Helper function to format arrays of items with quantities
 const formatItemsWithQuantities = (items, mappedItems, idField) => {
-  if (!Array.isArray(items)) return "None";
+  if (!Array.isArray(items) || items.length === 0) return "None";
 
   return items
     .map((item) => {

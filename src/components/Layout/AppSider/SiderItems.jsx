@@ -69,6 +69,12 @@ export const siderItems = [
         privilege: "Room Type",
       },
       {
+        key: "/room-facilities",
+        label: "Room Facilities",
+        icon: <TagsOutlined />,
+        privilege: "Room Facility",
+      },
+      {
         key: "/room-inventory",
         label: "Room Inventory",
         icon: <ContainerOutlined />,
@@ -131,6 +137,26 @@ export const siderItems = [
     ],
   },
   {
+    key: "tasks",
+    label: "Tasks & Maintenance",
+    type: "group",
+    icon: <DatabaseOutlined />,
+    children: [
+      {
+        key: "/tasks",
+        label: "Tasks",
+        icon: <ToolOutlined />,
+        privilege: "Task",
+      },
+      {
+        key: "/preventive-maintenance",
+        label: "Preventive Maintenance",
+        icon: <BuildOutlined />,
+        privilege: "Task",
+      },
+    ],
+  },
+  {
     key: "people",
     label: "People",
     type: "group",
@@ -138,13 +164,19 @@ export const siderItems = [
     children: [
       {
         key: "/guests",
-        label: "Guest Management",
+        label: "Guests",
         icon: <SolutionOutlined />,
         privilege: "Guest",
       },
       {
+        key: "/children",
+        label: "Children",
+        icon: <SolutionOutlined />,
+        privilege: "Child",
+      },
+      {
         key: "/employees",
-        label: "Staff Management",
+        label: "Staff",
         icon: <IdcardOutlined />,
         privilege: "Employee",
       },

@@ -13,9 +13,9 @@ import {
   Divider,
   Statistic,
 } from "antd";
+import dayjs from "dayjs";
 
 const { Title, Text, Paragraph } = Typography;
-const { Option } = Select;
 
 const RoomPaymentForm = ({
   isEditing,
@@ -59,18 +59,18 @@ const RoomPaymentForm = ({
               <Title level={5}>Booking Details</Title>
               <Paragraph>
                 <Text strong>Check-in Date:</Text>{" "}
-                {pricingInformation.checkInDate}
+                {dayjs(pricingInformation.checkInDate).format("YYYY-MM-DD")}
               </Paragraph>
               <Paragraph>
                 <Text strong>Check-out Date:</Text>{" "}
-                {pricingInformation.checkOutDate}
+                {dayjs(pricingInformation.checkOutDate).format("YYYY-MM-DD")}
               </Paragraph>
               <Paragraph>
-                <Text strong>Room ID:</Text> {pricingInformation.roomId}
+                <Text strong>Room :</Text> {pricingInformation.roomNumber}
               </Paragraph>
               <Paragraph>
-                <Text strong>Package ID:</Text>{" "}
-                {pricingInformation.roomPackageId}
+                <Text strong>Package :</Text>{" "}
+                {pricingInformation.roomPackageName}
               </Paragraph>
             </Col>
 
@@ -89,14 +89,16 @@ const RoomPaymentForm = ({
               </Paragraph>
               <Paragraph>
                 <Text strong>Discount:</Text>{" "}
-                {pricingInformation?.discount &&
-                  Math.ceil(pricingInformation.discount).toLocaleString(
+                {pricingInformation?.discountAmount &&
+                  Math.ceil(pricingInformation.discountAmount).toLocaleString(
                     "en-LK",
                     {
                       style: "currency",
                       currency: "LKR",
                     }
                   )}
+                <br />
+                (Code : {pricingInformation?.discount?.code})
               </Paragraph>
               <Paragraph>
                 <Text strong>Taxes:</Text>{" "}
@@ -108,6 +110,7 @@ const RoomPaymentForm = ({
                       currency: "LKR",
                     }
                   )}
+                <br />({pricingInformation?.tax?.percentage * 100}%)
               </Paragraph>
 
               {pricingInformation.amenities &&
@@ -115,9 +118,9 @@ const RoomPaymentForm = ({
                   <>
                     <Title level={5}>Additional Amenities</Title>
                     {pricingInformation?.amenities.map((amenity, index) => (
-                      <Paragraph key={index}>
-                        <Text strong>Amenity {amenity.amenityId}:</Text>{" "}
-                        Quantity: {amenity.quantity}
+                      <Paragraph key={index} style={{ margin: 0 }}>
+                        <Text strong>{amenity.amenityName} : </Text>{" "}
+                        {amenity.quantity}
                       </Paragraph>
                     ))}
                   </>

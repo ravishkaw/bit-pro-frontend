@@ -183,8 +183,10 @@ const RoomCheckInInfoForm = ({
 
   // Update the form values for guests and children
   const updateGuestData = (guestIds, childIds, primaryId) => {
+    // Exclude primary guest from guestIds
+    const filteredGuestIds = guestIds.filter((id) => id !== primaryId);
     form.setFieldsValue({
-      guestIds: guestIds,
+      guestIds: filteredGuestIds,
       childIds: childIds,
       primaryGuestId: primaryId,
     });

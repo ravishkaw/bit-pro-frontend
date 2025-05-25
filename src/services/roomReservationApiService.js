@@ -69,6 +69,15 @@ export const checkRoomReservationPricing = async (params) => {
   return response.data;
 };
 
+// pricing calculation for checkout
+export const checkOutRoomReservationPricing = async (reservationId) => {
+  const response = await axiosInstance.post(
+    `${ROOM_RESERVATION_BASE_URL}/${reservationId}/calculate-pricing`
+  );
+
+  return response.data;
+};
+
 // update room reservation status ( actions in table )
 export const updateRoomReservationStatus = async (id, actionType) => {
   const response = await axiosInstance.put(

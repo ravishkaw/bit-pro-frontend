@@ -258,6 +258,25 @@ const RoomReservationFormModal = ({
             size="small"
             current={current}
             items={steps}
+            onChange={(clickedStep) => {
+              // Prevent direct navigation from Package & Amenities to Checkout
+              if (
+                current === steps.length - 2 &&
+                clickedStep === steps.length - 1
+              ) {
+                messageApi.warning(
+                  "Please use the 'Proceed To Checkout' button to proceed"
+                );
+                return;
+              }
+
+              if (clickedStep > current) {
+                next();
+              } else if (clickedStep < current) {
+                setCurrent(clickedStep);
+                triggerFormFieldsValidation(form);
+              }
+            }}
           />
           <div style={{ marginTop: 16 }}>{steps[current].content}</div>
         </Form>

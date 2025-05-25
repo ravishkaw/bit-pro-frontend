@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Modal,
   Form,
   Input,
-  InputNumber,
   Button,
   Row,
   Col,
@@ -11,12 +10,10 @@ import {
   Typography,
   Divider,
   Space,
-  notification,
-  Descriptions,
   Statistic,
-  Tag,
   Select,
   Flex,
+  Alert,
 } from "antd";
 import {
   CheckCircleOutlined,
@@ -26,12 +23,13 @@ import {
   MobileOutlined,
   MailOutlined,
   MoonOutlined,
+  BookOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 
-import { calculateRoomReservationPrice } from "../../utils/pricing";
 import { useThemeContext } from "../../contexts/ThemeContext";
 import { toast } from "react-toastify";
+import { checkOutRoomReservationPricing } from "../../services/roomReservationApiService";
 
 const { Title, Text } = Typography;
 
@@ -54,8 +52,6 @@ const RoomReservationCheckOutModal = ({
   const { open, selectedReservation } = modalState;
   const { guests, paymentMethods } = additionalData;
 
-  const billing = selectedReservation?.billing?.[0] || {};
-
   // Get primary guest details
   const primaryGuest = guests?.find(
     (guest) => guest.id === selectedReservation?.primaryGuestId
@@ -64,67 +60,44 @@ const RoomReservationCheckOutModal = ({
   const formatDate = (date) =>
     date ? dayjs(date).format("YYYY-MM-DD HH:mm") : "Not set";
 
-  // Calculate total nights based on check-in and check-out dates
-  const calculateTotalNights = (checkInDate, checkOutDate) => {
-    if (!checkInDate) return 0;
-
-    const startDate = dayjs(checkInDate);
-    const endDate = dayjs(checkOutDate || new Date());
-    let nights = endDate.diff(startDate, "day");
-    if (nights < 0) return 0;
-    if (nights === 0 && endDate.diff(startDate, "hour") >= 20) {
-      return 1;
-    }
-    return nights + 1;
-  };
-
   // Calculate room reservation pricing
-  const calculatePricing = async () => {
+  const checkOutPricing = async (reservationId) => {
+    setPricingLoading(true);
     try {
-      const roomId = selectedReservation?.roomId;
-      const checkInDate = dayjs(selectedReservation?.checkInDate);
-      const checkOutDate = dayjs(new Date());
-      const selectedPackage = selectedReservation?.roomPackageId;
-      const selectedAmenities = selectedReservation?.amenities || [];
-      setCheckOutDate(checkOutDate);
-
-      calculateRoomReservationPrice(
-        roomId,
-        checkInDate,
-        checkOutDate,
-        selectedAmenities,
-        selectedPackage,
-        setPricingLoading,
-        setPricingInformation
-      );
+      const pricingData = await checkOutRoomReservationPricing(reservationId);
+      setPricingInformation(pricingData);
+      console.log(pricingData);
     } catch (error) {
-      console.error("Error calculating pricing:", error);
-      toast.error("Error calculating pricing. Please try again.");
+      console.error("Error calculating checkout pricing:", error);
+      toast.error("Error calculating checkout pricing. Please try again.");
+    } finally {
+      setPricingLoading(false);
     }
   };
 
   useEffect(() => {
     if (open) {
-      try {
-        calculatePricing();
-
-        form.setFieldsValue({
-          paymentMethodId: billing?.paymentMethod?.id,
-          paidAmount: billing?.paidAmount,
-        });
-        setPaidAmount(billing?.paidAmount || 0);
-      } catch (error) {
-        toast.error("Error calculating pricing. Please try again.");
-      }
+      checkOutPricing(selectedReservation?.id);
     }
-  }, [open, selectedReservation, form]);
+  }, [open, selectedReservation]);
+
+  useEffect(() => {
+    if (open && pricingInformation) {
+      form.setFieldsValue({
+        paymentMethodId: selectedReservation?.billing?.paymentMethodId,
+        paidAmount: pricingInformation?.paidAmount,
+      });
+      setCheckOutDate(dayjs(pricingInformation?.checkOutDate || new Date()));
+      setPaidAmount(pricingInformation?.paidAmount || 0);
+    }
+  }, [pricingInformation, open, form, selectedReservation?.billing]);
 
   useEffect(() => {
     if (pricingInformation && paidAmount) {
-      const remaining = pricingInformation.totalPrice - paidAmount;
-      setRemainingAmount(remaining > 0 ? remaining : 0);
+      const remaining = pricingInformation.netAmount - paidAmount;
+      setRemainingAmount(remaining);
     } else if (pricingInformation) {
-      setRemainingAmount(pricingInformation.totalPrice);
+      setRemainingAmount(pricingInformation.netAmount);
     }
   }, [pricingInformation, paidAmount]);
 
@@ -140,21 +113,19 @@ const RoomReservationCheckOutModal = ({
 
     const updateData = {
       checkOutDate: checkOutDate.format("YYYY-MM-DDTHH:mm:ss"),
-      billingPayloadDTO: [
-        {
-          id: selectedReservation.billing?.[0]?.id,
-          basePrice:
-            Math.ceil(pricingInformation.basePrice) || values.basePrice,
-          totalTaxes:
-            Math.ceil(pricingInformation.totalTaxes) || values.totalTax,
-          totalPrice:
-            Math.ceil(pricingInformation.totalPrice) || values.totalPrice,
-          discount: Math.ceil(pricingInformation.discount) || values.discount,
-          paidAmount: Math.ceil(values.paidAmount),
-          paymentMethodId: values.paymentMethodId,
-        },
-      ],
+      billingPayloadDTO: {
+        id: selectedReservation?.billing.id,
+        basePrice: Math.ceil(pricingInformation.basePrice) || values.basePrice,
+        totalPrice: Math.ceil(pricingInformation.totalPrice),
+        discountId: pricingInformation.discountId,
+        discountAmount: Math.ceil(pricingInformation.discountAmount),
+        taxId: pricingInformation.taxId,
+        totalTax: Math.ceil(pricingInformation.totalTax),
+        paidAmount: Math.ceil(values.paidAmount),
+        paymentMethodId: values.paymentMethodId,
+      },
     };
+
     await roomCheckout(selectedReservation?.id, updateData);
     setLoading(false);
     closeModal();
@@ -247,10 +218,7 @@ const RoomReservationCheckOutModal = ({
                   <Col xs={24} sm={8}>
                     <Statistic
                       title="Total Nights"
-                      value={calculateTotalNights(
-                        selectedReservation?.checkInDate,
-                        new Date()
-                      )}
+                      value={pricingInformation?.totalNights || 0}
                       prefix={<MoonOutlined />}
                       valueStyle={{ fontSize: 15 }}
                     />
@@ -262,16 +230,46 @@ const RoomReservationCheckOutModal = ({
 
             <Row gutter={16}>
               <Col span={24}>
+                {/* Alert for remaining or refund */}
+                {remainingAmount > 0 && (
+                  <Alert
+                    message="Please settle the remaining amount before checkout."
+                    type="warning"
+                    showIcon
+                    style={{ marginBottom: 16 }}
+                  />
+                )}
+                {remainingAmount < 0 && (
+                  <Alert
+                    message={`Refund due: ${Math.abs(
+                      remainingAmount
+                    ).toLocaleString("en-LK", {
+                      style: "currency",
+                      currency: "LKR",
+                    })}`}
+                    description="The guest has overpaid. Please process the refund."
+                    type="info"
+                    showIcon
+                    style={{ marginBottom: 16 }}
+                  />
+                )}
+                {remainingAmount === 0 && (
+                  <Alert
+                    message="All payments are settled. Good to proceed with checkout."
+                    type="success"
+                    showIcon
+                    style={{ marginBottom: 16 }}
+                  />
+                )}
                 <Title level={5}>
                   <DollarOutlined style={{ marginRight: "8px" }} />
                   Checkout Summary
                 </Title>
               </Col>
-
               <Col span={8}>
                 <Statistic
-                  title="Total Price"
-                  value={pricingInformation?.totalPrice}
+                  title="Net Amount"
+                  value={pricingInformation?.netAmount}
                   precision={0}
                   formatter={(value) =>
                     Math.ceil(value).toLocaleString("en-LK", {
@@ -298,7 +296,13 @@ const RoomReservationCheckOutModal = ({
               </Col>
               <Col span={8}>
                 <Statistic
-                  title="Remaining Balance"
+                  title={
+                    remainingAmount > 0
+                      ? "Remaining Amount"
+                      : remainingAmount === 0
+                      ? "No Remaining Amount"
+                      : "Refund Amount"
+                  }
                   value={remainingAmount}
                   precision={0}
                   formatter={(value) =>
@@ -308,11 +312,33 @@ const RoomReservationCheckOutModal = ({
                     })
                   }
                   valueStyle={{
-                    color: remainingAmount > 0 ? "#cf1322" : "#3f8600",
+                    color:
+                      remainingAmount > 0
+                        ? "#cf1322"
+                        : remainingAmount === 0
+                        ? "#52c41a"
+                        : "#faad14",
                   }}
                 />
               </Col>
             </Row>
+            {pricingInformation?.additionalNotes && (
+              <>
+                <Divider />
+                <Col span={24}>
+                  <Title level={5}>
+                    <BookOutlined style={{ marginRight: "8px" }} />
+                    Additional Notes
+                  </Title>
+                </Col>
+                <Col span={24}>
+                  <Text style={{ whiteSpace: "pre-line" }}>
+                    {pricingInformation.additionalNotes}
+                  </Text>
+                </Col>
+              </>
+            )}
+
             <Divider />
 
             <Row gutter={16}>
@@ -368,6 +394,7 @@ const RoomReservationCheckOutModal = ({
                       htmlType="submit"
                       loading={loading}
                       icon={<CheckCircleOutlined />}
+                      disabled={remainingAmount !== 0}
                     >
                       Complete Checkout
                     </Button>

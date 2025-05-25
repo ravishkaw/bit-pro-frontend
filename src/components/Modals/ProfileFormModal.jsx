@@ -181,6 +181,14 @@ const ProfileFormModal = ({
             size="small"
             current={current}
             items={items}
+            onChange={(clickedStep) => {
+              if (clickedStep > current) {
+                next();
+              } else if (clickedStep < current) {
+                setCurrent(clickedStep);
+                triggerFormFieldsValidation(form); 
+              }
+            }}
           />
           <div style={{ marginTop: 16 }}>{steps[current].content}</div>
 
