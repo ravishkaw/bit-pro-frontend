@@ -31,6 +31,12 @@ export const getReservationsToAStatus = async (params) => {
 // Generic API service for event venues
 export const eventVenueService = createApiService(EVENT_VENUE_URL);
 
+// Fetch all event venues
+export const fetchAllEventVenues = async () => {
+  const response = await axiosInstance.get(`${EVENT_VENUE_URL}/get-all`);
+  return response.data;
+};
+
 // Generic API service for event reservation services
 export const eventReservationServiceService = createApiService(
   EVENT_RESERVATION_SERVICE_URL

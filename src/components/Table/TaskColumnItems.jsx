@@ -36,10 +36,14 @@ export const TaskColumnItems = (
   opendeleteRestoreModal
 ) => [
   {
-    title: "Room",
-    dataIndex: "roomNumber",
+    title: "Type",
+    dataIndex: "targetTypeName",
     sorter: true,
     fixed: "left",
+  },
+  {
+    title: "Room / Venue",
+    dataIndex: "targetName",
   },
   {
     title: "Assigned To",

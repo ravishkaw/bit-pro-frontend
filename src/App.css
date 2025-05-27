@@ -1,7 +1,7 @@
 /* Sidebar content scrollbar stylings */
 .sider-content-scroll {
   scrollbar-width: thin;
-  scrollbar-color: #bdbdbd #f5f5f5;
+  scrollbar-color: #bdbdbd #ffffff;
 }
 
 /* Chrome, Edge, Safari */
@@ -18,7 +18,7 @@
 
 /* Dark mode */
 .sider-content-scroll.dark {
-  scrollbar-color: #444 #222;
+  scrollbar-color: #444 #141414;
 }
 .sider-content-scroll.dark::-webkit-scrollbar-thumb {
   background: #444;

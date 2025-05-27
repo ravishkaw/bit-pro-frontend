@@ -3,31 +3,45 @@ import { toast } from "react-toastify";
 import dayjs from "dayjs";
 
 import {
-  roomTasksService,
-  roomTaskStatusService,
-  roomTaskTypeService,
-} from "../../services/roomApiServices";
-import useCrudHandler from "../common/useCrudHandler";
+  tasksService,
+  taskStatusService,
+  taskTypeService,
+  taskTargetTypeService,
+} from "../../services/taskApiService";
 
 import { mapToSelectOptions } from "../../utils/utils";
 import { fetchAllEmployees } from "../../services/systemApiService";
+import { fetchAllRooms } from "../../services/roomApiServices";
+import { fetchAllEventVenues } from "../../services/eventReservationApiService";
 
-// Custom hook to manage room housekeeping and maintenance operations
-const useRoomTasks = () => {
+import useCrudHandler from "../common/useCrudHandler";
+
+// Custom hook to manage housekeeping and maintenance operations
+const useTasks = () => {
   const [taskTypes, setTaskTypes] = useState([]);
   const [taskStatus, setTaskStatus] = useState([]);
   const [employees, setEmployees] = useState([]);
+  const [taskTargetTypes, setTaskTargetTypes] = useState([]);
+  const [rooms, setRooms] = useState([]);
+  const [eventVenues, setEventVenues] = useState([]);
 
   const loadReferenceData = async () => {
     try {
-      const [types, status, employees] = await Promise.all([
-        roomTaskTypeService.getAll(),
-        roomTaskStatusService.getAll(),
-        fetchAllEmployees(),
-      ]);
+      const [types, status, employees, targetType, rooms, eventVenues] =
+        await Promise.all([
+          taskTypeService.getAll(),
+          taskStatusService.getAll(),
+          fetchAllEmployees(),
+          taskTargetTypeService.getAll(),
+          fetchAllRooms(),
+          fetchAllEventVenues(),
+        ]);
       setTaskTypes(mapToSelectOptions(types));
       setTaskStatus(mapToSelectOptions(status));
       setEmployees(mapToSelectOptions(employees));
+      setTaskTargetTypes(mapToSelectOptions(targetType));
+      setRooms(mapToSelectOptions(rooms));
+      setEventVenues(mapToSelectOptions(eventVenues));
     } catch (error) {
       toast.error("Error loading reference data:", error);
     }
@@ -43,8 +57,8 @@ const useRoomTasks = () => {
   });
 
   const config = {
-    service: roomTasksService,
-    entityName: "Room Tasks",
+    service: tasksService,
+    entityName: "Tasks",
     formatData: formatTask,
     additionalFunc: [loadReferenceData],
   };
@@ -69,6 +83,9 @@ const useRoomTasks = () => {
       taskTypes,
       taskStatus,
       employees,
+      taskTargetTypes,
+      rooms,
+      eventVenues,
     },
     loadOneItem,
     addItem,
@@ -81,4 +98,4 @@ const useRoomTasks = () => {
   };
 };
 
-export default useRoomTasks;
+export default useTasks;

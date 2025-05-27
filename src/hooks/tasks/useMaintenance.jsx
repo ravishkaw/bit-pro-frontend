@@ -5,22 +5,34 @@ import dayjs from "dayjs";
 import {
   preventiveMaintenanceService,
   preventiveMaintenanceStatusService,
-} from "../../services/roomApiServices";
+  taskTargetTypeService,
+} from "../../services/taskApiService";
+import { fetchAllRooms } from "../../services/roomApiServices";
+import { fetchAllEventVenues } from "../../services/eventReservationApiService";
 import useCrudHandler from "../common/useCrudHandler";
 
 import { mapToSelectOptions } from "../../utils/utils";
 
-// Custom hook to manage room maintenance operations
+// Custom hook to manage maintenance operations
 const useMaintenance = () => {
   const [maintenanceStatus, setMaintenanceStatus] = useState([]);
+  const [taskTargetTypes, setTaskTargetTypes] = useState([]);
+  const [rooms, setRooms] = useState([]);
+  const [eventVenues, setEventVenues] = useState([]);
 
   // Load reference data
   const loadReferenceData = async () => {
     try {
-      const [status] = await Promise.all([
+      const [status, targetType, rooms, eventVenues] = await Promise.all([
         preventiveMaintenanceStatusService.getAll(),
+        taskTargetTypeService.getAll(),
+        fetchAllRooms(),
+        fetchAllEventVenues(),
       ]);
       setMaintenanceStatus(mapToSelectOptions(status));
+      setTaskTargetTypes(mapToSelectOptions(targetType));
+      setRooms(mapToSelectOptions(rooms));
+      setEventVenues(mapToSelectOptions(eventVenues));
     } catch (error) {
       setMaintenanceStatus([]);
       toast.error("Failed to load maintenance status");
@@ -38,7 +50,7 @@ const useMaintenance = () => {
 
   const config = {
     service: preventiveMaintenanceService,
-    entityName: "Room Preventive Maintenance",
+    entityName: "Preventive Maintenance",
     formatData: formatMaintenance,
     additionalFunc: [loadReferenceData],
   };
@@ -61,6 +73,9 @@ const useMaintenance = () => {
     data,
     additionalData: {
       maintenanceStatus,
+      taskTargetTypes,
+      rooms,
+      eventVenues,
     },
     loadOneItem,
     addItem,

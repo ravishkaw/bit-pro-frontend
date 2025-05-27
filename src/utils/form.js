@@ -209,7 +209,54 @@ const fieldFormatters = {
       ),
   },
 
-  // Special cases
+  // Task specific fields
+  targetTypeId: {
+    label: "Task Target Type",
+    format: (value, data) => getLabel(data?.taskTargetTypes || [], value),
+  },
+  targetId: {
+    label: "Target",
+    format: (value, data) => {
+      // Try both rooms and event venues for flexibility
+      const roomLabel = getLabel(data?.rooms || [], value);
+      if (roomLabel !== value) return roomLabel;
+      return getLabel(data?.eventVenues || [], value);
+    },
+  },
+  scheduledStartTime: {
+    label: "Scheduled Start Time",
+    format: (value) => (value ? dateTimeFormat(value) : "Not set"),
+  },
+  scheduledEndTime: {
+    label: "Scheduled End Time",
+    format: (value) => (value ? dateTimeFormat(value) : "Not set"),
+  },
+  actualStartTime: {
+    label: "Actual Start Time",
+    format: (value) => (value ? dateTimeFormat(value) : "Not set"),
+  },
+  actualEndTime: {
+    label: "Actual End Time",
+    format: (value) => (value ? dateTimeFormat(value) : "Not set"),
+  },
+  description: {
+    label: "Description",
+  },
+  maintenanceType: {
+    label: "Maintenance Type",
+  },
+  scheduledDate: {
+    label: "Scheduled Date",
+    format: (value) => (value ? dateTimeFormat(value) : "Not set"),
+  },
+  completedDate: {
+    label: "Completed Date",
+    format: (value) => (value ? dateTimeFormat(value) : "Not set"),
+  },
+  maintenanceStatusId: {
+    label: "Maintenance Status",
+    format: (value, data) => getLabel(data?.maintenanceStatus || [], value),
+  },
   roomTypeId: {
     label: "Room Type",
     format: (value, data) =>
@@ -297,6 +344,7 @@ const getLabel = (dataArray, value) =>
 
 // Format the date
 const dateFormat = (value) => dayjs(value).format("YYYY-MM-DD");
+const dateTimeFormat = (value) => dayjs(value).format("YYYY-MM-DD HH:mm:ss");
 
 // Helper function to compare arrays with items that have quantities
 const compareArraysWithQuantities = (arr1, arr2, idField) => {

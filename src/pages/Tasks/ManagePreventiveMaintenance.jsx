@@ -2,25 +2,22 @@ import { PreventiveMaintenanceColumnItems } from "../../components/Table/Prevent
 import PreventiveMaintenanceForm from "../../components/Forms/PreventiveMaintenanceForm";
 
 import GenericPage from "../GenericPage";
-import useMaintenance from "../../hooks/room/useMaintenance";
+import useMaintenance from "../../hooks/tasks/useMaintenance";
 
 const ManagePreventiveMaintenance = () => {
-  const roomTaskModule = "Task";
+  const taskModule = "Task";
   const rowKey = "id";
-  const rooms = [];
 
   // Destructure functions and states
-  const roomPreventiveMaintenancehookData = useMaintenance();
+  const hookData = useMaintenance();
 
   return (
     <GenericPage
-      module={roomTaskModule}
-      hookData={roomPreventiveMaintenancehookData}
+      module={taskModule}
+      hookData={hookData}
       rowKey={rowKey}
       columnItems={PreventiveMaintenanceColumnItems}
-      CustomForm={(props) => (
-        <PreventiveMaintenanceForm {...props} rooms={rooms} />
-      )}
+      CustomForm={PreventiveMaintenanceForm}
     />
   );
 };

@@ -121,6 +121,7 @@ const RoomReservationUpdateForm = ({
         totalTaxes: billing.totalTax || 0,
         discountAmount: billing.discountAmount || 0,
         totalPrice: billing.totalPrice || 0,
+        netAmount: billing.netAmount || 0,
         discountId: billing.discountId || null,
         taxId: billing.taxId,
       });
@@ -235,8 +236,6 @@ const RoomReservationUpdateForm = ({
     try {
       const values = await form.validateFields();
 
-      console.log(pricingInformation);
-
       // Format data for API
       const updateData = {
         ...values,
@@ -251,23 +250,28 @@ const RoomReservationUpdateForm = ({
           ? values.actualCheckOutDate.format("YYYY-MM-DDTHH:mm:ss")
           : null,
         amenities: selectedAmenities.map((amenity) => ({
-          amenityId: amenity.id,
-          quantity: amenity.quantity,
+          amenityId: amenity?.id,
+          quantity: amenity?.quantity,
         })),
         billingPayloadDTO: {
-          id: selectedObject.billing.id,
+          id: selectedObject?.billing?.id,
           basePrice:
             Math.ceil(pricingInformation.basePrice) || values.basePrice,
           totalPrice:
             Math.ceil(pricingInformation.totalPrice) || values.totalPrice,
-          discountId: pricingInformation.discountId || values.discountId,
+          netAmount:
+            Math.ceil(pricingInformation.netAmount) || values.netAmount,
+          discountId:
+            pricingInformation?.discount?.id ||
+            selectedObject?.billing?.discountId,
           discountAmount:
             Math.ceil(pricingInformation.discountAmount) ||
             values.discountAmount,
-          taxId: pricingInformation.taxId || values.taxId,
+          taxId: pricingInformation?.tax?.id || selectedObject?.billing?.taxId,
           totalTax: Math.ceil(pricingInformation.totalTaxes) || values.totalTax,
           paidAmount: Math.ceil(values.paidAmount),
           paymentMethodId: values.paymentMethodId,
+          note: values.note || "",
         },
         roomReservationSourceId: selectedObject.roomReservationSourceId,
         roomReservationStatusId: selectedObject.roomReservationStatusId,

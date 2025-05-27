@@ -37,10 +37,14 @@ export const PreventiveMaintenanceColumnItems = (
   opendeleteRestoreModal
 ) => [
   {
-    title: "Room",
-    dataIndex: "roomNumber",
+    title: "Room / Venue",
+    dataIndex: "targetTypeName",
     sorter: true,
     fixed: "left",
+  },
+  {
+    title: "Room / Venue No.",
+    dataIndex: "targetName",
   },
   {
     title: "Maintenance Type",

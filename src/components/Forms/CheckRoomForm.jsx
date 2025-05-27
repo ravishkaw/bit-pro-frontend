@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Form,
   Space,
@@ -17,11 +17,7 @@ import {
   Alert,
   Tag,
 } from "antd";
-import {
-  SearchOutlined,
-  CalendarOutlined,
-  TeamOutlined,
-} from "@ant-design/icons";
+import { CalendarOutlined, TeamOutlined } from "@ant-design/icons";
 import FormInputTooltip from "./FormInputTooltip";
 
 // Form for room facility availability check
@@ -42,27 +38,18 @@ const CheckRoomForm = ({
     infants: 0,
   });
   const [error, setError] = useState(null);
-
-  // Handle capacity change for adults, children, and infants
-  const handleCapacityChange = (type, value) => {
-    setCapacity((prev) => ({
-      ...prev,
-      [type]: value,
-    }));
-  };
+  const [dateRange, setDateRange] = useState(null);
 
   // get available rooms for a stay between two dates with adults, children and infants
-  const handleSearch = async () => {
+  const handleSearch = async (dateRange, cap) => {
     try {
       setError(null);
       setSearching(true);
 
-      // Check if date range is selected
-      const dateRange = form.getFieldValue("reservationDateRange");
-
       if (!dateRange || !dateRange[0] || !dateRange[1]) {
         setSearching(false);
-        throw new Error("Please select check-in and check-out dates");
+        setAvailableRooms([]);
+        return;
       }
 
       const checkInDate = dateRange[0].format("YYYY-MM-DD");
@@ -71,9 +58,9 @@ const CheckRoomForm = ({
       const rooms = await fetchRooms(
         checkInDate,
         checkOutDate,
-        capacity.adults,
-        capacity.children,
-        capacity.infants
+        cap.adults,
+        cap.children,
+        cap.infants
       );
       setSearching(false);
       setAvailableRooms(rooms);
@@ -81,6 +68,27 @@ const CheckRoomForm = ({
       setError(error.message || "Failed to search for rooms");
       setAvailableRooms([]);
     }
+  };
+
+  // useEffect to trigger search on relevant changes
+  useEffect(() => {
+    handleSearch(dateRange, capacity);
+  }, [capacity, dateRange]);
+
+  // Set dateRange from form if available to show rooms on load
+  useEffect(() => {
+    const initialRange = form.getFieldValue("reservationDateRange");
+    if (initialRange && initialRange[0] && initialRange[1]) {
+      setDateRange(initialRange);
+    }
+  }, []);
+
+  // Handle capacity change for adults, children, and infants
+  const handleCapacityChange = (type, value) => {
+    setCapacity((prev) => ({
+      ...prev,
+      [type]: value,
+    }));
   };
 
   // Handle room selection
@@ -157,6 +165,7 @@ const CheckRoomForm = ({
               disabledDate={disabledDate}
               format="YYYY-MM-DD"
               placeholder={["Check-in", "Check-out"]}
+              onChange={setDateRange}
             />
           </Form.Item>
         </Col>
@@ -234,19 +243,6 @@ const CheckRoomForm = ({
               onChange={(value) => handleCapacityChange("infants", value)}
             />
           </Form.Item>
-        </Col>
-      </Row>
-
-      <Row justify="end">
-        <Col>
-          <Button
-            type="primary"
-            icon={<SearchOutlined />}
-            onClick={handleSearch}
-            loading={searching}
-          >
-            Search Available Rooms
-          </Button>
         </Col>
       </Row>
 

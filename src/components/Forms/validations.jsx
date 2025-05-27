@@ -241,7 +241,7 @@ export const formValidations = {
     ({ getFieldValue }) => ({
       validator: (_, value) => {
         const scheduledStartTime = getFieldValue("scheduledStartTime");
-        if (scheduledStartTime && value.isBefore(scheduledStartTime)) {
+        if (scheduledStartTime && value?.isBefore(scheduledStartTime)) {
           return Promise.reject("End date must be after start date");
         }
         return Promise.resolve();
@@ -253,8 +253,10 @@ export const formValidations = {
   actualDateValidation: [
     ({ getFieldValue }) => ({
       validator: (_, value) => {
-        const actualStartTime = getFieldValue("actualStartTime");
-        if (actualStartTime && value.isBefore(actualStartTime)) {
+        const actualStartTime =
+          getFieldValue("actualStartTime") || getFieldValue("scheduledDate");
+
+        if (actualStartTime && value?.isBefore(actualStartTime)) {
           return Promise.reject("End date must be after start date");
         }
         return Promise.resolve();

@@ -100,14 +100,14 @@ const RoomReservationFormModal = ({
     const newData = { ...formData, ...values };
     setFormData(newData);
 
+    console.log(pricingInformation);
+
     // Prepare the data for submission
     const reservationData = {
       ...newData,
       childIds: newData?.childIds.map((c) => c.id),
       // Filter out the primary guest from the additional guests list
-      guestIds: newData?.guestIds?.filter(
-        (g) => g.id !== newData.primaryGuestId
-      ),
+      guestIds: newData?.guestIds?.filter((g) => g !== newData.primaryGuestId),
       roomId: newData.roomId.value,
       reservedCheckInDate: newData.reservationDateRange[0].format("YYYY-MM-DD"),
       reservedCheckOutDate:
@@ -117,16 +117,18 @@ const RoomReservationFormModal = ({
         quantity: amenity.quantity,
       })),
       roomPackageId: selectedPackage,
-      billingPayloadDTO: [
-        {
-          basePrice: Math.ceil(pricingInformation?.basePrice) || 0.0,
-          totalTaxes: Math.ceil(pricingInformation?.totalTaxes) || 0.0,
-          totalPrice: Math.ceil(pricingInformation?.totalPrice) || 0.0,
-          discount: Math.ceil(pricingInformation?.discount) || 0.0,
-          paidAmount: Math.ceil(newData.paidAmount),
-          paymentMethodId: newData.paymentMethodId,
-        },
-      ],
+      billingPayloadDTO: {
+        basePrice: Math.ceil(pricingInformation?.basePrice) || 0.0,
+        totalPrice: Math.ceil(pricingInformation?.totalPrice) || 0.0,
+        netAmount: Math.ceil(pricingInformation?.netAmount) || 0.0,
+        discountId: pricingInformation?.discount?.id || null,
+        discountAmount: Math.ceil(pricingInformation.discountAmount),
+        taxId: pricingInformation?.tax?.id,
+        totalTax: Math.ceil(pricingInformation.totalTaxes),
+        paidAmount: Math.ceil(values.paidAmount),
+        paymentMethodId: values.paymentMethodId,
+        note: pricingInformation.additionalNotes || "",
+      },
     };
 
     delete reservationData.reservationDateRange;

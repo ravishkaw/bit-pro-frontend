@@ -200,8 +200,9 @@ const useRoomReservation = () => {
   const roomCheckout = async (id, values) => {
     setLoading(true);
     try {
-      await checkOutRoomReservation(id, values);
+      const resp = await checkOutRoomReservation(id, values);
       toast.success(`Room Reservation checked out successfully`);
+      return resp;
     } catch (err) {
       toast.error(err.response?.data?.message || err.message);
     } finally {

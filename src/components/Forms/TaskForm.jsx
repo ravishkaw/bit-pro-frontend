@@ -1,15 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Col,
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-  Row,
-  Select,
-  Switch,
-  DatePicker,
-} from "antd";
+import { Col, Form, Input, Modal, Row, Select, DatePicker } from "antd";
 import dayjs from "dayjs";
 
 import FormOnFinishButtons from "./FormOnFinishButtons";
@@ -20,7 +10,6 @@ import {
   triggerFormFieldsValidation,
 } from "../../utils/form";
 import { formValidations } from "./validations";
-import { mapToSelectOptions } from "../../utils/utils";
 
 const TaskForm = ({
   additionalData,
@@ -31,14 +20,20 @@ const TaskForm = ({
   selectedObject,
   addItem,
   showUpdateConfirmModal,
-  rooms,
 }) => {
   const [initialFormData, setInitialFormData] = useState({});
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [targetType, setTargetType] = useState("Room");
   const [form] = Form.useForm();
 
-  const { taskTypes, taskStatus, employees } = additionalData;
-  const mappedRooms = mapToSelectOptions(rooms);
+  const {
+    taskTypes,
+    taskStatus,
+    employees,
+    taskTargetTypes,
+    rooms,
+    eventVenues,
+  } = additionalData;
 
   const {
     noteValidation,
@@ -81,14 +76,14 @@ const TaskForm = ({
     const updatedData = {
       ...formdata,
       // Convert dayjs objects to local datetime strings for backend
-      scheduledStartTime: formdata.scheduledStartTime?.format(
+      scheduledStartTime: formdata?.scheduledStartTime?.format(
         "YYYY-MM-DDTHH:mm:ss"
       ),
-      scheduledEndTime: formdata.scheduledEndTime?.format(
+      scheduledEndTime: formdata?.scheduledEndTime?.format(
         "YYYY-MM-DDTHH:mm:ss"
       ),
-      actualStartTime: formdata.actualStartTime?.format("YYYY-MM-DDTHH:mm:ss"),
-      actualEndTime: formdata.actualEndTime?.format("YYYY-MM-DDTHH:mm:ss"),
+      actualStartTime: formdata?.actualStartTime?.format("YYYY-MM-DDTHH:mm:ss"),
+      actualEndTime: formdata?.actualEndTime?.format("YYYY-MM-DDTHH:mm:ss"),
       taskInventories: [],
       taskCosts: [],
     };
@@ -100,7 +95,7 @@ const TaskForm = ({
         taskTypes,
         taskStatus,
         employees,
-        mappedRooms,
+        rooms,
       });
       showUpdateConfirmModal(updatedValues, selectedObject.id, updatedData);
     } else {
@@ -155,25 +150,57 @@ const TaskForm = ({
 
           <Col sm={12} md={8} xs={24}>
             <Form.Item
-              name="roomId"
+              name="targetTypeId"
               label={
                 <FormInputTooltip
-                  label="Room"
-                  title="Select the room for this task"
+                  label="Task Target Type"
+                  title="Select event venue or room for this task"
                 />
               }
-              rules={[{ required: true, message: "Please enter room" }]}
+              rules={[
+                {
+                  required: true,
+                  message: "Please select the task target type",
+                },
+              ]}
               hasFeedback
             >
               <Select
-                placeholder="Select Room"
-                options={mappedRooms}
+                placeholder="Select Task Target Type"
+                options={taskTargetTypes}
+                showSearch
+                optionFilterProp="label"
+                onChange={(value, option) => {
+                  form.setFieldsValue({ targetId: undefined });
+                  setTargetType(option.label);
+                }}
+              />
+            </Form.Item>
+          </Col>
+
+          <Col sm={12} md={8} xs={24}>
+            <Form.Item
+              name="targetId"
+              label={
+                <FormInputTooltip
+                  label={targetType == "Room" ? "Room" : "Event Venue"}
+                  title="Select the target for this task"
+                />
+              }
+              rules={[{ required: true, message: "Please select target" }]}
+              hasFeedback
+            >
+              <Select
+                placeholder="Select Target"
+                options={targetType == "Room" ? rooms : eventVenues}
                 showSearch
                 optionFilterProp="label"
               />
             </Form.Item>
           </Col>
+        </Row>
 
+        <Row gutter={16}>
           <Col sm={12} md={8} xs={24}>
             <Form.Item
               name="assignedToId"
@@ -199,10 +226,7 @@ const TaskForm = ({
               />
             </Form.Item>
           </Col>
-        </Row>
-
-        <Row gutter={16}>
-          <Col sm={12} xs={24}>
+          <Col sm={12} md={8} xs={24}>
             <Form.Item
               name="scheduledStartTime"
               label={
@@ -227,7 +251,7 @@ const TaskForm = ({
             </Form.Item>
           </Col>
 
-          <Col sm={12} xs={24}>
+          <Col sm={12} md={8} xs={24}>
             <Form.Item
               name="scheduledEndTime"
               label={
@@ -256,7 +280,7 @@ const TaskForm = ({
         </Row>
 
         <Row gutter={16}>
-          <Col sm={12} xs={24}>
+          <Col sm={12} md={8} xs={24}>
             <Form.Item
               name="actualStartTime"
               label={
@@ -278,7 +302,7 @@ const TaskForm = ({
             </Form.Item>
           </Col>
 
-          <Col sm={12} xs={24}>
+          <Col sm={12} md={8} xs={24}>
             <Form.Item
               name="actualEndTime"
               label={
@@ -303,27 +327,6 @@ const TaskForm = ({
               />
             </Form.Item>
           </Col>
-        </Row>
-
-        <Row gutter={16}>
-          <Col sm={16} xs={24}>
-            <Form.Item
-              name="description"
-              label={
-                <FormInputTooltip
-                  label="Description"
-                  title="Provide details about the room's features or amenities"
-                />
-              }
-              rules={[
-                ...noteValidation,
-                { required: true, message: "Please enter short description" },
-              ]}
-              hasFeedback
-            >
-              <Input.TextArea placeholder="E.g., Cleaning" rows={1} />
-            </Form.Item>
-          </Col>
 
           <Col sm={8} xs={24}>
             <Form.Item
@@ -343,6 +346,27 @@ const TaskForm = ({
                 showSearch
                 optionFilterProp="label"
               />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={16}>
+          <Col span={24}>
+            <Form.Item
+              name="description"
+              label={
+                <FormInputTooltip
+                  label="Description"
+                  title="Provide details about the room's features or amenities"
+                />
+              }
+              rules={[
+                ...noteValidation,
+                { required: true, message: "Please enter short description" },
+              ]}
+              hasFeedback
+            >
+              <Input.TextArea placeholder="E.g., Cleaning" rows={1} />
             </Form.Item>
           </Col>
         </Row>

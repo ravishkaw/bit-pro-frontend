@@ -27,15 +27,19 @@ const PreventiveMaintenanceForm = ({
   selectedObject,
   addItem,
   showUpdateConfirmModal,
-  rooms,
 }) => {
   const [initialFormData, setInitialFormData] = useState({});
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [form] = Form.useForm();
+  const [targetType, setTargetType] = useState("Room");
 
-  const { maintenanceStatus } = additionalData;
-  const mappedRooms = mapToSelectOptions(rooms);
-  const { alphanumericWithSpacesValidation, dateValidation } = formValidations;
+  const { maintenanceStatus, rooms, eventVenues, taskTargetTypes } =
+    additionalData;
+  const {
+    alphanumericWithSpacesValidation,
+    dateValidation,
+    actualDateValidation,
+  } = formValidations;
 
   // Set initial values when editing
   useEffect(() => {
@@ -102,19 +106,47 @@ const PreventiveMaintenanceForm = ({
         onFinish={onFinish}
       >
         <Form.Item
-          name="roomId"
+          name="targetTypeId"
           label={
             <FormInputTooltip
-              label="Room"
-              title="Select the room for this task"
+              label="Task Target Type"
+              title="Select event venue or room for this task"
             />
           }
-          rules={[{ required: true, message: "Please enter room" }]}
+          rules={[
+            {
+              required: true,
+              message: "Please select the task target type",
+            },
+          ]}
           hasFeedback
         >
           <Select
-            placeholder="Select Room"
-            options={mappedRooms}
+            placeholder="Select Task Target Type"
+            options={taskTargetTypes}
+            showSearch
+            optionFilterProp="label"
+            onChange={(value, option) => {
+              form.setFieldsValue({ targetId: undefined });
+              setTargetType(option.label);
+            }}
+          />
+        </Form.Item>
+
+        <Form.Item
+          name="targetId"
+          label={
+            <FormInputTooltip
+              label={targetType == "Room" ? "Room" : "Event Venue"}
+              title="Select the target for this task"
+            />
+          }
+          rules={[{ required: true, message: "Please select target" }]}
+          hasFeedback
+        >
+          <Select
+            placeholder="Select Target"
+            options={targetType == "Room" ? rooms : eventVenues}
             showSearch
             optionFilterProp="label"
           />
@@ -169,7 +201,10 @@ const PreventiveMaintenanceForm = ({
             />
           }
           hasFeedback
-          rules={[...(!isEditing ? dateValidation : [])]}
+          rules={[
+            ...(!isEditing ? dateValidation : []),
+            ...actualDateValidation,
+          ]}
         >
           <DatePicker
             showTime
