@@ -1,0 +1,362 @@
+import {
+  EditOutlined,
+  EyeOutlined,
+  ScheduleOutlined,
+  CloseCircleOutlined,
+  CheckCircleOutlined,
+  ExclamationCircleOutlined,
+  InfoCircleOutlined,
+} from "@ant-design/icons";
+import { Button, Space, Tag, Tooltip } from "antd";
+
+const statusColors = {
+  Paid: "green",
+  "Partially Paid": "orange",
+  Pending: "red",
+};
+
+const confirmedActions = (
+  record,
+  handleView,
+  handleEdit,
+  loadOneItem,
+  openActionConfirmationModal
+) => {
+  return (
+    <Space size="small">
+      <Tooltip title="View Details">
+        <Button
+          type="primary"
+          ghost
+          icon={<EyeOutlined />}
+          onClick={() => handleView(loadOneItem, record.id)}
+        />
+      </Tooltip>
+      <Tooltip title="Edit Reservation">
+        <Button
+          type="default"
+          icon={<EditOutlined />}
+          onClick={() => handleEdit(record.id)}
+        />
+      </Tooltip>
+      <Tooltip title="Check In">
+        <Button
+          type="primary"
+          icon={<CheckCircleOutlined />}
+          onClick={() => openActionConfirmationModal(record.id, "check-in")}
+        />
+      </Tooltip>
+    </Space>
+  );
+};
+
+const currentActions = (
+  record,
+  handleView,
+  handleEdit,
+  loadOneItem,
+  handleCheckOut
+) => {
+  return (
+    <Space size="small">
+      <Tooltip title="View Details">
+        <Button
+          type="primary"
+          ghost
+          icon={<EyeOutlined />}
+          onClick={() => handleView(loadOneItem, record.id)}
+        />
+      </Tooltip>
+      <Tooltip title="Edit Reservation">
+        <Button
+          type="default"
+          icon={<EditOutlined />}
+          onClick={() => handleEdit(record.id)}
+        />
+      </Tooltip>
+      <Tooltip title="Check Out">
+        <Button
+          type="primary"
+          icon={<ScheduleOutlined />}
+          onClick={() => handleCheckOut(record.id)}
+        />
+      </Tooltip>
+    </Space>
+  );
+};
+
+const pendingActions = (
+  record,
+  handleView,
+  handleEdit,
+  loadOneItem,
+  openActionConfirmationModal
+) => {
+  return (
+    <Space size="small">
+      <Tooltip title="View Details">
+        <Button
+          type="primary"
+          ghost
+          icon={<EyeOutlined />}
+          onClick={() => handleView(loadOneItem, record.id)}
+        />
+      </Tooltip>
+      <Tooltip title="Edit Reservation">
+        <Button
+          type="default"
+          icon={<EditOutlined />}
+          onClick={() => handleEdit(record.id)}
+        />
+      </Tooltip>
+      <Tooltip title="confirm Reservation">
+        <Button
+          type="primary"
+          icon={<CheckCircleOutlined />}
+          onClick={() => openActionConfirmationModal(record.id, "confirm")}
+        />
+      </Tooltip>
+      <Tooltip title="Cancel Reservation">
+        <Button
+          danger
+          icon={<CloseCircleOutlined />}
+          onClick={() => openActionConfirmationModal(record.id, "cancel")}
+        />
+      </Tooltip>
+    </Space>
+  );
+};
+
+const completedActions = (record, handleView, loadOneItem) => {
+  return (
+    <Space size="small">
+      <Tooltip title="View Details">
+        <Button
+          type="primary"
+          ghost
+          icon={<EyeOutlined />}
+          onClick={() => handleView(loadOneItem, record.id)}
+        />
+      </Tooltip>
+    </Space>
+  );
+};
+
+const cancelledActions = (
+  record,
+  handleView,
+  loadOneItem,
+  openActionConfirmationModal
+) => {
+  return (
+    <Space size="small">
+      <Tooltip title="View Details">
+        <Button
+          type="primary"
+          ghost
+          icon={<EyeOutlined />}
+          onClick={() => handleView(loadOneItem, record.id)}
+        />
+      </Tooltip>
+      <Tooltip title="Reactivate">
+        <Button
+          type="default"
+          icon={<InfoCircleOutlined />}
+          onClick={() => openActionConfirmationModal(record.id, "confirm")}
+        />
+      </Tooltip>
+    </Space>
+  );
+};
+
+const noShowActions = (
+  record,
+  handleView,
+  loadOneItem,
+  openActionConfirmationModal
+) => {
+  return (
+    <Space size="small">
+      <Tooltip title="View Details">
+        <Button
+          type="primary"
+          ghost
+          icon={<EyeOutlined />}
+          onClick={() => handleView(loadOneItem, record.id)}
+        />
+      </Tooltip>
+      <Tooltip title="Mark As Checked-In">
+        <Button
+          type="default"
+          icon={<ExclamationCircleOutlined />}
+          onClick={() => openActionConfirmationModal(record.id, "check-in")}
+        />
+      </Tooltip>
+    </Space>
+  );
+};
+
+// Create table columns with permission-based edit/delete actions
+export const EventReservationColumnItems = (
+  modulePrivileges,
+  handleEdit,
+  loadOneItem,
+  handleView,
+  handleCheckOut,
+  openActionConfirmationModal
+) => [
+  {
+    title: "Guest",
+    dataIndex: "guestFullName",
+  },
+  {
+    title: "Event Name",
+    dataIndex: "name",
+  },
+  {
+    title: "Event Venue",
+    dataIndex: "eventVenueName",
+    align: "center",
+  },
+  {
+    title: "Start Date & Time",
+    dataIndex: "startDatetime",
+    render: (_, record) => {
+      const date = record.sartDatetime;
+      return date
+        ? date.toLocaleString("en-LK", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        : "N/A";
+    },
+    sorter: true,
+    align: "center",
+  },
+  {
+    title: "End Date & Time",
+    dataIndex: "endDatetime",
+    render: (_, record) => {
+      const date = record.endDatetime;
+      return date
+        ? date.toLocaleString("en-LK", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        : "N/A";
+    },
+    sorter: true,
+    align: "center",
+  },
+  {
+    title: "Expected Guests",
+    dataIndex: "expectedGuestCount",
+    sorter: true,
+    align: "center",
+  },
+  {
+    title: " Note",
+    dataIndex: "actualCheckOutDate",
+    render: (_, record) => {
+      const date = record.checkOutDate;
+      return date ? date.substring(0, 10) : "N/A";
+    },
+    sorter: true,
+    align: "center",
+  },
+  {
+    title: (
+      <span style={{ whiteSpace: "normal" }}>
+        Total
+        <br />
+        Price
+      </span>
+    ),
+    dataIndex: "totalPrice",
+    render: (_, record) => {
+      const totalPrice = record.totalPrice || 0;
+      return `${totalPrice.toLocaleString("en-LK", {
+        style: "currency",
+        currency: "LKR",
+      })}`;
+    },
+    align: "center",
+  },
+  {
+    title: (
+      <span style={{ whiteSpace: "normal" }}>
+        Payment
+        <br />
+        Status
+      </span>
+    ),
+    dataIndex: "paymentStatusName",
+    align: "center",
+    render: (_, record) => {
+      const status = record.paymentStatusName;
+      return <Tag color={statusColors[status]}>{status}</Tag>;
+    },
+  },
+  {
+    title: "Actions",
+    key: "operation",
+    fixed: "right",
+    align: "center",
+    render: (_, record) => {
+      const status = record?.roomReservationStatusName;
+
+      switch (status) {
+        case "CONFIRMED":
+          return confirmedActions(
+            record,
+            handleView,
+            handleEdit,
+            loadOneItem,
+            openActionConfirmationModal
+          );
+        case "CHECKED-IN":
+          return currentActions(
+            record,
+            handleView,
+            handleEdit,
+            loadOneItem,
+            handleCheckOut
+          );
+        case "PENDING":
+          return pendingActions(
+            record,
+            handleView,
+            handleEdit,
+            loadOneItem,
+            openActionConfirmationModal
+          );
+        case "CHECKED-OUT":
+          return completedActions(record, handleView, loadOneItem);
+        case "CANCELLED":
+          return completedActions(record, handleView, loadOneItem);
+        case "NO-SHOW":
+          return noShowActions(
+            record,
+            handleView,
+            loadOneItem,
+            openActionConfirmationModal
+          );
+        default:
+          return (
+            <Button
+              type="primary"
+              ghost
+              icon={<EyeOutlined />}
+              onClick={() => handleView(loadOneItem, record.id)}
+            />
+          );
+      }
+    },
+  },
+];
