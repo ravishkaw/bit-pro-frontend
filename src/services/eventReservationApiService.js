@@ -2,7 +2,7 @@ import { createApiService } from "./apiService";
 import axiosInstance from "./axiosInstance";
 
 // events
-const EVENT_RESERVATION_BASE_URL = "/event-reservation";
+const EVENT_RESERVATION_BASE_URL = "/event-reservations";
 const EVENT_RESERVATION_SERVICE_URL = "/event-services";
 const EVENT_VENUE_URL = "/event-venues";
 const EVENT_TYPE_URL = "/event-types";

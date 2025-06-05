@@ -125,7 +125,7 @@ const ViewRoomReservation = ({
   ];
 
   // Billing info section
-  const billing = selectedReservation?.billing?.[0];
+  const billing = selectedReservation?.billing;
   const billingInfo = billing
     ? [
         {
@@ -139,7 +139,7 @@ const ViewRoomReservation = ({
         {
           key: "2",
           label: "Discount",
-          children: `${billing.discount?.toLocaleString("en-Lk", {
+          children: `${billing.discountAmount?.toLocaleString("en-Lk", {
             style: "currency",
             currency: "LKR",
           })}`,
@@ -413,15 +413,16 @@ const ViewRoomReservation = ({
                     />
                     <Statistic
                       title="Payment Date"
-                      value={new Date(
-                        billing?.lastModifiedDatetime
-                      ).toLocaleString("en-LK", {
-                        month: "short",
-                        day: "numeric",
-                        hour: "numeric",
-                        minute: "2-digit",
-                        hour12: true,
-                      })}
+                      value={new Date(billing?.billingDate).toLocaleString(
+                        "en-LK",
+                        {
+                          month: "short",
+                          day: "numeric",
+                          hour: "numeric",
+                          minute: "2-digit",
+                          hour12: true,
+                        }
+                      )}
                       valueStyle={{ fontSize: 16 }}
                     />
                   </Flex>

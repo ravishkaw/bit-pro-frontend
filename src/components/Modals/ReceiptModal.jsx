@@ -7,10 +7,18 @@ import { pdfjs, Document, Page } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.mjs",
-  import.meta.url
-).toString();
+// Configure PDF.js worker
+if (typeof window !== "undefined") {
+  try {
+    pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+  } catch (error) {
+    // Fallback for if public worker fails
+    pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+      "pdfjs-dist/build/pdf.worker.min.mjs",
+      import.meta.url
+    ).toString();
+  }
+}
 
 const { Text } = Typography;
 
@@ -21,18 +29,31 @@ const ReceiptModal = ({
 }) => {
   const [pdfBlobUrl, setPdfBlobUrl] = useState(null);
   const [numPages, setNumPages] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     let url;
     if (receiptUrl) {
+      setLoading(true);
+      setError(null);
+
       axiosInstance
         .get(receiptUrl, { responseType: "blob" })
         .then((response) => {
           url = URL.createObjectURL(response.data);
           setPdfBlobUrl(url);
         })
-        .catch(() => setPdfBlobUrl(null));
+        .catch((error) => {
+          console.error("Error loading PDF:", error);
+          setError("Failed to load receipt");
+          setPdfBlobUrl(null);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     }
+
     return () => {
       if (url) URL.revokeObjectURL(url);
       setPdfBlobUrl(null);
@@ -41,6 +62,12 @@ const ReceiptModal = ({
 
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
+    setError(null);
+  };
+
+  const onDocumentLoadError = (error) => {
+    console.error("PDF load error:", error);
+    setError("Failed to display PDF");
   };
 
   const handleBrowserPrint = () => {
@@ -51,6 +78,11 @@ const ReceiptModal = ({
         printWindow.print();
       } else {
         console.error("Failed to open print window. Please allow popups.");
+        // Fallback: try to download the file
+        const link = document.createElement("a");
+        link.href = pdfBlobUrl;
+        link.download = "receipt.pdf";
+        link.click();
       }
     }
   };
@@ -72,7 +104,8 @@ const ReceiptModal = ({
             icon={<PrinterOutlined />}
             onClick={handleBrowserPrint}
             size="small"
-            disabled={!pdfBlobUrl}
+            disabled={!pdfBlobUrl || loading}
+            loading={loading}
           >
             Print
           </Button>
@@ -86,17 +119,33 @@ const ReceiptModal = ({
         <div
           style={{
             border: "1px solid #eee",
+            minHeight: 500,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <Document file={pdfBlobUrl} onLoadSuccess={onDocumentLoadSuccess}>
-            {Array.from(new Array(numPages), (el, index) => (
-              <Page
-                key={`page_${index + 1}`}
-                pageNumber={index + 1}
-                width={750}
-              />
-            ))}
-          </Document>
+          {loading && <Text>Loading receipt...</Text>}
+          {error && <Text type="danger">{error}</Text>}
+          {pdfBlobUrl && !loading && !error && (
+            <Document
+              file={pdfBlobUrl}
+              onLoadSuccess={onDocumentLoadSuccess}
+              onLoadError={onDocumentLoadError}
+              loading={<Text>Loading PDF...</Text>}
+              error={<Text type="danger">Failed to load PDF</Text>}
+            >
+              {Array.from(new Array(numPages), (el, index) => (
+                <Page
+                  key={`page_${index + 1}`}
+                  pageNumber={index + 1}
+                  width={750}
+                  loading={<Text>Loading page...</Text>}
+                  error={<Text type="danger">Failed to load page</Text>}
+                />
+              ))}
+            </Document>
+          )}
         </div>
       </Space>
     </Modal>

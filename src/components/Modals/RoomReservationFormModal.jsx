@@ -100,8 +100,6 @@ const RoomReservationFormModal = ({
     const newData = { ...formData, ...values };
     setFormData(newData);
 
-    console.log(pricingInformation);
-
     // Prepare the data for submission
     const reservationData = {
       ...newData,
